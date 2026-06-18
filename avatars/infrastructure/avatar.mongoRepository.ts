@@ -1,37 +1,72 @@
-import { Types } from "mongoose";
+
 import { AvatarType } from "../domain/entities/AvatarsTypes";
 import { IAvatar } from "../domain/ports/AvatarPorts";
-import { AvatarModel } from "./models/avatarModel";
+
 import { deleteCoverImage } from "../../shared/utils/deleteCoverImage";
+import { prisma } from "../../shared/lib/prisma";
 
+export class AvatarPostgresRepository implements IAvatar {
 
-
-
-export class AvatarMongoRepository implements IAvatar {
 	async saveAvatar(avatar: AvatarType): Promise<AvatarType> {
-		const newAvatar = new AvatarModel(avatar);
-		return await newAvatar.save()
+
+		return await prisma.avatar.create({
+			data: {
+				idImage: avatar.idImage,
+				urlSecura: avatar.urlSecura,
+				gender: avatar.gender
+			}
+		});
 	}
+
 	async findAvatars(): Promise<AvatarType[]> {
-		const result = await AvatarModel.find()
-		return result
+
+		return await prisma.avatar.findMany();
 	}
 
-	async deleteAvatar(id: Types.ObjectId): Promise<void | null> {
-		const result = await AvatarModel.findById(id);
-		if (!result) {
-			return null
+	async findAvatarById(id: string): Promise<AvatarType | null> {
+
+		return await prisma.avatar.findUnique({
+			where: {
+				id
+			}
+		});
+	}
+
+	async updateAvatar(
+		id: string,
+		avatar: Partial<AvatarType>
+	): Promise<AvatarType | null> {
+
+		return await prisma.avatar.update({
+			where: {
+				id
+			},
+			data: {
+				idImage: avatar.idImage,
+				urlSecura: avatar.urlSecura,
+				gender: avatar.gender
+			}
+		});
+	}
+
+	async deleteAvatar(id: string): Promise<void | null> {
+
+		const avatar = await prisma.avatar.findUnique({
+			where: {
+				id
+			}
+		});
+
+		if (!avatar) {
+			return null;
 		}
-		await deleteCoverImage(result.avatars.id_image);
 
-		await AvatarModel.findByIdAndDelete(result._id);
+		await deleteCoverImage(avatar.idImage);
 
-	}
-	async findAvatarById(id: any): Promise<AvatarType | null> {
-		return await AvatarModel.findById(id)
-	}
-
-	async updateAvatar(id: Types.ObjectId, avatar: AvatarType): Promise<AvatarType | null> {
-		return await AvatarModel.findByIdAndUpdate(id, avatar, { new: true });
+		await prisma.avatar.delete({
+			where: {
+				id
+			}
+		});
 	}
 }

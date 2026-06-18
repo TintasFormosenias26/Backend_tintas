@@ -1,0 +1,77 @@
+import mongoose from "mongoose";
+import { User } from "../../domain/entities/UserTypes";
+import { Schema } from "mongoose";
+import { string } from "zod";
+
+const UserSchema = new Schema<User>(
+	{
+		name: {
+			type: String,
+			required: true,
+		},
+		lastName: {
+			type: String,
+			required: true,
+		},
+		userName: {
+			type: String,
+			required: true,
+		},
+		birthDate: {
+			type: Date,
+			required: true,
+		},
+		email: {
+			type: String,
+			required: true,
+		},
+		password: {
+			type: String,
+			required: true,
+		},
+		nivel: {
+			type: String,
+			required: true,
+		},
+		level: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Levels",
+			required: true
+		},
+		imgLevel: {
+			type: String,
+			required: true
+		},
+		rol: {
+			type: String,
+			enum: ["User", "Admin"],
+			default: "User",
+			required: true,
+		},
+		point: {
+			type: Number,
+			required: true,
+			default: 0,
+		},
+		avatar: {
+			type: String,
+			required: true
+		},
+		preference: {
+			type: new Schema({
+				category: {
+					type: [String],
+				},
+				format: {
+					type: [String],
+				},
+			}),
+		},
+		medals: [{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Medals",
+		}]
+	},
+	{ timestamps: true }
+);
+export const UserModel = mongoose.model<User>("Users", UserSchema);

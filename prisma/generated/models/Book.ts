@@ -350,6 +350,7 @@ export type BookWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Book"> | Date | string
   authors?: Prisma.AuthorListRelationFilter
   contents?: Prisma.BookContentListRelationFilter
+  progresses?: Prisma.BookProgressListRelationFilter
 }
 
 export type BookOrderByWithRelationInput = {
@@ -377,6 +378,7 @@ export type BookOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   authors?: Prisma.AuthorOrderByRelationAggregateInput
   contents?: Prisma.BookContentOrderByRelationAggregateInput
+  progresses?: Prisma.BookProgressOrderByRelationAggregateInput
 }
 
 export type BookWhereUniqueInput = Prisma.AtLeast<{
@@ -407,6 +409,7 @@ export type BookWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Book"> | Date | string
   authors?: Prisma.AuthorListRelationFilter
   contents?: Prisma.BookContentListRelationFilter
+  progresses?: Prisma.BookProgressListRelationFilter
 }, "id">
 
 export type BookOrderByWithAggregationInput = {
@@ -492,6 +495,7 @@ export type BookCreateInput = {
   updatedAt?: Date | string
   authors?: Prisma.AuthorCreateNestedManyWithoutBooksInput
   contents?: Prisma.BookContentCreateNestedManyWithoutBookInput
+  progresses?: Prisma.BookProgressCreateNestedManyWithoutBookInput
 }
 
 export type BookUncheckedCreateInput = {
@@ -519,6 +523,7 @@ export type BookUncheckedCreateInput = {
   updatedAt?: Date | string
   authors?: Prisma.AuthorUncheckedCreateNestedManyWithoutBooksInput
   contents?: Prisma.BookContentUncheckedCreateNestedManyWithoutBookInput
+  progresses?: Prisma.BookProgressUncheckedCreateNestedManyWithoutBookInput
 }
 
 export type BookUpdateInput = {
@@ -546,6 +551,7 @@ export type BookUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   authors?: Prisma.AuthorUpdateManyWithoutBooksNestedInput
   contents?: Prisma.BookContentUpdateManyWithoutBookNestedInput
+  progresses?: Prisma.BookProgressUpdateManyWithoutBookNestedInput
 }
 
 export type BookUncheckedUpdateInput = {
@@ -573,6 +579,7 @@ export type BookUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   authors?: Prisma.AuthorUncheckedUpdateManyWithoutBooksNestedInput
   contents?: Prisma.BookContentUncheckedUpdateManyWithoutBookNestedInput
+  progresses?: Prisma.BookProgressUncheckedUpdateManyWithoutBookNestedInput
 }
 
 export type BookCreateManyInput = {
@@ -746,6 +753,20 @@ export type BookSumOrderByAggregateInput = {
   duration?: Prisma.SortOrder
 }
 
+export type BookCreateNestedOneWithoutProgressesInput = {
+  create?: Prisma.XOR<Prisma.BookCreateWithoutProgressesInput, Prisma.BookUncheckedCreateWithoutProgressesInput>
+  connectOrCreate?: Prisma.BookCreateOrConnectWithoutProgressesInput
+  connect?: Prisma.BookWhereUniqueInput
+}
+
+export type BookUpdateOneRequiredWithoutProgressesNestedInput = {
+  create?: Prisma.XOR<Prisma.BookCreateWithoutProgressesInput, Prisma.BookUncheckedCreateWithoutProgressesInput>
+  connectOrCreate?: Prisma.BookCreateOrConnectWithoutProgressesInput
+  upsert?: Prisma.BookUpsertWithoutProgressesInput
+  connect?: Prisma.BookWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BookUpdateToOneWithWhereWithoutProgressesInput, Prisma.BookUpdateWithoutProgressesInput>, Prisma.BookUncheckedUpdateWithoutProgressesInput>
+}
+
 export type BookCreateNestedOneWithoutContentsInput = {
   create?: Prisma.XOR<Prisma.BookCreateWithoutContentsInput, Prisma.BookUncheckedCreateWithoutContentsInput>
   connectOrCreate?: Prisma.BookCreateOrConnectWithoutContentsInput
@@ -828,6 +849,130 @@ export type BookUpdatesubgenreInput = {
   push?: string | string[]
 }
 
+export type BookCreateWithoutProgressesInput = {
+  id?: string
+  title: string
+  summary: string
+  synopsis: string
+  language: string
+  available?: boolean
+  yearBook: string
+  genre: string
+  level: $Enums.Level
+  format: string
+  fileExtension: string
+  totalPages?: number | null
+  duration?: number | null
+  anthology?: boolean
+  contentBookId: string
+  contentBookUrl: string
+  coverImageId: string
+  coverImageUrl: string
+  theme?: Prisma.BookCreatethemeInput | string[]
+  subgenre?: Prisma.BookCreatesubgenreInput | string[]
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  authors?: Prisma.AuthorCreateNestedManyWithoutBooksInput
+  contents?: Prisma.BookContentCreateNestedManyWithoutBookInput
+}
+
+export type BookUncheckedCreateWithoutProgressesInput = {
+  id?: string
+  title: string
+  summary: string
+  synopsis: string
+  language: string
+  available?: boolean
+  yearBook: string
+  genre: string
+  level: $Enums.Level
+  format: string
+  fileExtension: string
+  totalPages?: number | null
+  duration?: number | null
+  anthology?: boolean
+  contentBookId: string
+  contentBookUrl: string
+  coverImageId: string
+  coverImageUrl: string
+  theme?: Prisma.BookCreatethemeInput | string[]
+  subgenre?: Prisma.BookCreatesubgenreInput | string[]
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  authors?: Prisma.AuthorUncheckedCreateNestedManyWithoutBooksInput
+  contents?: Prisma.BookContentUncheckedCreateNestedManyWithoutBookInput
+}
+
+export type BookCreateOrConnectWithoutProgressesInput = {
+  where: Prisma.BookWhereUniqueInput
+  create: Prisma.XOR<Prisma.BookCreateWithoutProgressesInput, Prisma.BookUncheckedCreateWithoutProgressesInput>
+}
+
+export type BookUpsertWithoutProgressesInput = {
+  update: Prisma.XOR<Prisma.BookUpdateWithoutProgressesInput, Prisma.BookUncheckedUpdateWithoutProgressesInput>
+  create: Prisma.XOR<Prisma.BookCreateWithoutProgressesInput, Prisma.BookUncheckedCreateWithoutProgressesInput>
+  where?: Prisma.BookWhereInput
+}
+
+export type BookUpdateToOneWithWhereWithoutProgressesInput = {
+  where?: Prisma.BookWhereInput
+  data: Prisma.XOR<Prisma.BookUpdateWithoutProgressesInput, Prisma.BookUncheckedUpdateWithoutProgressesInput>
+}
+
+export type BookUpdateWithoutProgressesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  summary?: Prisma.StringFieldUpdateOperationsInput | string
+  synopsis?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  available?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  yearBook?: Prisma.StringFieldUpdateOperationsInput | string
+  genre?: Prisma.StringFieldUpdateOperationsInput | string
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  format?: Prisma.StringFieldUpdateOperationsInput | string
+  fileExtension?: Prisma.StringFieldUpdateOperationsInput | string
+  totalPages?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anthology?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  contentBookId?: Prisma.StringFieldUpdateOperationsInput | string
+  contentBookUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImageId?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  theme?: Prisma.BookUpdatethemeInput | string[]
+  subgenre?: Prisma.BookUpdatesubgenreInput | string[]
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  authors?: Prisma.AuthorUpdateManyWithoutBooksNestedInput
+  contents?: Prisma.BookContentUpdateManyWithoutBookNestedInput
+}
+
+export type BookUncheckedUpdateWithoutProgressesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  summary?: Prisma.StringFieldUpdateOperationsInput | string
+  synopsis?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  available?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  yearBook?: Prisma.StringFieldUpdateOperationsInput | string
+  genre?: Prisma.StringFieldUpdateOperationsInput | string
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  format?: Prisma.StringFieldUpdateOperationsInput | string
+  fileExtension?: Prisma.StringFieldUpdateOperationsInput | string
+  totalPages?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anthology?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  contentBookId?: Prisma.StringFieldUpdateOperationsInput | string
+  contentBookUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImageId?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  theme?: Prisma.BookUpdatethemeInput | string[]
+  subgenre?: Prisma.BookUpdatesubgenreInput | string[]
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  authors?: Prisma.AuthorUncheckedUpdateManyWithoutBooksNestedInput
+  contents?: Prisma.BookContentUncheckedUpdateManyWithoutBookNestedInput
+}
+
 export type BookCreateWithoutContentsInput = {
   id?: string
   title: string
@@ -852,6 +997,7 @@ export type BookCreateWithoutContentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   authors?: Prisma.AuthorCreateNestedManyWithoutBooksInput
+  progresses?: Prisma.BookProgressCreateNestedManyWithoutBookInput
 }
 
 export type BookUncheckedCreateWithoutContentsInput = {
@@ -878,6 +1024,7 @@ export type BookUncheckedCreateWithoutContentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   authors?: Prisma.AuthorUncheckedCreateNestedManyWithoutBooksInput
+  progresses?: Prisma.BookProgressUncheckedCreateNestedManyWithoutBookInput
 }
 
 export type BookCreateOrConnectWithoutContentsInput = {
@@ -920,6 +1067,7 @@ export type BookUpdateWithoutContentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   authors?: Prisma.AuthorUpdateManyWithoutBooksNestedInput
+  progresses?: Prisma.BookProgressUpdateManyWithoutBookNestedInput
 }
 
 export type BookUncheckedUpdateWithoutContentsInput = {
@@ -946,6 +1094,7 @@ export type BookUncheckedUpdateWithoutContentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   authors?: Prisma.AuthorUncheckedUpdateManyWithoutBooksNestedInput
+  progresses?: Prisma.BookProgressUncheckedUpdateManyWithoutBookNestedInput
 }
 
 export type BookCreateWithoutAuthorsInput = {
@@ -972,6 +1121,7 @@ export type BookCreateWithoutAuthorsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   contents?: Prisma.BookContentCreateNestedManyWithoutBookInput
+  progresses?: Prisma.BookProgressCreateNestedManyWithoutBookInput
 }
 
 export type BookUncheckedCreateWithoutAuthorsInput = {
@@ -998,6 +1148,7 @@ export type BookUncheckedCreateWithoutAuthorsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   contents?: Prisma.BookContentUncheckedCreateNestedManyWithoutBookInput
+  progresses?: Prisma.BookProgressUncheckedCreateNestedManyWithoutBookInput
 }
 
 export type BookCreateOrConnectWithoutAuthorsInput = {
@@ -1073,6 +1224,7 @@ export type BookUpdateWithoutAuthorsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   contents?: Prisma.BookContentUpdateManyWithoutBookNestedInput
+  progresses?: Prisma.BookProgressUpdateManyWithoutBookNestedInput
 }
 
 export type BookUncheckedUpdateWithoutAuthorsInput = {
@@ -1099,6 +1251,7 @@ export type BookUncheckedUpdateWithoutAuthorsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   contents?: Prisma.BookContentUncheckedUpdateManyWithoutBookNestedInput
+  progresses?: Prisma.BookProgressUncheckedUpdateManyWithoutBookNestedInput
 }
 
 export type BookUncheckedUpdateManyWithoutAuthorsInput = {
@@ -1134,11 +1287,13 @@ export type BookUncheckedUpdateManyWithoutAuthorsInput = {
 export type BookCountOutputType = {
   authors: number
   contents: number
+  progresses: number
 }
 
 export type BookCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   authors?: boolean | BookCountOutputTypeCountAuthorsArgs
   contents?: boolean | BookCountOutputTypeCountContentsArgs
+  progresses?: boolean | BookCountOutputTypeCountProgressesArgs
 }
 
 /**
@@ -1163,6 +1318,13 @@ export type BookCountOutputTypeCountAuthorsArgs<ExtArgs extends runtime.Types.Ex
  */
 export type BookCountOutputTypeCountContentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.BookContentWhereInput
+}
+
+/**
+ * BookCountOutputType without action
+ */
+export type BookCountOutputTypeCountProgressesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BookProgressWhereInput
 }
 
 
@@ -1191,6 +1353,7 @@ export type BookSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   updatedAt?: boolean
   authors?: boolean | Prisma.Book$authorsArgs<ExtArgs>
   contents?: boolean | Prisma.Book$contentsArgs<ExtArgs>
+  progresses?: boolean | Prisma.Book$progressesArgs<ExtArgs>
   _count?: boolean | Prisma.BookCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["book"]>
 
@@ -1273,6 +1436,7 @@ export type BookOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type BookInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   authors?: boolean | Prisma.Book$authorsArgs<ExtArgs>
   contents?: boolean | Prisma.Book$contentsArgs<ExtArgs>
+  progresses?: boolean | Prisma.Book$progressesArgs<ExtArgs>
   _count?: boolean | Prisma.BookCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BookIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1283,6 +1447,7 @@ export type $BookPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     authors: Prisma.$AuthorPayload<ExtArgs>[]
     contents: Prisma.$BookContentPayload<ExtArgs>[]
+    progresses: Prisma.$BookProgressPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1703,6 +1868,7 @@ export interface Prisma__BookClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   authors<T extends Prisma.Book$authorsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Book$authorsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuthorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   contents<T extends Prisma.Book$contentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Book$contentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookContentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  progresses<T extends Prisma.Book$progressesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Book$progressesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2192,6 +2358,30 @@ export type Book$contentsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.BookContentScalarFieldEnum | Prisma.BookContentScalarFieldEnum[]
+}
+
+/**
+ * Book.progresses
+ */
+export type Book$progressesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BookProgress
+   */
+  select?: Prisma.BookProgressSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BookProgress
+   */
+  omit?: Prisma.BookProgressOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BookProgressInclude<ExtArgs> | null
+  where?: Prisma.BookProgressWhereInput
+  orderBy?: Prisma.BookProgressOrderByWithRelationInput | Prisma.BookProgressOrderByWithRelationInput[]
+  cursor?: Prisma.BookProgressWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BookProgressScalarFieldEnum | Prisma.BookProgressScalarFieldEnum[]
 }
 
 /**

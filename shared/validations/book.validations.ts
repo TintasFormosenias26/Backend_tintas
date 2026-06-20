@@ -1,7 +1,5 @@
 import { z } from "zod";
-import { Types } from "mongoose";
 
-const isObjectId = (val: unknown): val is Types.ObjectId => val instanceof Types.ObjectId;
 
 // ? validaciones de los campos de libro
 export const bookSchema = z.object({
@@ -41,18 +39,6 @@ export const bookSchema = z.object({
     message: "Debe haber al menos un tema",
   }),
 
-  author: z
-    .array(
-      z.union([
-        z.string().regex(/^[0-9a-fA-F]{24}$/),
-        z.custom<Types.ObjectId>(isObjectId, {
-          message: "Se esperaba un ObjectId o una cadena válida.",
-        }),
-      ])
-    )
-    .nonempty({
-      message: "Este campo requiere uno o más autores o autoras. No puede quedar vacío.",
-    }),
 
   synopsis: z
     .string({ message: "la sinopsis no puede ser un numero" })

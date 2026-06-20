@@ -1,17 +1,18 @@
-import { Types } from "mongoose";
 import { BookUserProgresRepo } from "../../domain/entities/BookPogress.types";
 import { BookProgresPort } from "../../domain/ports/saveProgres.Ports";
-import { GetBooksByIds } from "../../../books/application";
+import { GetBooksById, GetBooksByIds } from "../../../books/application";
+import { id } from "zod/locales";
 
 export class BookSaveProgres {
+    getBooksById: any;
     constructor(
         private readonly progresRepo: BookProgresPort,
-        private readonly getBooksByIds: GetBooksByIds
+        private readonly getBooksByIds: GetBooksById
     ) { }
     //Funcion de logica de negocio para Guardar libros 
     async saveBookProgres(data: BookUserProgresRepo): Promise<BookUserProgresRepo> {
 
-        const books = await this.getBooksByIds.run([new Types.ObjectId(data.idBook)]);
+        const books = await this.getBooksById.run(id);
         const book = books[0];
 
         if (!book) {

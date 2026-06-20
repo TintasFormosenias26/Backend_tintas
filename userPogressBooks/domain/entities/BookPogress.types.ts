@@ -1,9 +1,8 @@
-import { Types } from "mongoose";
 
 export class BookUserProgresRepo {
     constructor(
-        public readonly idUser: Types.ObjectId,
-        public readonly idBook: Types.ObjectId,
+        public readonly idUser: string,
+        public readonly idBook: string,
         public unit: "page" | "second" | "seconds" | "pages",
         public position: number,
         public percent: number,

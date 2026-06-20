@@ -8,7 +8,8 @@ export async function avatarsAssignment(avatars: AvatarType[]): Promise<string |
 
     const index = Math.floor(Math.random() * avatars.length);
     const avatar = avatars[index];
-    const userAvatar = avatar.avatars.url_secura
+    const userAvatar = avatar.urlSecura
+
 
 
     return userAvatar

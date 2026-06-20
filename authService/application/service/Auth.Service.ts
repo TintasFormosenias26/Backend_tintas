@@ -1,6 +1,6 @@
 // application/Auth_users.ts
-import bcrypt from 'bcrypt-ts';
-import { User } from "../../../userService/domain/entities/UserTypes";
+import * as bcrypt from 'bcrypt-ts';
+import { UserType } from "../../../userService/domain/entities/UserTypes";
 import { AuthUserRepository } from "../../../userService/domain/ports/AuthUserRepository";
 
 export class Auth_users {
@@ -8,7 +8,7 @@ export class Auth_users {
         private readonly authRepo: AuthUserRepository
     ) { }
 
-    async login(email: string, password: string): Promise<User | null> {
+    async login(email: string, password: string): Promise<UserType | null> {
         const user = await this.authRepo.findByEmail(email);
         if (!user) return null;
 

@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { DeleteAuthors } from "../../app/service/DeleteAuthor.service";
-import { DeleteAuthorMongoRepo, findAuthorMongoRepo } from "../../infrastructure/authores.MongoRepo";
+import { DeleteAuthorPostgresRepo, FindAuthorPostgresRepo } from "../../infrastructure/authores.MongoRepo";
 
 
 // new instances of classes 
-const deleteAuthorRepo = new DeleteAuthorMongoRepo();
-const findAuthorRepo = new findAuthorMongoRepo()
+const deleteAuthorRepo = new DeleteAuthorPostgresRepo();
+const findAuthorRepo = new FindAuthorPostgresRepo()
 const deleteAuthorService = new DeleteAuthors(deleteAuthorRepo, findAuthorRepo);
 
 //delte author

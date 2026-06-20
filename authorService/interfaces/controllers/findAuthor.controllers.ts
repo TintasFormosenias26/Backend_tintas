@@ -1,20 +1,23 @@
 import { Request, Response } from "express";
 import { FindAuthors } from "../../app/service/FindAuthor.service";
 import { FindAuthor as findAuthorRepo } from "../../domain/ports/findAuthorRepository";
-import { findAuthorMongoRepo } from "../../infrastructure/authores.MongoRepo";
-import { CreateMetric } from "../../../metrics/app";
-import { MongoIndexMetric } from "../../../metrics/infrastructure";
 import { MetricEventDetails } from "../../../shared/types/metricTypes/metricDetails";
+import { FindAuthorPostgresRepo } from "../../infrastructure/authores.MongoRepo";
 
-const findAuthorRepo = new findAuthorMongoRepo();
+const findAuthorRepo = new FindAuthorPostgresRepo();
 const findAuthorService = new FindAuthors(findAuthorRepo);
 
-const metricRepo = new MongoIndexMetric();
-const createMetric = new CreateMetric(metricRepo);
 
 export const getAuthorById = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    // ensure id is a string (req.params can be string or string[])
+    const rawId = req.params.id;
+    const id: string | undefined = Array.isArray(rawId) ? rawId[0] : rawId;
+    if (!id) {
+      res.status(400).json({ message: "Id inválido" });
+      return;
+    }
+
     const author = await findAuthorService.findAuthor(id);
 
     if (!author) {
@@ -24,11 +27,10 @@ export const getAuthorById = async (req: Request, res: Response) => {
 
     const data: MetricEventDetails = {
       idBook: undefined,
-      idAuthor: author._id,
+      idAuthor: author.id,
       subgenre: undefined,
       format: undefined,
     };
-    await createMetric.exec(data);
 
     res.status(200).json(author);
     return;

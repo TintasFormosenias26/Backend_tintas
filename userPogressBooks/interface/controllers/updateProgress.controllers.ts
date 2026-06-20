@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import { UpdateProgressService } from "../../aplication/service/UpdateProgress.Service";
-import { FindProgressMongo, UpdateProgressMongo } from "../../infrastructure/bookProgressRepoMongo";
-import { findAndDeleteMongo, UpdateUSerMongo } from "../../../userService/infrastructure/userRespositoryMongo";
+import { findAndDeleteMongo, UpdateUserPostgresRepository, } from "../../../userService/infrastructure/userRespositoryMongo";
+import { FindProgressPostgres, UpdateProgressPostgres } from "../../infrastructure/bookProgressRepoMongo";
 
 // Instancias
-const updateRepo = new UpdateProgressMongo();
+const updateRepo = new UpdateProgressPostgres();
 const getUser = new findAndDeleteMongo();
-const updateUser = new UpdateUSerMongo();
-const getProgress = new FindProgressMongo()
+const updateUser = new UpdateUserPostgresRepository();
+const getProgress = new FindProgressPostgres()
 const bookService = new UpdateProgressService(updateRepo, getProgress, getUser, updateUser);
 
 // Controlador para actualizar progreso

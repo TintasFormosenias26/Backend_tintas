@@ -1,6 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
 import ENV from "../config/configEnv";
-import chalk from "chalk";
 
 cloudinary.config({
   cloud_name: ENV.CLOUD_NAME,
@@ -16,10 +15,7 @@ export async function uploadAudiobook(rutaArchivo: string) {
 
     return result;
   } catch (error) {
-    console.log();
-    console.error(chalk.red("Error en la utilidad: uploadAudiobook"));
-    console.log();
+
     console.log(error);
-    console.log();
   }
 }

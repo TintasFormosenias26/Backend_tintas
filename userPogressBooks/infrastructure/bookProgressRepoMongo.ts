@@ -1,46 +1,91 @@
-import { BookProgressModel } from "./models/BookProgressModel";
-import { BookProgresPort } from '../domain/ports/saveProgres.Ports'
+import { prisma } from "../../shared/lib/prisma";
 import { BookUserProgresRepo } from "../domain/entities/BookPogress.types";
 import { UpdateProgresPort } from "../domain/ports/updateProgressPort";
 import { deleteProgress } from "../domain/ports/deleteProgress.Ports";
 import { FindProgressPort } from "../domain/ports/findProgres";
 
+export class BookProgresPostgres {
+    async saveProgress(
+        datos: BookUserProgresRepo
+    ): Promise<BookUserProgresRepo> {
+        const progress = await prisma.bookProgress.create({
+            data: {
+                user: { connect: { id: datos.idUser } },
+                bookId: datos.idBook,
+                unit: datos.unit,
+                position: datos.position,
+                percent: datos.percent,
+                total: datos.total,
+                status: datos.status?.toUpperCase() as any,
+                startDate: datos.startDate,
+                finishDate: datos.finishDate,
+            },
+        });
 
-export class BookProgresMongo implements BookProgresPort {
-    async saveProgress(datos: BookUserProgresRepo): Promise<BookUserProgresRepo> {
-        const newProgres = new BookProgressModel(datos)
-        return await newProgres.save()
+        return progress as unknown as BookUserProgresRepo;
     }
 }
+export class UpdateProgressPostgres implements UpdateProgresPort {
+    async updateProgres(
+        id: string,
+        data: Partial<BookUserProgresRepo>
+    ): Promise<BookUserProgresRepo | null> {
+        try {
+            const updateData = {
+                ...data,
+                status: data.status?.toUpperCase() as any,
+            };
+            const result = await prisma.bookProgress.update({
+                where: {
+                    id,
+                },
+                data: updateData,
+            });
 
-export class UpdateProgressMongo implements UpdateProgresPort {
-    async updateProgres(id: string, data: Partial<BookUserProgresRepo>): Promise<BookUserProgresRepo | null> {
-
-        const updated = await BookProgressModel.findByIdAndUpdate(
-            id,
-            { $set: data },
-            { new: true, runValidators: true }
-        );
-        return updated;
+            return result as unknown as BookUserProgresRepo;
+        } catch {
+            return null;
+        }
     }
 }
 
 export class DeleteRepo implements deleteProgress {
     async deleteProgres(id: string): Promise<void> {
-        await BookProgressModel.findByIdAndDelete(id)
+        await prisma.bookProgress.delete({
+            where: {
+                id,
+            },
+        });
     }
 }
+export class FindProgressPostgres implements FindProgressPort {
+    async findByUser(id: string): Promise<BookUserProgresRepo[]> {
+        return await prisma.bookProgress.findMany({
+            where: {
+                userId: id,
+            },
+        }) as unknown as BookUserProgresRepo[];
+    }
 
-export class FindProgressMongo implements FindProgressPort {
-    async findByUser(id: any): Promise<BookUserProgresRepo[]> {
-        const result = await BookProgressModel.find({ idUser: id });
-        return result;
+    async findByBook(
+        id: string,
+        idUser: string
+    ): Promise<BookUserProgresRepo[]> {
+        return await prisma.bookProgress.findMany({
+            where: {
+                bookId: id,
+                userId: idUser,
+            },
+        }) as unknown as BookUserProgresRepo[];
     }
-    async findByBook(id: any, idUser: any): Promise<BookUserProgresRepo[] | null> {
-        const result = await BookProgressModel.find({ idBook: id, idUser: idUser });
-        return result;
-    }
-    async findById(id: any): Promise<BookUserProgresRepo | null> {
-        return await BookProgressModel.findById(id)
+
+    async findById(
+        id: string
+    ): Promise<BookUserProgresRepo | null> {
+        return await prisma.bookProgress.findUnique({
+            where: {
+                id,
+            },
+        }) as unknown as BookUserProgresRepo | null;
     }
 }

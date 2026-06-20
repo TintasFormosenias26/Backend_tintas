@@ -1,5 +1,5 @@
 // sockets/middleware/socketAuth.ts
-import { Socket } from "socket.io";
+/*import { Socket } from "socket.io";
 import jwt from "jsonwebtoken";
 
 const SECRET_KEY = process.env.CLAVE_SECRETA || "clave_secreta";
@@ -24,3 +24,4 @@ export const socketAuth = (socket: Socket, next: (err?: Error) => void) => {
         next(new Error("Token de Socket.IO inválido"));
     }
 };
+*/

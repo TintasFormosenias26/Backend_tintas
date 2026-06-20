@@ -4,7 +4,7 @@ import { avatarsAssignment } from "../../domain/utils/avatarAssignment";
 
 export async function getAllAvatars(): Promise<AvatarType[]> {
     try {
-        const response = await fetch(`http://localhost:3402/getAvatars`);
+        const response = await fetch(`http://localhost:${ENV.PORT}/getAvatars`);
 
 
         const data: AvatarType[] = await response.json();

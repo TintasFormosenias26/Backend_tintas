@@ -13,10 +13,10 @@ declare global {
 }
 import { generarJWT } from "../../helpers/generJWT";
 import { AuthUserRepository } from "../../../userService/domain/ports/AuthUserRepository";
-import { AuthMongoRepostitory } from "../../../userService/infrastructure/userRespositoryMongo";
 import { Auth_users } from "../../application/service/Auth.Service";
+import { AuthPostgres } from "../../../userService/infrastructure/userRespositoryMongo";
 
-const authUserRepositoryMongo: AuthUserRepository = new AuthMongoRepostitory()
+const authUserRepositoryMongo: AuthUserRepository = new AuthPostgres()
 const authUserService = new Auth_users(authUserRepositoryMongo)
 
 declare module "express-session" {
@@ -37,7 +37,7 @@ export const login = async (req: Request, res: Response) => {
         if (!result) {
             res.status(400).json({ msg: 'Credenciales incorrectas' });
         } else {
-            const id = result._id
+            const id = result.id
 
             const token = await generarJWT(id, result.rol);
             req.session.token = token;

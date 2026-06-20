@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import { UpdateAuthor } from "../../app/service/UpdateAuthor.service";
-import { findAuthorMongoRepo, updateAuthorMongo } from "../../infrastructure/authores.MongoRepo";
 import { Author } from "../../domain/entidades/author.Types";
 import { authorUpdateValidation } from "../../app/validations/authorValidations";
 import { UploadAuthorService } from "../../../shared/services/upload_Author.Service";
+import { FindAuthorPostgresRepo, UpdateAuthorPostgresRepo } from "../../infrastructure/authores.MongoRepo";
 
-const updateAuthorRepo = new updateAuthorMongo();
-const findAuthorRepo = new findAuthorMongoRepo();
+const updateAuthorRepo = new UpdateAuthorPostgresRepo();
+const findAuthorRepo = new FindAuthorPostgresRepo();
 const updataAuthor = new UpdateAuthor(updateAuthorRepo, findAuthorRepo);
 
 export const updataAuthors = async (req: Request, res: Response) => {

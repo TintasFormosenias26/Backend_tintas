@@ -14,7 +14,8 @@ export class FindAndDeleteUser implements FindAndDeleteRepo {
         const result = await this.userRepo.findByID(id);
         return result
     }
-    async deleteUser(id: any): Promise<void> {
+    async deleteUser(id: any): Promise<boolean> {
         const result = await this.userRepo.deleteUser(id)
+        return result
     }
 }

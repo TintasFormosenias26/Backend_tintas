@@ -1,7 +1,4 @@
-import { photoProfile } from "../../../shared/types/photo.Types";
-
 export class Author {
-  public _id: any;
   constructor(
     public readonly fullName: string,
     public readonly biography: string,
@@ -9,9 +6,10 @@ export class Author {
     public readonly birthdate: string | Date,
     public readonly birthplace: string,
     public readonly nationality: string,
-    public readonly itActivo: boolean,
-    public readonly avatar: photoProfile) { }
-  public readonly writingGenre?: string[]
-
+    public readonly isActive: boolean,
+    public readonly writingGenre: string[],
+    public readonly photoIdImage?: string,
+    public readonly photoUrl?: string,
+    public readonly id?: string,
+  ) { }
 }
-

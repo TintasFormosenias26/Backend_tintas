@@ -6,6 +6,7 @@ import {
   UpdateBooksById,
   GetAllBooksByLevel,
 } from "../../application";
+
 import { Request, Response } from "express";
 import { fileDelete } from "../../../shared/utils/deleteFile";
 import { uploadBook } from "../../../shared/utils/uploadBook";
@@ -23,7 +24,7 @@ const mongoCrudRepo = new PrismaCrudRepository();
 const createService = new CreateBook(mongoCrudRepo);
 const deleteService = new DeleteBook(mongoCrudRepo);
 const getAllService = new GetAllBooks(mongoCrudRepo);
-/*const getByIdService = new GetBooksById(mongoCrudRepo);*/
+const getByIdService = new GetBooksById(mongoCrudRepo);
 const updateService = new UpdateBooksById(mongoCrudRepo);
 
 
@@ -79,12 +80,12 @@ export class BooksCrudController {
         subgenre,
         language,
         available,
-        // Flat fields expected by the Books type
+        // Flat fields expected by Books type
         contentBookId: content.public_id,
         contentBookUrl: content.secure_url,
         coverImageId: coverImage.public_id,
         coverImageUrl: coverImage.secure_url,
-        // Keep nested objects for backward compatibility
+        authorIds: author,
         contentBook: {
           idContentBook: content.public_id,
           url_secura: content.secure_url,
@@ -93,8 +94,6 @@ export class BooksCrudController {
           url_secura: coverImage.secure_url,
           idBookCoverImage: coverImage.public_id,
         },
-        // map authors to authorIds expected by repository
-        authorIds: author,
         synopsis,
         yearBook,
         theme,
@@ -107,7 +106,7 @@ export class BooksCrudController {
         anthology,
       };
 
-      await createService.run(newBook);
+      await createService.run(newBook as any);
 
       await fileDelete(img.path);
       await fileDelete(file.path);
@@ -200,33 +199,17 @@ export class BooksCrudController {
     try {
       const id = req.params.id;
 
-      if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({ msg: "id invalida" });
 
-      const idValid = new mongoose.Types.ObjectId(id);
-
-      const book = await getByIdService.run(idValid);
+      const book = await getByIdService.run(id);
 
       if (!book) return res.status(200).json({ msg: "libro no encontrado" });
 
-      const eventDataForMetric = {
-        idBook: book._id as mongoose.Types.ObjectId,
-        idAuthor: undefined,
-        subgenre: undefined,
-        format: undefined,
-      };
-
-      createMetric.exec(eventDataForMetric).catch((metricError: any) => {
-        console.error("Error al crear la métrica:", metricError);
-      });
-
       return res.json(book);
     } catch (error) {
-      console.log(chalk.yellow("Error en el controlador: getBookById"));
-      console.log(chalk.yellow(separator()));
+
       console.log();
       console.log(error);
       console.log();
-      console.log(chalk.yellow(separator()));
       return res.status(500).json({ msg: "Erro inesperado por favor intente de nuevo mas tarde" });
     }
   }
@@ -234,7 +217,7 @@ export class BooksCrudController {
   //✅
   async updateBookById(req: Request, res: Response): Promise<Response> {
     try {
-      const id = req.params.id;
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 
       const {
         title,
@@ -254,10 +237,9 @@ export class BooksCrudController {
         fileExtension,
       }: BookBase = req.body;
 
-      if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({ msg: "id invalida" });
-      const idValid = new mongoose.Types.ObjectId(id);
 
-      const existingBook: BookSearch | null = await getByIdService.run(idValid);
+
+      const existingBook: BookSearch | null = await getByIdService.run(id);
       if (!existingBook) return res.status(404).json({ msg: "no se encontró el libro para actualizar" });
 
       const files = req.files as {
@@ -306,7 +288,7 @@ export class BooksCrudController {
       }
 
       const updatedBook = {
-        _id: existingBook._id,
+        _id: existingBook.id,
         title: title || existingBook.title,
         author: author || existingBook.author,
         summary: summary || existingBook.summary,
@@ -326,16 +308,13 @@ export class BooksCrudController {
         contentBook: contentBook || existingBook.contentBook,
       };
 
-      await updateService.run(idValid, updatedBook);
+      await updateService.run(id, updatedBook);
 
       return res.status(200).json({ msg: "libro actualizado correctamente" });
     } catch (error) {
-      console.log(chalk.yellow("Error en el controlador: updateBook"));
-      console.log(chalk.yellow(separator()));
+
       console.log();
       console.log(error);
-      console.log();
-      console.log(chalk.yellow(separator()));
       return res.status(500).json({ msg: "Error inesperado por favor intente de nuevo mas tarde" });
     }
   }

@@ -27,21 +27,28 @@ export type AggregateBookProgress = {
 }
 
 export type BookProgressAvgAggregateOutputType = {
-  progress: number | null
+  position: number | null
+  percent: number | null
+  total: number | null
 }
 
 export type BookProgressSumAggregateOutputType = {
-  progress: number | null
+  position: number | null
+  percent: number | null
+  total: number | null
 }
 
 export type BookProgressMinAggregateOutputType = {
   id: string | null
   userId: string | null
   bookId: string | null
-  progress: number | null
+  unit: $Enums.ProgressUnit | null
+  position: number | null
+  percent: number | null
+  total: number | null
   status: $Enums.ProgressStatus | null
-  startedAt: Date | null
-  completedAt: Date | null
+  startDate: Date | null
+  finishDate: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -50,10 +57,13 @@ export type BookProgressMaxAggregateOutputType = {
   id: string | null
   userId: string | null
   bookId: string | null
-  progress: number | null
+  unit: $Enums.ProgressUnit | null
+  position: number | null
+  percent: number | null
+  total: number | null
   status: $Enums.ProgressStatus | null
-  startedAt: Date | null
-  completedAt: Date | null
+  startDate: Date | null
+  finishDate: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -62,10 +72,13 @@ export type BookProgressCountAggregateOutputType = {
   id: number
   userId: number
   bookId: number
-  progress: number
+  unit: number
+  position: number
+  percent: number
+  total: number
   status: number
-  startedAt: number
-  completedAt: number
+  startDate: number
+  finishDate: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -73,21 +86,28 @@ export type BookProgressCountAggregateOutputType = {
 
 
 export type BookProgressAvgAggregateInputType = {
-  progress?: true
+  position?: true
+  percent?: true
+  total?: true
 }
 
 export type BookProgressSumAggregateInputType = {
-  progress?: true
+  position?: true
+  percent?: true
+  total?: true
 }
 
 export type BookProgressMinAggregateInputType = {
   id?: true
   userId?: true
   bookId?: true
-  progress?: true
+  unit?: true
+  position?: true
+  percent?: true
+  total?: true
   status?: true
-  startedAt?: true
-  completedAt?: true
+  startDate?: true
+  finishDate?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -96,10 +116,13 @@ export type BookProgressMaxAggregateInputType = {
   id?: true
   userId?: true
   bookId?: true
-  progress?: true
+  unit?: true
+  position?: true
+  percent?: true
+  total?: true
   status?: true
-  startedAt?: true
-  completedAt?: true
+  startDate?: true
+  finishDate?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -108,10 +131,13 @@ export type BookProgressCountAggregateInputType = {
   id?: true
   userId?: true
   bookId?: true
-  progress?: true
+  unit?: true
+  position?: true
+  percent?: true
+  total?: true
   status?: true
-  startedAt?: true
-  completedAt?: true
+  startDate?: true
+  finishDate?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -207,10 +233,13 @@ export type BookProgressGroupByOutputType = {
   id: string
   userId: string
   bookId: string
-  progress: number
+  unit: $Enums.ProgressUnit
+  position: number
+  percent: number
+  total: number
   status: $Enums.ProgressStatus
-  startedAt: Date | null
-  completedAt: Date | null
+  startDate: Date
+  finishDate: Date | null
   createdAt: Date
   updatedAt: Date
   _count: BookProgressCountAggregateOutputType | null
@@ -242,26 +271,34 @@ export type BookProgressWhereInput = {
   id?: Prisma.StringFilter<"BookProgress"> | string
   userId?: Prisma.StringFilter<"BookProgress"> | string
   bookId?: Prisma.StringFilter<"BookProgress"> | string
-  progress?: Prisma.IntFilter<"BookProgress"> | number
+  unit?: Prisma.EnumProgressUnitFilter<"BookProgress"> | $Enums.ProgressUnit
+  position?: Prisma.IntFilter<"BookProgress"> | number
+  percent?: Prisma.FloatFilter<"BookProgress"> | number
+  total?: Prisma.IntFilter<"BookProgress"> | number
   status?: Prisma.EnumProgressStatusFilter<"BookProgress"> | $Enums.ProgressStatus
-  startedAt?: Prisma.DateTimeNullableFilter<"BookProgress"> | Date | string | null
-  completedAt?: Prisma.DateTimeNullableFilter<"BookProgress"> | Date | string | null
+  startDate?: Prisma.DateTimeFilter<"BookProgress"> | Date | string
+  finishDate?: Prisma.DateTimeNullableFilter<"BookProgress"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"BookProgress"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BookProgress"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  book?: Prisma.XOR<Prisma.BookScalarRelationFilter, Prisma.BookWhereInput>
 }
 
 export type BookProgressOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   bookId?: Prisma.SortOrder
-  progress?: Prisma.SortOrder
+  unit?: Prisma.SortOrder
+  position?: Prisma.SortOrder
+  percent?: Prisma.SortOrder
+  total?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  startedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  startDate?: Prisma.SortOrder
+  finishDate?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
+  book?: Prisma.BookOrderByWithRelationInput
 }
 
 export type BookProgressWhereUniqueInput = Prisma.AtLeast<{
@@ -272,23 +309,30 @@ export type BookProgressWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.BookProgressWhereInput | Prisma.BookProgressWhereInput[]
   userId?: Prisma.StringFilter<"BookProgress"> | string
   bookId?: Prisma.StringFilter<"BookProgress"> | string
-  progress?: Prisma.IntFilter<"BookProgress"> | number
+  unit?: Prisma.EnumProgressUnitFilter<"BookProgress"> | $Enums.ProgressUnit
+  position?: Prisma.IntFilter<"BookProgress"> | number
+  percent?: Prisma.FloatFilter<"BookProgress"> | number
+  total?: Prisma.IntFilter<"BookProgress"> | number
   status?: Prisma.EnumProgressStatusFilter<"BookProgress"> | $Enums.ProgressStatus
-  startedAt?: Prisma.DateTimeNullableFilter<"BookProgress"> | Date | string | null
-  completedAt?: Prisma.DateTimeNullableFilter<"BookProgress"> | Date | string | null
+  startDate?: Prisma.DateTimeFilter<"BookProgress"> | Date | string
+  finishDate?: Prisma.DateTimeNullableFilter<"BookProgress"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"BookProgress"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BookProgress"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  book?: Prisma.XOR<Prisma.BookScalarRelationFilter, Prisma.BookWhereInput>
 }, "id" | "userId_bookId">
 
 export type BookProgressOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   bookId?: Prisma.SortOrder
-  progress?: Prisma.SortOrder
+  unit?: Prisma.SortOrder
+  position?: Prisma.SortOrder
+  percent?: Prisma.SortOrder
+  total?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  startedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  startDate?: Prisma.SortOrder
+  finishDate?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.BookProgressCountOrderByAggregateInput
@@ -305,58 +349,73 @@ export type BookProgressScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"BookProgress"> | string
   userId?: Prisma.StringWithAggregatesFilter<"BookProgress"> | string
   bookId?: Prisma.StringWithAggregatesFilter<"BookProgress"> | string
-  progress?: Prisma.IntWithAggregatesFilter<"BookProgress"> | number
+  unit?: Prisma.EnumProgressUnitWithAggregatesFilter<"BookProgress"> | $Enums.ProgressUnit
+  position?: Prisma.IntWithAggregatesFilter<"BookProgress"> | number
+  percent?: Prisma.FloatWithAggregatesFilter<"BookProgress"> | number
+  total?: Prisma.IntWithAggregatesFilter<"BookProgress"> | number
   status?: Prisma.EnumProgressStatusWithAggregatesFilter<"BookProgress"> | $Enums.ProgressStatus
-  startedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BookProgress"> | Date | string | null
-  completedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BookProgress"> | Date | string | null
+  startDate?: Prisma.DateTimeWithAggregatesFilter<"BookProgress"> | Date | string
+  finishDate?: Prisma.DateTimeNullableWithAggregatesFilter<"BookProgress"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"BookProgress"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"BookProgress"> | Date | string
 }
 
 export type BookProgressCreateInput = {
   id?: string
-  bookId: string
-  progress?: number
+  unit: $Enums.ProgressUnit
+  position: number
+  percent: number
+  total: number
   status?: $Enums.ProgressStatus
-  startedAt?: Date | string | null
-  completedAt?: Date | string | null
+  startDate: Date | string
+  finishDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutProgressesInput
+  book: Prisma.BookCreateNestedOneWithoutProgressesInput
 }
 
 export type BookProgressUncheckedCreateInput = {
   id?: string
   userId: string
   bookId: string
-  progress?: number
+  unit: $Enums.ProgressUnit
+  position: number
+  percent: number
+  total: number
   status?: $Enums.ProgressStatus
-  startedAt?: Date | string | null
-  completedAt?: Date | string | null
+  startDate: Date | string
+  finishDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type BookProgressUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  bookId?: Prisma.StringFieldUpdateOperationsInput | string
-  progress?: Prisma.IntFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumProgressUnitFieldUpdateOperationsInput | $Enums.ProgressUnit
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  percent?: Prisma.FloatFieldUpdateOperationsInput | number
+  total?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumProgressStatusFieldUpdateOperationsInput | $Enums.ProgressStatus
-  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  finishDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutProgressesNestedInput
+  book?: Prisma.BookUpdateOneRequiredWithoutProgressesNestedInput
 }
 
 export type BookProgressUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   bookId?: Prisma.StringFieldUpdateOperationsInput | string
-  progress?: Prisma.IntFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumProgressUnitFieldUpdateOperationsInput | $Enums.ProgressUnit
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  percent?: Prisma.FloatFieldUpdateOperationsInput | number
+  total?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumProgressStatusFieldUpdateOperationsInput | $Enums.ProgressStatus
-  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  finishDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -365,21 +424,26 @@ export type BookProgressCreateManyInput = {
   id?: string
   userId: string
   bookId: string
-  progress?: number
+  unit: $Enums.ProgressUnit
+  position: number
+  percent: number
+  total: number
   status?: $Enums.ProgressStatus
-  startedAt?: Date | string | null
-  completedAt?: Date | string | null
+  startDate: Date | string
+  finishDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type BookProgressUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  bookId?: Prisma.StringFieldUpdateOperationsInput | string
-  progress?: Prisma.IntFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumProgressUnitFieldUpdateOperationsInput | $Enums.ProgressUnit
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  percent?: Prisma.FloatFieldUpdateOperationsInput | number
+  total?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumProgressStatusFieldUpdateOperationsInput | $Enums.ProgressStatus
-  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  finishDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -388,10 +452,13 @@ export type BookProgressUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   bookId?: Prisma.StringFieldUpdateOperationsInput | string
-  progress?: Prisma.IntFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumProgressUnitFieldUpdateOperationsInput | $Enums.ProgressUnit
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  percent?: Prisma.FloatFieldUpdateOperationsInput | number
+  total?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumProgressStatusFieldUpdateOperationsInput | $Enums.ProgressStatus
-  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  finishDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -415,26 +482,34 @@ export type BookProgressCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   bookId?: Prisma.SortOrder
-  progress?: Prisma.SortOrder
+  unit?: Prisma.SortOrder
+  position?: Prisma.SortOrder
+  percent?: Prisma.SortOrder
+  total?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  startedAt?: Prisma.SortOrder
-  completedAt?: Prisma.SortOrder
+  startDate?: Prisma.SortOrder
+  finishDate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type BookProgressAvgOrderByAggregateInput = {
-  progress?: Prisma.SortOrder
+  position?: Prisma.SortOrder
+  percent?: Prisma.SortOrder
+  total?: Prisma.SortOrder
 }
 
 export type BookProgressMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   bookId?: Prisma.SortOrder
-  progress?: Prisma.SortOrder
+  unit?: Prisma.SortOrder
+  position?: Prisma.SortOrder
+  percent?: Prisma.SortOrder
+  total?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  startedAt?: Prisma.SortOrder
-  completedAt?: Prisma.SortOrder
+  startDate?: Prisma.SortOrder
+  finishDate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -443,16 +518,21 @@ export type BookProgressMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   bookId?: Prisma.SortOrder
-  progress?: Prisma.SortOrder
+  unit?: Prisma.SortOrder
+  position?: Prisma.SortOrder
+  percent?: Prisma.SortOrder
+  total?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  startedAt?: Prisma.SortOrder
-  completedAt?: Prisma.SortOrder
+  startDate?: Prisma.SortOrder
+  finishDate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type BookProgressSumOrderByAggregateInput = {
-  progress?: Prisma.SortOrder
+  position?: Prisma.SortOrder
+  percent?: Prisma.SortOrder
+  total?: Prisma.SortOrder
 }
 
 export type BookProgressCreateNestedManyWithoutUserInput = {
@@ -497,6 +577,18 @@ export type BookProgressUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.BookProgressScalarWhereInput | Prisma.BookProgressScalarWhereInput[]
 }
 
+export type EnumProgressUnitFieldUpdateOperationsInput = {
+  set?: $Enums.ProgressUnit
+}
+
+export type FloatFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type EnumProgressStatusFieldUpdateOperationsInput = {
   set?: $Enums.ProgressStatus
 }
@@ -505,24 +597,72 @@ export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
 }
 
+export type BookProgressCreateNestedManyWithoutBookInput = {
+  create?: Prisma.XOR<Prisma.BookProgressCreateWithoutBookInput, Prisma.BookProgressUncheckedCreateWithoutBookInput> | Prisma.BookProgressCreateWithoutBookInput[] | Prisma.BookProgressUncheckedCreateWithoutBookInput[]
+  connectOrCreate?: Prisma.BookProgressCreateOrConnectWithoutBookInput | Prisma.BookProgressCreateOrConnectWithoutBookInput[]
+  createMany?: Prisma.BookProgressCreateManyBookInputEnvelope
+  connect?: Prisma.BookProgressWhereUniqueInput | Prisma.BookProgressWhereUniqueInput[]
+}
+
+export type BookProgressUncheckedCreateNestedManyWithoutBookInput = {
+  create?: Prisma.XOR<Prisma.BookProgressCreateWithoutBookInput, Prisma.BookProgressUncheckedCreateWithoutBookInput> | Prisma.BookProgressCreateWithoutBookInput[] | Prisma.BookProgressUncheckedCreateWithoutBookInput[]
+  connectOrCreate?: Prisma.BookProgressCreateOrConnectWithoutBookInput | Prisma.BookProgressCreateOrConnectWithoutBookInput[]
+  createMany?: Prisma.BookProgressCreateManyBookInputEnvelope
+  connect?: Prisma.BookProgressWhereUniqueInput | Prisma.BookProgressWhereUniqueInput[]
+}
+
+export type BookProgressUpdateManyWithoutBookNestedInput = {
+  create?: Prisma.XOR<Prisma.BookProgressCreateWithoutBookInput, Prisma.BookProgressUncheckedCreateWithoutBookInput> | Prisma.BookProgressCreateWithoutBookInput[] | Prisma.BookProgressUncheckedCreateWithoutBookInput[]
+  connectOrCreate?: Prisma.BookProgressCreateOrConnectWithoutBookInput | Prisma.BookProgressCreateOrConnectWithoutBookInput[]
+  upsert?: Prisma.BookProgressUpsertWithWhereUniqueWithoutBookInput | Prisma.BookProgressUpsertWithWhereUniqueWithoutBookInput[]
+  createMany?: Prisma.BookProgressCreateManyBookInputEnvelope
+  set?: Prisma.BookProgressWhereUniqueInput | Prisma.BookProgressWhereUniqueInput[]
+  disconnect?: Prisma.BookProgressWhereUniqueInput | Prisma.BookProgressWhereUniqueInput[]
+  delete?: Prisma.BookProgressWhereUniqueInput | Prisma.BookProgressWhereUniqueInput[]
+  connect?: Prisma.BookProgressWhereUniqueInput | Prisma.BookProgressWhereUniqueInput[]
+  update?: Prisma.BookProgressUpdateWithWhereUniqueWithoutBookInput | Prisma.BookProgressUpdateWithWhereUniqueWithoutBookInput[]
+  updateMany?: Prisma.BookProgressUpdateManyWithWhereWithoutBookInput | Prisma.BookProgressUpdateManyWithWhereWithoutBookInput[]
+  deleteMany?: Prisma.BookProgressScalarWhereInput | Prisma.BookProgressScalarWhereInput[]
+}
+
+export type BookProgressUncheckedUpdateManyWithoutBookNestedInput = {
+  create?: Prisma.XOR<Prisma.BookProgressCreateWithoutBookInput, Prisma.BookProgressUncheckedCreateWithoutBookInput> | Prisma.BookProgressCreateWithoutBookInput[] | Prisma.BookProgressUncheckedCreateWithoutBookInput[]
+  connectOrCreate?: Prisma.BookProgressCreateOrConnectWithoutBookInput | Prisma.BookProgressCreateOrConnectWithoutBookInput[]
+  upsert?: Prisma.BookProgressUpsertWithWhereUniqueWithoutBookInput | Prisma.BookProgressUpsertWithWhereUniqueWithoutBookInput[]
+  createMany?: Prisma.BookProgressCreateManyBookInputEnvelope
+  set?: Prisma.BookProgressWhereUniqueInput | Prisma.BookProgressWhereUniqueInput[]
+  disconnect?: Prisma.BookProgressWhereUniqueInput | Prisma.BookProgressWhereUniqueInput[]
+  delete?: Prisma.BookProgressWhereUniqueInput | Prisma.BookProgressWhereUniqueInput[]
+  connect?: Prisma.BookProgressWhereUniqueInput | Prisma.BookProgressWhereUniqueInput[]
+  update?: Prisma.BookProgressUpdateWithWhereUniqueWithoutBookInput | Prisma.BookProgressUpdateWithWhereUniqueWithoutBookInput[]
+  updateMany?: Prisma.BookProgressUpdateManyWithWhereWithoutBookInput | Prisma.BookProgressUpdateManyWithWhereWithoutBookInput[]
+  deleteMany?: Prisma.BookProgressScalarWhereInput | Prisma.BookProgressScalarWhereInput[]
+}
+
 export type BookProgressCreateWithoutUserInput = {
   id?: string
-  bookId: string
-  progress?: number
+  unit: $Enums.ProgressUnit
+  position: number
+  percent: number
+  total: number
   status?: $Enums.ProgressStatus
-  startedAt?: Date | string | null
-  completedAt?: Date | string | null
+  startDate: Date | string
+  finishDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  book: Prisma.BookCreateNestedOneWithoutProgressesInput
 }
 
 export type BookProgressUncheckedCreateWithoutUserInput = {
   id?: string
   bookId: string
-  progress?: number
+  unit: $Enums.ProgressUnit
+  position: number
+  percent: number
+  total: number
   status?: $Enums.ProgressStatus
-  startedAt?: Date | string | null
-  completedAt?: Date | string | null
+  startDate: Date | string
+  finishDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -560,43 +700,109 @@ export type BookProgressScalarWhereInput = {
   id?: Prisma.StringFilter<"BookProgress"> | string
   userId?: Prisma.StringFilter<"BookProgress"> | string
   bookId?: Prisma.StringFilter<"BookProgress"> | string
-  progress?: Prisma.IntFilter<"BookProgress"> | number
+  unit?: Prisma.EnumProgressUnitFilter<"BookProgress"> | $Enums.ProgressUnit
+  position?: Prisma.IntFilter<"BookProgress"> | number
+  percent?: Prisma.FloatFilter<"BookProgress"> | number
+  total?: Prisma.IntFilter<"BookProgress"> | number
   status?: Prisma.EnumProgressStatusFilter<"BookProgress"> | $Enums.ProgressStatus
-  startedAt?: Prisma.DateTimeNullableFilter<"BookProgress"> | Date | string | null
-  completedAt?: Prisma.DateTimeNullableFilter<"BookProgress"> | Date | string | null
+  startDate?: Prisma.DateTimeFilter<"BookProgress"> | Date | string
+  finishDate?: Prisma.DateTimeNullableFilter<"BookProgress"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"BookProgress"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BookProgress"> | Date | string
+}
+
+export type BookProgressCreateWithoutBookInput = {
+  id?: string
+  unit: $Enums.ProgressUnit
+  position: number
+  percent: number
+  total: number
+  status?: $Enums.ProgressStatus
+  startDate: Date | string
+  finishDate?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutProgressesInput
+}
+
+export type BookProgressUncheckedCreateWithoutBookInput = {
+  id?: string
+  userId: string
+  unit: $Enums.ProgressUnit
+  position: number
+  percent: number
+  total: number
+  status?: $Enums.ProgressStatus
+  startDate: Date | string
+  finishDate?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type BookProgressCreateOrConnectWithoutBookInput = {
+  where: Prisma.BookProgressWhereUniqueInput
+  create: Prisma.XOR<Prisma.BookProgressCreateWithoutBookInput, Prisma.BookProgressUncheckedCreateWithoutBookInput>
+}
+
+export type BookProgressCreateManyBookInputEnvelope = {
+  data: Prisma.BookProgressCreateManyBookInput | Prisma.BookProgressCreateManyBookInput[]
+  skipDuplicates?: boolean
+}
+
+export type BookProgressUpsertWithWhereUniqueWithoutBookInput = {
+  where: Prisma.BookProgressWhereUniqueInput
+  update: Prisma.XOR<Prisma.BookProgressUpdateWithoutBookInput, Prisma.BookProgressUncheckedUpdateWithoutBookInput>
+  create: Prisma.XOR<Prisma.BookProgressCreateWithoutBookInput, Prisma.BookProgressUncheckedCreateWithoutBookInput>
+}
+
+export type BookProgressUpdateWithWhereUniqueWithoutBookInput = {
+  where: Prisma.BookProgressWhereUniqueInput
+  data: Prisma.XOR<Prisma.BookProgressUpdateWithoutBookInput, Prisma.BookProgressUncheckedUpdateWithoutBookInput>
+}
+
+export type BookProgressUpdateManyWithWhereWithoutBookInput = {
+  where: Prisma.BookProgressScalarWhereInput
+  data: Prisma.XOR<Prisma.BookProgressUpdateManyMutationInput, Prisma.BookProgressUncheckedUpdateManyWithoutBookInput>
 }
 
 export type BookProgressCreateManyUserInput = {
   id?: string
   bookId: string
-  progress?: number
+  unit: $Enums.ProgressUnit
+  position: number
+  percent: number
+  total: number
   status?: $Enums.ProgressStatus
-  startedAt?: Date | string | null
-  completedAt?: Date | string | null
+  startDate: Date | string
+  finishDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type BookProgressUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  bookId?: Prisma.StringFieldUpdateOperationsInput | string
-  progress?: Prisma.IntFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumProgressUnitFieldUpdateOperationsInput | $Enums.ProgressUnit
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  percent?: Prisma.FloatFieldUpdateOperationsInput | number
+  total?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumProgressStatusFieldUpdateOperationsInput | $Enums.ProgressStatus
-  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  finishDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  book?: Prisma.BookUpdateOneRequiredWithoutProgressesNestedInput
 }
 
 export type BookProgressUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookId?: Prisma.StringFieldUpdateOperationsInput | string
-  progress?: Prisma.IntFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumProgressUnitFieldUpdateOperationsInput | $Enums.ProgressUnit
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  percent?: Prisma.FloatFieldUpdateOperationsInput | number
+  total?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumProgressStatusFieldUpdateOperationsInput | $Enums.ProgressStatus
-  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  finishDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -604,10 +810,69 @@ export type BookProgressUncheckedUpdateWithoutUserInput = {
 export type BookProgressUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookId?: Prisma.StringFieldUpdateOperationsInput | string
-  progress?: Prisma.IntFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumProgressUnitFieldUpdateOperationsInput | $Enums.ProgressUnit
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  percent?: Prisma.FloatFieldUpdateOperationsInput | number
+  total?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumProgressStatusFieldUpdateOperationsInput | $Enums.ProgressStatus
-  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  finishDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BookProgressCreateManyBookInput = {
+  id?: string
+  userId: string
+  unit: $Enums.ProgressUnit
+  position: number
+  percent: number
+  total: number
+  status?: $Enums.ProgressStatus
+  startDate: Date | string
+  finishDate?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type BookProgressUpdateWithoutBookInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  unit?: Prisma.EnumProgressUnitFieldUpdateOperationsInput | $Enums.ProgressUnit
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  percent?: Prisma.FloatFieldUpdateOperationsInput | number
+  total?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumProgressStatusFieldUpdateOperationsInput | $Enums.ProgressStatus
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  finishDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutProgressesNestedInput
+}
+
+export type BookProgressUncheckedUpdateWithoutBookInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  unit?: Prisma.EnumProgressUnitFieldUpdateOperationsInput | $Enums.ProgressUnit
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  percent?: Prisma.FloatFieldUpdateOperationsInput | number
+  total?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumProgressStatusFieldUpdateOperationsInput | $Enums.ProgressStatus
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  finishDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BookProgressUncheckedUpdateManyWithoutBookInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  unit?: Prisma.EnumProgressUnitFieldUpdateOperationsInput | $Enums.ProgressUnit
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  percent?: Prisma.FloatFieldUpdateOperationsInput | number
+  total?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumProgressStatusFieldUpdateOperationsInput | $Enums.ProgressStatus
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  finishDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -618,77 +883,99 @@ export type BookProgressSelect<ExtArgs extends runtime.Types.Extensions.Internal
   id?: boolean
   userId?: boolean
   bookId?: boolean
-  progress?: boolean
+  unit?: boolean
+  position?: boolean
+  percent?: boolean
+  total?: boolean
   status?: boolean
-  startedAt?: boolean
-  completedAt?: boolean
+  startDate?: boolean
+  finishDate?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  book?: boolean | Prisma.BookDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bookProgress"]>
 
 export type BookProgressSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
   bookId?: boolean
-  progress?: boolean
+  unit?: boolean
+  position?: boolean
+  percent?: boolean
+  total?: boolean
   status?: boolean
-  startedAt?: boolean
-  completedAt?: boolean
+  startDate?: boolean
+  finishDate?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  book?: boolean | Prisma.BookDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bookProgress"]>
 
 export type BookProgressSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
   bookId?: boolean
-  progress?: boolean
+  unit?: boolean
+  position?: boolean
+  percent?: boolean
+  total?: boolean
   status?: boolean
-  startedAt?: boolean
-  completedAt?: boolean
+  startDate?: boolean
+  finishDate?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  book?: boolean | Prisma.BookDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bookProgress"]>
 
 export type BookProgressSelectScalar = {
   id?: boolean
   userId?: boolean
   bookId?: boolean
-  progress?: boolean
+  unit?: boolean
+  position?: boolean
+  percent?: boolean
+  total?: boolean
   status?: boolean
-  startedAt?: boolean
-  completedAt?: boolean
+  startDate?: boolean
+  finishDate?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type BookProgressOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "bookId" | "progress" | "status" | "startedAt" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["bookProgress"]>
+export type BookProgressOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "bookId" | "unit" | "position" | "percent" | "total" | "status" | "startDate" | "finishDate" | "createdAt" | "updatedAt", ExtArgs["result"]["bookProgress"]>
 export type BookProgressInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  book?: boolean | Prisma.BookDefaultArgs<ExtArgs>
 }
 export type BookProgressIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  book?: boolean | Prisma.BookDefaultArgs<ExtArgs>
 }
 export type BookProgressIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  book?: boolean | Prisma.BookDefaultArgs<ExtArgs>
 }
 
 export type $BookProgressPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "BookProgress"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
+    book: Prisma.$BookPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     userId: string
     bookId: string
-    progress: number
+    unit: $Enums.ProgressUnit
+    position: number
+    percent: number
+    total: number
     status: $Enums.ProgressStatus
-    startedAt: Date | null
-    completedAt: Date | null
+    startDate: Date
+    finishDate: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["bookProgress"]>
@@ -1086,6 +1373,7 @@ readonly fields: BookProgressFieldRefs;
 export interface Prisma__BookProgressClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  book<T extends Prisma.BookDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BookDefaultArgs<ExtArgs>>): Prisma.Prisma__BookClient<runtime.Types.Result.GetResult<Prisma.$BookPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1118,10 +1406,13 @@ export interface BookProgressFieldRefs {
   readonly id: Prisma.FieldRef<"BookProgress", 'String'>
   readonly userId: Prisma.FieldRef<"BookProgress", 'String'>
   readonly bookId: Prisma.FieldRef<"BookProgress", 'String'>
-  readonly progress: Prisma.FieldRef<"BookProgress", 'Int'>
+  readonly unit: Prisma.FieldRef<"BookProgress", 'ProgressUnit'>
+  readonly position: Prisma.FieldRef<"BookProgress", 'Int'>
+  readonly percent: Prisma.FieldRef<"BookProgress", 'Float'>
+  readonly total: Prisma.FieldRef<"BookProgress", 'Int'>
   readonly status: Prisma.FieldRef<"BookProgress", 'ProgressStatus'>
-  readonly startedAt: Prisma.FieldRef<"BookProgress", 'DateTime'>
-  readonly completedAt: Prisma.FieldRef<"BookProgress", 'DateTime'>
+  readonly startDate: Prisma.FieldRef<"BookProgress", 'DateTime'>
+  readonly finishDate: Prisma.FieldRef<"BookProgress", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"BookProgress", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"BookProgress", 'DateTime'>
 }

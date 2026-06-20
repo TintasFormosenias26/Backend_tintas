@@ -52,20 +52,43 @@ model Preference {
 }
 
 // Modelo BookProgress (relación opcional)
-model BookProgress {
-  id        String   @id @default(cuid())
-  userId    String
-  bookId    String
-  progress  Int      @default(0)
-  status    ProgressStatus @default(PLANNED)
-  startedAt DateTime?
-  completedAt DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum ProgressUnit {
+  PAGE
+  PAGES
+  SECOND
+  SECONDS
+}
 
-  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+enum ProgressStatus {
+  READING
+  FINISHED
+  PENDING
+}
+
+model BookProgress {
+  id          String           @id @default(cuid())
+
+  userId      String
+  bookId      String
+
+  unit        ProgressUnit
+  position    Int
+  percent     Float
+  total       Int
+
+  status      ProgressStatus   @default(READING)
+
+  startDate   DateTime
+  finishDate  DateTime?
+
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book        Book             @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
   @@unique([userId, bookId])
+  @@map("book_progress")
 }
 //BookContent
 
@@ -78,14 +101,7 @@ model BookContent {
   bookId  String
   book    Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
 }
-// Enum para el estado del progreso
-enum ProgressStatus {
-  PLANNED
-  READING
-  COMPLETED
-  DROPPED
-  ON_HOLD
-}
+
 //Authors 
 model Author {
   id            String   @id @default(cuid())
@@ -99,8 +115,8 @@ model Author {
 
   writingGenre  String[]
 
-  avatarIdImage String
-  avatarUrl     String
+  photoIdImage String
+  photorUrl     String
 
   books         Book[]
 }
@@ -148,6 +164,7 @@ model Book {
 
   authors           Author[]
   contents BookContent[]
+  progresses BookProgress[]
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 }

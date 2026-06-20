@@ -18,12 +18,20 @@ export const Role = {
 export type Role = (typeof Role)[keyof typeof Role]
 
 
+export const ProgressUnit = {
+  PAGE: 'PAGE',
+  PAGES: 'PAGES',
+  SECOND: 'SECOND',
+  SECONDS: 'SECONDS'
+} as const
+
+export type ProgressUnit = (typeof ProgressUnit)[keyof typeof ProgressUnit]
+
+
 export const ProgressStatus = {
-  PLANNED: 'PLANNED',
   READING: 'READING',
-  COMPLETED: 'COMPLETED',
-  DROPPED: 'DROPPED',
-  ON_HOLD: 'ON_HOLD'
+  FINISHED: 'FINISHED',
+  PENDING: 'PENDING'
 } as const
 
 export type ProgressStatus = (typeof ProgressStatus)[keyof typeof ProgressStatus]

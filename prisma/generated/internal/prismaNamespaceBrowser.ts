@@ -110,10 +110,13 @@ export const BookProgressScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   bookId: 'bookId',
-  progress: 'progress',
+  unit: 'unit',
+  position: 'position',
+  percent: 'percent',
+  total: 'total',
   status: 'status',
-  startedAt: 'startedAt',
-  completedAt: 'completedAt',
+  startDate: 'startDate',
+  finishDate: 'finishDate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -141,8 +144,8 @@ export const AuthorScalarFieldEnum = {
   nationality: 'nationality',
   itActivo: 'itActivo',
   writingGenre: 'writingGenre',
-  avatarIdImage: 'avatarIdImage',
-  avatarUrl: 'avatarUrl'
+  photoIdImage: 'photoIdImage',
+  photorUrl: 'photorUrl'
 } as const
 
 export type AuthorScalarFieldEnum = (typeof AuthorScalarFieldEnum)[keyof typeof AuthorScalarFieldEnum]

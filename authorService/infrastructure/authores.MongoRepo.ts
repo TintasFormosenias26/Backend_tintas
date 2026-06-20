@@ -1,79 +1,189 @@
+
+
 import { Author } from "../domain/entidades/author.Types";
 import { FindAuthor } from "../domain/ports/findAuthorRepository";
 import { ISaveAuthorRepository } from "../domain/ports/saveAuthorRepository";
 import { UpdateAuthorRepository } from "../domain/ports/updateAuthorRepository";
 import { DeleteAuthor } from "../domain/ports/deleteAuthorRepository";
-import { AuthorModel } from "./models/authores.Model";
 import { deleteCoverImage } from "../../shared/utils/deleteCoverImage";
-import { GetMetadataAuthor } from "../domain/ports/getAuthorForMetadata";
-import { Types } from "mongoose";
+import { prisma } from "../../shared/lib/prisma";
 
 
+// SAVE AUTHOR
+export class SaveAuthorPostgresRepo implements ISaveAuthorRepository {
+  async createAuthor(author: Author): Promise<false | Author> {
+    const createdAuthor = await prisma.author.create({
+      data: {
+        fullName: author.fullName,
+        biography: author.biography,
+        profession: author.profession,
+        birthdate: new Date(author.birthdate),
+        birthplace: author.birthplace,
+        nationality: author.nationality,
+        itActivo: author.isActive,
+        photoIdImage: author.photoIdImage!,
+        photorUrl: author.photoUrl!,
+        writingGenre: author.writingGenre ?? [],
+      },
+    });
+    const result = new Author(
+      createdAuthor.fullName,
+      createdAuthor.biography,
+      createdAuthor.profession,
+      createdAuthor.birthdate,
+      createdAuthor.birthplace,
+      createdAuthor.nationality,
+      createdAuthor.itActivo,
+      createdAuthor.writingGenre,
+      createdAuthor.photoIdImage,
+      createdAuthor.photorUrl,
+      createdAuthor.id
+    );
 
-//save author on the data base
-export class SaveAuthorMongoRepo implements ISaveAuthorRepository {
-  async createAuthor(author: Author): Promise<Author> {
-    const newAuthor = new AuthorModel(author);
-
-    return await newAuthor.save();
+    return result;
   }
 }
 
-//update author on the data base
-export class updateAuthorMongo implements UpdateAuthorRepository {
-  async updateAuthor(id: any, author: Partial<Author>) {
-    const currentAuthor = await AuthorModel.findById(id);
+// UPDATE AUTHOR
+export class UpdateAuthorPostgresRepo implements UpdateAuthorRepository {
+  async updateAuthor(id: string, author: Partial<Author>): Promise<Author | null> {
 
-    if (currentAuthor && author.avatar && currentAuthor.avatar?.id_image) {
-      if (currentAuthor.avatar.id_image !== author.avatar.id_image) {
-        await deleteCoverImage(currentAuthor.avatar.id_image);
-      }
+    const currentAuthor = await prisma.author.findUnique({
+      where: { id },
+    });
+
+    if (!currentAuthor) {
+      return null;
     }
 
-    const newAuthor = await AuthorModel.findByIdAndUpdate(id, author, { new: true });
-    if (newAuthor) {
-
-      return newAuthor;
+    if (
+      author.photoIdImage &&
+      currentAuthor.photoIdImage &&
+      currentAuthor.photoIdImage !== author.photoIdImage
+    ) {
+      await deleteCoverImage(currentAuthor.photoIdImage);
     }
-    return null;
+
+    const updatedAuthor = await prisma.author.update({
+      where: { id },
+      data: {
+        ...(author.fullName && { fullName: author.fullName }),
+        ...(author.biography && { biography: author.biography }),
+        ...(author.profession && { profession: author.profession }),
+        ...(author.birthdate && {
+          birthdate: new Date(author.birthdate),
+        }),
+        ...(author.birthplace && {
+          birthplace: author.birthplace,
+        }),
+        ...(author.nationality && {
+          nationality: author.nationality,
+        }),
+        ...(author.isActive !== undefined && {
+          itActivo: author.isActive,
+        }),
+        ...(author.photoIdImage && {
+          photoIdImage: author.photoIdImage,
+        }),
+        ...(author.photoUrl && {
+          photoUrl: author.photoUrl,
+        }),
+        ...(author.writingGenre && {
+          writingGenre: author.writingGenre,
+        }),
+      },
+    });
+
+    return {
+      id: updatedAuthor.id,
+      fullName: updatedAuthor.fullName,
+      biography: updatedAuthor.biography,
+      profession: updatedAuthor.profession,
+      birthdate: updatedAuthor.birthdate,
+      birthplace: updatedAuthor.birthplace,
+      nationality: updatedAuthor.nationality,
+      isActive: updatedAuthor.itActivo,
+      photoIdImage: updatedAuthor.photoIdImage,
+      photoUrl: updatedAuthor.photorUrl,
+      writingGenre: updatedAuthor.writingGenre,
+    };
   }
 }
 
-// search author on the db
-export class findAuthorMongoRepo implements FindAuthor {
-  async findById(id: any): Promise<Author | null> {
-    const result = await AuthorModel.findById(id);
-    return result;
+
+// FIND AUTHOR
+const mapPrismaAuthorToDomain = (author: any): Author =>
+  new Author(
+    author.fullName,
+    author.biography,
+    author.profession,
+    author.birthdate,
+    author.birthplace,
+    author.nationality,
+    author.itActivo,
+    author.writingGenre,
+    author.photoIdImage,
+    author.photorUrl,
+    author.id
+  );
+
+export class FindAuthorPostgresRepo implements FindAuthor {
+
+  async findById(id: string): Promise<Author | null> {
+    const result = await prisma.author.findUnique({
+      where: { id },
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return mapPrismaAuthorToDomain(result);
   }
-  async findByName(date: string): Promise<Author | null> {
-    const result = await AuthorModel.findOne({ fullName: date });
-    return result;
+
+  async findByName(name: string): Promise<Author | null> {
+    const result = await prisma.author.findFirst({
+      where: {
+        fullName: name,
+      },
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return mapPrismaAuthorToDomain(result);
   }
+
   async findAuthor(): Promise<Author[]> {
-    const result = await AuthorModel.find();
-    return result;
+    const results = await prisma.author.findMany();
+    return results.map(mapPrismaAuthorToDomain);
   }
 }
 
-//repo de delete author in mongo
-export class DeleteAuthorMongoRepo implements DeleteAuthor {
-  async deleteAuthor(id: any): Promise<void | null> {
-    const result = await AuthorModel.findById(id);
-    if (!result) return null;
 
-    if (result && result.avatar) {
-      await deleteCoverImage(result.avatar.id_image);
+// DELETE AUTHOR
+export class DeleteAuthorPostgresRepo implements DeleteAuthor {
+
+  async deleteAuthor(id: string): Promise<void | null> {
+
+    const result = await prisma.author.findUnique({
+      where: { id },
+    });
+
+    if (!result) {
+      return null;
     }
 
-    await AuthorModel.findByIdAndDelete(id);
+    if (result.photoIdImage) {
+      await deleteCoverImage(result.photoIdImage);
+    }
+
+    await prisma.author.delete({
+      where: { id },
+    });
   }
 }
 
-export class GetMetadataAuthorMongoRepo implements GetMetadataAuthor {
 
-  async getMetadata(): Promise<({ _id: Types.ObjectId; fullName: string; })[]> {
-    const result = await AuthorModel.find({}, { _id: 1, fullName: 1 });
-    return result;
-  }
 
-}

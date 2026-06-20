@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
 import { CreateAuthor } from "../../app/service/SaveAuthor.service";
 import { ISaveAuthorRepository } from "../../domain/ports/saveAuthorRepository";
-import { findAuthorMongoRepo, SaveAuthorMongoRepo } from "../../infrastructure/authores.MongoRepo";
 import { Author } from "../../domain/entidades/author.Types";
 import { deleteCoverImage } from "../../../shared/utils/deleteCoverImage";
 import { authorValidation } from "../../app/validations/authorValidations";
 import { UploadAuthorService } from "../../../shared/services/upload_Author.Service";
+import { FindAuthorPostgresRepo, SaveAuthorPostgresRepo } from "../../infrastructure/authores.MongoRepo";
 
-const saveAuthorMongo: ISaveAuthorRepository = new SaveAuthorMongoRepo();
-const findAuthorRepo = new findAuthorMongoRepo();
+const saveAuthorMongo: ISaveAuthorRepository = new SaveAuthorPostgresRepo();
+const findAuthorRepo = new FindAuthorPostgresRepo();
 
 const authorService = new CreateAuthor(saveAuthorMongo, findAuthorRepo);
 

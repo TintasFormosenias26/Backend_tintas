@@ -1,18 +1,17 @@
 import { Request, Response } from "express";
 import { FindProgresByID } from "../../aplication/service/FindById.Service";
-import { FindProgressMongo } from "../../infrastructure/bookProgressRepoMongo";
-import { ObjectId } from "mongodb";
+import { FindProgressPostgres } from "../../infrastructure/bookProgressRepoMongo";
 
 
-const findProgresMongo = new FindProgressMongo
+
+const findProgresMongo = new FindProgressPostgres
 const findProgress = new FindProgresByID(findProgresMongo)
 
 
 export const findByProgressIdControllers = async (req: Request, res: Response) => {
     try {
         const id = req.user?.id;
-        const objectId = typeof id === "string" ? new ObjectId(id) : id;
-        const result = await findProgress.findByUser(objectId)
+        const result = await findProgress.findByUser(id)
         if (!result) {
             res.status(404).json({ msg: 'the progress user not found' })
         }
@@ -25,7 +24,6 @@ export const findByProgressIdControllers = async (req: Request, res: Response) =
 export const findProgressByBook = async (req: Request, res: Response) => {
     try {
         const idUser = req.user?.id;
-        const objectId = typeof idUser === "string" ? new ObjectId(idUser) : idUser;
         const idBook = req.params.id;
 
         const result = await findProgress.findByBook(idBook, idUser)

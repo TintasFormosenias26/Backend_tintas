@@ -1,10 +1,8 @@
-
-
-import { User } from "../../domain/entities/UserTypes";
+import { UserType } from "../../domain/entities/UserTypes";
 import { IRegisterRepository } from "../../domain/ports/RegisterRepositoryPorts";
 import { AuthUserRepository } from "../../domain/ports/AuthUserRepository";
 import { UniqueUserName } from "../../domain/ports/UniqueUserName";
-import bcrypt from 'bcrypt-ts';
+import * as bcrypt from 'bcrypt-ts';
 import { calcularEdad } from "../../../shared/utils/calcularNivel";
 import { getAllAvatars } from "../../infrastructure/Apis/avatarApi";
 import { avatarsAssignment } from "../../domain/utils/avatarAssignment";
@@ -17,7 +15,7 @@ export class Register implements IRegisterRepository {
         private readonly authRepo: AuthUserRepository,
         private readonly uniqueRepo: UniqueUserName
     ) { }
-    async createUser(user: User): Promise<User | api_response> {
+    async createUser(user: UserType): Promise<UserType | api_response> {
         const emailExists = await this.authRepo.findByEmail(user.email);
         if (emailExists) {
             return {

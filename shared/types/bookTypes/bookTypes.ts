@@ -39,7 +39,7 @@ export interface BookDetail extends BookBase {
 
 // Libro usado en búsquedas
 export interface BookSearch extends BookDetail {
-  _id: unknown;
+  id: unknown;
   __v: number;
 }
 

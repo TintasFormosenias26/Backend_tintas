@@ -80,12 +80,13 @@ export class findAndDeleteMongo implements FindAndDeleteRepo {
   }
 
 
-  async deleteUser(id: string): Promise<void> {
+  async deleteUser(id: string): Promise<boolean> {
     await prisma.user.delete({
       where: {
         id,
       },
     });
+    return true;
   }
   async findUser() {
     return await prisma.user.findMany({

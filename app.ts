@@ -1,69 +1,80 @@
 import express from "express";
 import dotenv from "dotenv";
-
 dotenv.config();
+
 import cors from "cors";
 import morgan from "morgan";
 import fs from "fs";
 import path from "path";
 import cookies from "cookie-parser";
+import session from "express-session";
 
-// ? importación de módulos locales
+import ENV from "./shared/config/configEnv";
+
+// Rutas
 import { userRoutes } from "./userService/interfaces/routes/userService.routes";
 import { autorRoutes } from "./authorService/interfaces/routes/authors.routes";
 import bookRouter from "./books/interfaces/router/index";
 import { authRoutes } from "./authService/interfaces/routes/auth.routes";
-import session from "express-session";
 import { progressRouter } from "./userPogressBooks/interface/routes/bookProgress.routes";
 import { avaRoutes } from "./avatars/interface/routes/avatar.routes";
 
-// ? creación de la aplicación Express
+// Crear aplicación
 export const app = express();
 
-// ? configuración del directorio de subida de archivos
-const fileUpload = path.join(__dirname, "./uploads");
-app.use(express.static(path.join(__dirname, "public")));
+// Directorio de uploads
+const fileUpload = path.join(process.cwd(), "uploads");
 
-// ? verificación de la existencia del directorio de subida de archivos
-if (!fs.existsSync(fileUpload)) fs.mkdirSync(fileUpload, { recursive: true });
+// Crear carpeta uploads si no existe
+if (!fs.existsSync(fileUpload)) {
+    fs.mkdirSync(fileUpload, { recursive: true });
+}
 
-// ? configuración de middlewares
+// Archivos estáticos
+app.use("/uploads", express.static(fileUpload));
+app.use(express.static(path.join(process.cwd(), "public")));
+
+// Middlewares
 app.use(
     cors({
-        origin: ["http://localhost:5500", "http://localhost:3402", "http://localhost:5173"],
+        origin: [
+            "http://localhost:5500",
+            "http://localhost:3402",
+            "http://localhost:5173",
+        ],
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
         credentials: true,
     })
 );
+
 app.use(cookies());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static("./src/uploads"));
 
-// ? configuración de sesiones
+// Sesiones
 app.use(
     session({
         secret: "tu_clave_secreta",
         resave: false,
         saveUninitialized: false,
         cookie: {
-            secure: false, // poner true solo si usas HTTPS
+            secure: false,
             maxAge: 3600000,
         },
     })
 );
 
-// ? configuración de rutas
+// Rutas
 app.use(userRoutes);
 app.use(authRoutes);
 app.use(autorRoutes);
 app.use(progressRouter);
 app.use(avaRoutes);
 app.use(bookRouter);
-app.use(express.json());
 
-app.listen(4000, () => {
-    console.log("🚀 Servidor ejecutándose en puerto 4000");
-    console.log("📡 Health check: http://localhost:4000/health");
+// Servidor
+app.listen(Number(ENV.PORT), () => {
+    console.log(`🚀 Servidor ejecutándose en puerto ${ENV.PORT}`);
+    console.log(`📡 Health check: http://localhost:${ENV.PORT}`);
 });

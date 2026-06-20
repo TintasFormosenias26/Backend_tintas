@@ -1,6 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
 import ENV from "../config/configEnv";
-import chalk from "chalk";
 
 cloudinary.config({
   cloud_name: ENV.CLOUD_NAME,
@@ -17,9 +16,6 @@ export async function deleteBookInCloudinary(publicId: string): Promise<boolean>
 
     return result.result === "ok";
   } catch (error) {
-    console.log();
-    console.error(chalk.red("Error en la utilidad: deleteBookInCloudinary"));
-    console.log();
     console.log(error);
     console.log();
     return false;

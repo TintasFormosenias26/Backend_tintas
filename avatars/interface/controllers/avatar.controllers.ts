@@ -3,11 +3,10 @@ import { UploadService } from "../../../shared/services/uploadAvatar.service";
 import { AvatarsService } from "../../app/services/avatars.service";
 import { AvatarType } from "../../domain/entities/AvatarsTypes";
 import { IAvatar } from "../../domain/ports/AvatarPorts";
-import { AvatarMongoRepository } from "../../infrastructure/avatar.mongoRepository";
-import mongoose from "mongoose";
 import { deleteCoverImage } from "../../../shared/utils/deleteCoverImage";
+import { AvatarPostgresRepository } from "../../infrastructure/avatar.mongoRepository"
 
-const iAvatar: IAvatar = new AvatarMongoRepository();
+const iAvatar: IAvatar = new AvatarPostgresRepository();
 const avatarControllers = new AvatarsService(iAvatar);
 
 // Extend Request type to include file property
@@ -23,10 +22,8 @@ export const saveAvatar = async (req: MulterRequest, res: Response) => {
 
 		const date: AvatarType = {
 			gender,
-			avatars: {
-				url_secura: avatarUploaded.url_secura,
-				id_image: avatarUploaded.id_image,
-			},
+			urlSecura: avatarUploaded.url_secura,
+			idImage: avatarUploaded.id_image
 		};
 
 		const result = await avatarControllers.saveAvatar(date);
@@ -45,10 +42,10 @@ export const saveAvatar = async (req: MulterRequest, res: Response) => {
 export const deleteAvatar = async (req: Request, res: Response) => {
 	try {
 		const id = req.params.id;
-		const idValid = new mongoose.Types.ObjectId(id);
-		const repo = new AvatarMongoRepository();
-		const result = await repo.deleteAvatar(idValid);
-		if (!result === null) res.status(404).json({ msg: "Avatar no encontrado " });
+		const result = await avatarControllers.deleteAvatar(id);
+		if (result === null) {
+			res.status(404).json({ msg: "Avatar no encontrado " });
+		}
 		res.status(200).json({ msg: "Avatar eliminado exitosamente" });
 	} catch (error) {
 		console.error(error);
@@ -68,39 +65,33 @@ export const getAvatars = async (req: Request, res: Response) => {
 
 export const updateAvatar = async (req: MulterRequest, res: Response) => {
 	try {
-		const id = req.params.id;
-		const idValid = new mongoose.Types.ObjectId(id);
+		const id = req.params.id
 		const gender = req.body.gender;
 		const file = req.file;
 
-		const existingAvatar = await avatarControllers.findAvatarById(idValid);
+		const existingAvatar = await avatarControllers.findAvatarById(id);
 		if (!existingAvatar) {
 			res.status(404).json({ msg: "Avatar no encontrado" });
 			return
 		}
 
-		let avatarData: AvatarType;
+		let avatarData: AvatarType = {
+			gender,
+			urlSecura: existingAvatar.urlSecura,
+			idImage: existingAvatar.idImage,
+		};
 
 		if (file) {
-			if (existingAvatar.avatars?.id_image) await deleteCoverImage(existingAvatar.avatars.id_image);
-
+			if (existingAvatar.idImage) await deleteCoverImage(existingAvatar.idImage);
 
 			const avatarUploaded = await UploadService.uploadAvatar(file as Express.Multer.File);
 			avatarData = {
 				gender,
-				avatars: {
-					url_secura: avatarUploaded.url_secura,
-					id_image: avatarUploaded.id_image,
-				},
-			};
-		} else {
-			avatarData = {
-				gender,
-				avatars: existingAvatar.avatars,
+				urlSecura: avatarUploaded.url_secura,
+				idImage: avatarUploaded.id_image,
 			};
 		}
-
-		const updatedAvatar = await avatarControllers.updateAvatar(idValid, avatarData);
+		const updatedAvatar = await avatarControllers.updateAvatar(id, avatarData);
 		if (!updatedAvatar) {
 			res.status(404).json({ msg: "Avatar no encontrado para actualizar" });
 			return

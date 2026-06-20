@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import ENV from "../config/configEnv";
 
 dotenv.config();
-const SECRET_KEY = process.env.CLAVE_SECRETA || "clave_secreta";
+const clave_secreta = ENV.JWT_SECRET || "";
 
 // Middleware para validar JWT
 export const validateJWT = (req: Request, res: Response, next: NextFunction): void => {
@@ -17,7 +18,7 @@ export const validateJWT = (req: Request, res: Response, next: NextFunction): vo
     return;
   }
 
-  jwt.verify(token, SECRET_KEY, (err, decoded) => {
+  jwt.verify(token, clave_secreta, (err, decoded) => {
     if (err || !decoded) {
       res.status(401).json({ message: "Token inválido" });
       return;

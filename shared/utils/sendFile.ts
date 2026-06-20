@@ -1,7 +1,7 @@
 import axios from "axios";
 import fs from "fs";
 import FromData from "form-data";
-import chalk from "chalk";
+
 
 export const sendFile = async (path: string): Promise<{ path: string }> => {
   try {
@@ -15,9 +15,6 @@ export const sendFile = async (path: string): Promise<{ path: string }> => {
     });
     return res.data;
   } catch (error) {
-    console.log();
-    console.error(chalk.red("Error en la utilidad: sendFile"));
-    console.log();
     console.log(error);
     console.log();
     return { path: "" };

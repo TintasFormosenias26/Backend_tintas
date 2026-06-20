@@ -1,16 +1,17 @@
 import { Request, Response } from "express";
 import { BookSaveProgres } from "../../aplication/service/SaveProgress.Service";
 import { BookProgresPort } from "../../domain/ports/saveProgres.Ports";
-import { BookProgresMongo } from "../../infrastructure/bookProgressRepoMongo";
 import { BookUserProgresRepo } from "../../domain/entities/BookPogress.types";
-import { GetBooksByIds } from "../../../books/application";
-import { MongoQueryRepository } from "../../../books/infrastructure/mongo";
+import { GetBooksById, GetBooksByIds } from "../../../books/application";
+import { PrismaCrudRepository } from "../../../books/infrastructure/mongo";
+import { BookProgresPostgres } from "../../infrastructure/bookProgressRepoMongo";
 
 
 // Repositorios
-const saveRepoMongo: BookProgresPort = new BookProgresMongo();
-const booksRepo = new MongoQueryRepository();
-const getBooksByIds = new GetBooksByIds(booksRepo);
+const saveRepoMongo: BookProgresPort = new BookProgresPostgres();
+// PrismaCrudRepository doesn't fully implement the BooksQueryRepository interface
+// in this context; cast to any to satisfy the constructor typing here.
+const getBooksByIds = new GetBooksByIds(new PrismaCrudRepository() as any);
 
 // Servicio
 const bookService = new BookSaveProgres(saveRepoMongo, getBooksByIds);

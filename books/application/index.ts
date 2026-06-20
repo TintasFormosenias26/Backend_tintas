@@ -9,12 +9,6 @@ export * from "./queries/getBooksByIds";
 export * from "./queries/getBooksByFiltering";
 export * from "./queries/getAllBooksByLevel";
 
-export * from "./metadata/getAllThemes";
-export * from "./metadata/getAllSubgenres";
-export * from "./metadata/getAllYearBooks";
-export * from "./metadata/getAllGenres";
-export * from "./metadata/getAllFormats";
-
 export * from "./authors/getBookByAuthorId";
 
 export * from "./content/getContentBookById";

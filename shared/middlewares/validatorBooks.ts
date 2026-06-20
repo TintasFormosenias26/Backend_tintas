@@ -1,8 +1,7 @@
 import { ZodSchema } from "zod";
 import type { Request, Response, NextFunction } from "express";
 import { fileDelete } from "../utils/deleteFile";
-import chalk from "chalk";
-import { separator } from "../utils/consoleSeparator";
+
 
 export const validatorBooks = <T>(schema: ZodSchema<T>) => {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -38,17 +37,13 @@ export const validatorBooks = <T>(schema: ZodSchema<T>) => {
       // Si hay errores de validación
       await deleteUploadedFiles();
       res.status(400).json({
-        errors: result.error.errors.map((err) => ({
+        errors: result.error.issues.map((err) => ({
           path: err.path.length ? err.path.join(".") : "general",
           message: err.message,
         })),
       });
       return;
     } catch (error) {
-      console.log(chalk.yellow("Error en el middleware: validatorBooks"));
-      console.log(chalk.yellow(separator()));
-      console.log(error);
-      console.log(chalk.yellow(separator()));
       res.status(500).json({ msg: "Error inesperado, por favor intente de nuevo más tarde" });
     }
   };

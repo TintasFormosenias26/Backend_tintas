@@ -1,6 +1,5 @@
 import { BooksCrudRepository } from "../../domain/booksCrudRepository";
 import { Books } from "../../domain/entities/books";
-import { extractTextByPage } from "../../../shared/utils/pdfService";
 import { serviceContainer } from "../../../shared/services/serviceContainer";
 import { prisma } from "../../../shared/lib/prisma";
 
@@ -104,13 +103,11 @@ export class PrismaCrudRepository implements BooksCrudRepository {
 
       const url = updated.contentBookUrl;
 
-      const text = await extractTextByPage(url);
       const title = updated.title;
 
       await serviceContainer.bookContent.createBookContent.run(
         updated.id,
         title,
-        text
       );
     }
   }
@@ -191,7 +188,7 @@ export class PrismaCrudRepository implements BooksCrudRepository {
       }
     });
 
-    const booksWithAuthorIds = result.map(book => ({
+    const booksWithAuthorIds = result.map((book: { authors: any[]; totalPages: any; }) => ({
       ...book,
       authorIds: book.authors.map(author => author.id),
       totalPages: book.totalPages ?? undefined,

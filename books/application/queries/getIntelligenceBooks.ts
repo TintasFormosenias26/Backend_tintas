@@ -1,4 +1,5 @@
-import { BookSearch } from "../../../shared/types/bookTypes/bookTypes";
+
+/*import { BookSearch } from "../../../shared/types/bookTypes/bookTypes";
 import { BooksQueryRepository } from "../../domain/booksQueryRepository";
 
 export class GetIntelligenceBook {
@@ -7,4 +8,4 @@ export class GetIntelligenceBook {
   async run(id: string[]): Promise<BookSearch[]> {
     return await this.repository.getIntelligenceBook(id);
   }
-}
+}*/

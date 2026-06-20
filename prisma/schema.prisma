@@ -31,7 +31,7 @@ model User {
   point       Int      @default(0)
 
   avatarId    String
-  avatar      Avatar   @relation(fields: [avatarId], references: [id])?
+  avatar      Avatar   @relation(fields: [avatarId], references: [id])
 
   preference  Preference?
 
@@ -67,7 +67,17 @@ model BookProgress {
   
   @@unique([userId, bookId])
 }
+//BookContent
 
+model BookContent {
+  id      String @id @default(uuid())
+
+  page    Int
+  content String
+
+  bookId  String
+  book    Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+}
 // Enum para el estado del progreso
 enum ProgressStatus {
   PLANNED
@@ -94,6 +104,13 @@ model Author {
 
   books         Book[]
 }
+//level
+enum Level {
+  INICIAL
+  SECUNDARIO
+  JOVEN_ADULTO
+  ADULTO_MAYOR
+}
 
 //Books
 model Book {
@@ -109,7 +126,7 @@ model Book {
   yearBook          String
 
   genre             String
-  level             String
+  level             Level
 
   format            String
   fileExtension     String
@@ -121,6 +138,7 @@ model Book {
 
   contentBookId     String
   contentBookUrl    String
+  
 
   coverImageId      String
   coverImageUrl     String
@@ -129,7 +147,7 @@ model Book {
   subgenre          String[]
 
   authors           Author[]
-
+  contents BookContent[]
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 }
@@ -141,7 +159,7 @@ model Avatar {
   urlSecura  String
 
   gender     String
-  users User[]?
+  users User[]
 
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

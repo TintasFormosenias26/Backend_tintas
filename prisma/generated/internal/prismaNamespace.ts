@@ -387,6 +387,7 @@ export const ModelName = {
   User: 'User',
   Preference: 'Preference',
   BookProgress: 'BookProgress',
+  BookContent: 'BookContent',
   Author: 'Author',
   Book: 'Book',
   Avatar: 'Avatar'
@@ -405,7 +406,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "preference" | "bookProgress" | "author" | "book" | "avatar"
+    modelProps: "user" | "preference" | "bookProgress" | "bookContent" | "author" | "book" | "avatar"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -628,6 +629,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.BookProgressCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.BookProgressCountAggregateOutputType> | number
+        }
+      }
+    }
+    BookContent: {
+      payload: Prisma.$BookContentPayload<ExtArgs>
+      fields: Prisma.BookContentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BookContentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BookContentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BookContentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BookContentPayload>
+        }
+        findFirst: {
+          args: Prisma.BookContentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BookContentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BookContentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BookContentPayload>
+        }
+        findMany: {
+          args: Prisma.BookContentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BookContentPayload>[]
+        }
+        create: {
+          args: Prisma.BookContentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BookContentPayload>
+        }
+        createMany: {
+          args: Prisma.BookContentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BookContentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BookContentPayload>[]
+        }
+        delete: {
+          args: Prisma.BookContentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BookContentPayload>
+        }
+        update: {
+          args: Prisma.BookContentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BookContentPayload>
+        }
+        deleteMany: {
+          args: Prisma.BookContentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BookContentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BookContentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BookContentPayload>[]
+        }
+        upsert: {
+          args: Prisma.BookContentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BookContentPayload>
+        }
+        aggregate: {
+          args: Prisma.BookContentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBookContent>
+        }
+        groupBy: {
+          args: Prisma.BookContentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BookContentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BookContentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BookContentCountAggregateOutputType> | number
         }
       }
     }
@@ -937,6 +1012,16 @@ export const BookProgressScalarFieldEnum = {
 export type BookProgressScalarFieldEnum = (typeof BookProgressScalarFieldEnum)[keyof typeof BookProgressScalarFieldEnum]
 
 
+export const BookContentScalarFieldEnum = {
+  id: 'id',
+  page: 'page',
+  content: 'content',
+  bookId: 'bookId'
+} as const
+
+export type BookContentScalarFieldEnum = (typeof BookContentScalarFieldEnum)[keyof typeof BookContentScalarFieldEnum]
+
+
 export const AuthorScalarFieldEnum = {
   id: 'id',
   fullName: 'fullName',
@@ -1102,6 +1187,20 @@ export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'Level'
+ */
+export type EnumLevelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Level'>
+    
+
+
+/**
+ * Reference to a field of type 'Level[]'
+ */
+export type ListEnumLevelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Level[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -1227,6 +1326,7 @@ export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   preference?: Prisma.PreferenceOmit
   bookProgress?: Prisma.BookProgressOmit
+  bookContent?: Prisma.BookContentOmit
   author?: Prisma.AuthorOmit
   book?: Prisma.BookOmit
   avatar?: Prisma.AvatarOmit

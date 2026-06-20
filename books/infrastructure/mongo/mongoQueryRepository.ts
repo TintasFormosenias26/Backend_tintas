@@ -1,8 +1,7 @@
+/*
 import { BooksQueryRepository } from "../../domain/booksQueryRepository";
-import { BookModel } from "../model/books.model";
 import { BookDetail } from "../../../shared/types/bookTypes/bookTypes";
 import { BookSearch } from "../../../shared/types/bookTypes/bookTypes";
-import mongoose, { Types } from "mongoose";
 import { BookProgressModel } from "../../../userPogressBooks/infrastructure/models/BookProgressModel";
 
 export class MongoQueryRepository implements BooksQueryRepository {
@@ -303,4 +302,4 @@ export class MongoQueryRepository implements BooksQueryRepository {
 			});
 	}
 
-}
+}*/

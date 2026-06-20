@@ -1,74 +1,202 @@
 import { BooksCrudRepository } from "../../domain/booksCrudRepository";
 import { Books } from "../../domain/entities/books";
-import { BookModel } from "../model/books.model";
-import { Types } from "mongoose";
 import { extractTextByPage } from "../../../shared/utils/pdfService";
 import { serviceContainer } from "../../../shared/services/serviceContainer";
+import { prisma } from "../../../shared/lib/prisma";
 
-import { EmbeddingApps } from "../../../ai/applications";
-import { BookSearch } from "../../../shared/types/bookTypes/bookTypes";
-import { EmbeddingModel } from "../../../ai/infrastructure/model/embeddingModel";
-import { EmbeddingDriver } from "../../../ai/infrastructure/embedding.driver";
+export class PrismaCrudRepository implements BooksCrudRepository {
 
-
-
-const embeddingDriver = new EmbeddingDriver();
-const embedding = new EmbeddingApps(embeddingDriver);
-
-export class MongoCrudRepository implements BooksCrudRepository {
-  //  ✅
+  // =========================
+  // CREATE BOOK
+  // =========================
   async createBook(book: Books): Promise<void> {
-    const newBook = new BookModel(book);
-    const result = await newBook.save();
-    const id: Types.ObjectId = result._id as Types.ObjectId;
-    if (result.genre === "Narrativo") {
-      const url = result.contentBook.url_secura;
+
+    const created = await prisma.book.create({
+      data: {
+        title: book.title,
+        summary: book.summary,
+        synopsis: book.synopsis,
+
+        language: book.language,
+        available: book.available ?? true,
+
+        yearBook: book.yearBook,
+
+        genre: book.genre,
+        level: book.level,
+
+        format: book.format,
+        fileExtension: book.fileExtension,
+
+        totalPages: book.totalPages,
+        duration: book.duration,
+
+        anthology: book.anthology ?? false,
+
+        contentBookId: book.contentBookId,
+        contentBookUrl: book.contentBookUrl,
+
+        coverImageId: book.coverImageId,
+        coverImageUrl: book.coverImageUrl,
+
+        theme: book.theme ?? [],
+        subgenre: book.subgenre ?? [],
+      },
+    });
+
+    /*
+    ======LOGICA PARA JEUGOS CON IA====
+        if (created.genre === "Narrativo") {
+    
+          const url = created.contentBookUrl;
+    
+          const text = await extractTextByPage(url);
+          const title = created.title;
+    
+          await serviceContainer.bookContent.createBookContent.run(
+            created.id,
+            title,
+            text
+          );
+        }*/
+  }
+
+  // =========================
+  // UPDATE BOOK
+  // =========================
+  async updateBookById(id: string, book: Books): Promise<void> {
+
+    const updated = await prisma.book.update({
+      where: { id },
+      data: {
+        title: book.title,
+        summary: book.summary,
+        synopsis: book.synopsis,
+
+        language: book.language,
+        available: book.available,
+
+        yearBook: book.yearBook,
+
+        genre: book.genre,
+        level: book.level,
+
+        format: book.format,
+        fileExtension: book.fileExtension,
+
+        totalPages: book.totalPages,
+        duration: book.duration,
+
+        anthology: book.anthology,
+
+        contentBookId: book.contentBookId,
+        contentBookUrl: book.contentBookUrl,
+
+        coverImageId: book.coverImageId,
+        coverImageUrl: book.coverImageUrl,
+
+        theme: book.theme,
+        subgenre: book.subgenre,
+      },
+    });
+
+    if (updated.genre === "Narrativo") {
+
+      const url = updated.contentBookUrl;
+
       const text = await extractTextByPage(url);
-      const title = result.title;
-      await serviceContainer.bookContent.createBookContent.run(id, title, text);
+      const title = updated.title;
+
+      await serviceContainer.bookContent.createBookContent.run(
+        updated.id,
+        title,
+        text
+      );
     }
-
-    await embedding.create384(`${id}, ${result.title}, ${result.summary}, ${result.synopsis}`);
-
   }
 
-  //  ✅
-  async updateBookById(id: Types.ObjectId, book: Books): Promise<void> {
-    const result = await BookModel.findByIdAndUpdate(id, book);
-    if (result) {
-      if (result.genre === "Narrativo") {
-        const url = result.contentBook.url_secura;
-        const text = await extractTextByPage(url);
-        const title = result.title;
-        await serviceContainer.bookContent.createBookContent.run(id, title, text);
+  // =========================
+  // GET ALL BOOKS
+  // =========================
+  async getAllBooks(): Promise<any[]> {
+
+    return await prisma.book.findMany({
+      include: {
+        authors: true,
+        contents: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  }
+
+  // =========================
+  // DELETE BOOK
+  // =========================
+  async deleteBook(id: string): Promise<any | null> {
+
+    try {
+      return await prisma.book.delete({
+        where: { id },
+      });
+    } catch {
+      return null;
+    }
+  }
+
+  // =========================
+  // GET BOOK BY ID
+  // =========================
+  async getBookById(id: string): Promise<any | null> {
+
+    const book = await prisma.book.findUnique({
+      where: { id },
+      include: {
+        authors: true,
+        contents: true,
+      },
+    });
+
+    return book ?? null;
+  }
+  async getAllBooksByLevel(nivel: string): Promise<Books[] | null> {
+    const levelHierarchy: Record<string, string[]> = {
+      "Inicial": ["Inicial"],
+      "Secundario": ["Secundario", "Inicial"],
+      "Joven Adulto": ["Joven Adulto", "Secundario", "Inicial"],
+      "Adulto Mayor": ["Adulto Mayor", "Joven Adulto", "Secundario", "Inicial"]
+    };
+
+    const allowedLevels =
+      levelHierarchy[nivel] ??
+      ["Inicial", "Secundario", "Joven Adulto", "Adulto Mayor"];
+
+    const result = await prisma.book.findMany({
+      where: {
+        level: {
+          in: allowedLevels as any
+        }
+      },
+      include: {
+        authors: {
+          select: {
+            id: true,
+            fullName: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: "desc"
       }
-      await EmbeddingModel.deleteMany({ bookId: id });
+    });
 
-      await embedding.create384(`${id}, ${result.title}, ${result.summary}, ${result.synopsis}`);
+    const booksWithAuthorIds = result.map(book => ({
+      ...book,
+      authorIds: book.authors.map(author => author.id),
+      totalPages: book.totalPages ?? undefined,
+    }));
 
-    }
-  }
-
-  //  ✅
-  async getAllBooks(): Promise<BookSearch[]> {
-    const books = await BookModel.find().populate("author", "fullName").sort({ createdAt: -1 });
-
-    return books;
-  }
-
-  //  ✅
-  async deleteBook(id: Types.ObjectId): Promise<BookSearch | null> {
-    await EmbeddingModel.deleteMany({ bookId: id });
-
-    return await BookModel.findByIdAndDelete(id);
-  }
-
-  //  ✅
-  async getBookById(id: Types.ObjectId): Promise<BookSearch | null> {
-    const book: BookSearch | null = await BookModel.findById(id).populate("author", "fullName");
-
-    if (!book) return null;
-
-    return book;
+    return booksWithAuthorIds as Books[] ?? null
   }
 }

@@ -1,7 +1,5 @@
 
-import { GetAllThemes, GetAllFormats, GetAllGenres, GetAllSubgenres, GetAllYearsBooks } from "../../application";
-import { MongoMetadataRepository } from "../../infrastructure/mongo";
-import { Request, Response } from "express";
+/*
 
 const mongoMetadataRepo = new MongoMetadataRepository()
 const getTheme = new GetAllThemes(mongoMetadataRepo)
@@ -41,3 +39,4 @@ export class BooksMetadataController {
           return res.status(200).json(formats);
      }
 }
+     */

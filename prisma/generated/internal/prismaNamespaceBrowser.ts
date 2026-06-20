@@ -54,6 +54,7 @@ export const ModelName = {
   User: 'User',
   Preference: 'Preference',
   BookProgress: 'BookProgress',
+  BookContent: 'BookContent',
   Author: 'Author',
   Book: 'Book',
   Avatar: 'Avatar'
@@ -118,6 +119,16 @@ export const BookProgressScalarFieldEnum = {
 } as const
 
 export type BookProgressScalarFieldEnum = (typeof BookProgressScalarFieldEnum)[keyof typeof BookProgressScalarFieldEnum]
+
+
+export const BookContentScalarFieldEnum = {
+  id: 'id',
+  page: 'page',
+  content: 'content',
+  bookId: 'bookId'
+} as const
+
+export type BookContentScalarFieldEnum = (typeof BookContentScalarFieldEnum)[keyof typeof BookContentScalarFieldEnum]
 
 
 export const AuthorScalarFieldEnum = {

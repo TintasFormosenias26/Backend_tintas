@@ -8,7 +8,6 @@ export * from "./crud/getAllBooks";
 export * from "./queries/getBooksByIds";
 export * from "./queries/getBooksByFiltering";
 export * from "./queries/getAllBooksByLevel";
-export * from "./queries/getIntelligenceBooks";
 
 export * from "./metadata/getAllThemes";
 export * from "./metadata/getAllSubgenres";

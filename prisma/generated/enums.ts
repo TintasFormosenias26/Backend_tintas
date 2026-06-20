@@ -27,3 +27,13 @@ export const ProgressStatus = {
 } as const
 
 export type ProgressStatus = (typeof ProgressStatus)[keyof typeof ProgressStatus]
+
+
+export const Level = {
+  INICIAL: 'INICIAL',
+  SECUNDARIO: 'SECUNDARIO',
+  JOVEN_ADULTO: 'JOVEN_ADULTO',
+  ADULTO_MAYOR: 'ADULTO_MAYOR'
+} as const
+
+export type Level = (typeof Level)[keyof typeof Level]

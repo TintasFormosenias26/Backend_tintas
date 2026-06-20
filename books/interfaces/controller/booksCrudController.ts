@@ -6,34 +6,26 @@ import {
   UpdateBooksById,
   GetAllBooksByLevel,
 } from "../../application";
-import { MongoCrudRepository, MongoQueryRepository } from "../../infrastructure/mongo";
 import { Request, Response } from "express";
 import { fileDelete } from "../../../shared/utils/deleteFile";
-import { UserModel } from "../../../userService/infrastructure/models/userModels";
 import { uploadBook } from "../../../shared/utils/uploadBook";
 import { uploadCoverImage } from "../../../shared/utils/uploadCoverImage";
 import { deleteCoverImage } from "../../../shared/utils/deleteCoverImage";
 import { deleteBookInCloudinary } from "../../../shared/utils/deleteBookInCloudinary";
-import chalk from "chalk";
 import { separator } from "../../../shared/utils/consoleSeparator";
 import { BookBase, BookSearch } from "../../../shared/types/bookTypes/bookTypes";
-import mongoose from "mongoose";
 import { BookCover } from "../../../shared/types/bookTypes/bookTypes";
 import { ContentBook } from "../../../shared/types/bookTypes/contentBookTypes";
-import { MongoIndexMetric } from "../../../metrics/infrastructure/mongo/mongoIndexMetric";
-import { CreateMetric } from "../../../metrics/app";
+import { PrismaCrudRepository } from "../../infrastructure/mongo";
+import { prisma } from "../../../shared/lib/prisma";
 
-const mongoCrudRepo = new MongoCrudRepository();
-const mongoQueyRepo = new MongoQueryRepository();
+const mongoCrudRepo = new PrismaCrudRepository();
 const createService = new CreateBook(mongoCrudRepo);
 const deleteService = new DeleteBook(mongoCrudRepo);
 const getAllService = new GetAllBooks(mongoCrudRepo);
-const getAllByLevelService = new GetAllBooksByLevel(mongoQueyRepo);
-const getByIdService = new GetBooksById(mongoCrudRepo);
+/*const getByIdService = new GetBooksById(mongoCrudRepo);*/
 const updateService = new UpdateBooksById(mongoCrudRepo);
 
-const MetricRepo = new MongoIndexMetric();
-const createMetric = new CreateMetric(MetricRepo);
 
 export class BooksCrudController {
   // 🔄️
@@ -67,20 +59,7 @@ export class BooksCrudController {
       const img = files.img[0];
       const file = files.file[0];
 
-      const user = await UserModel.findById(idUser);
-      if (!user) {
-        await fileDelete(img.path);
-        await fileDelete(file.path);
-        return res.status(404).json({ msg: "necesitas acceso para realizar esta acción" });
-      }
 
-      const plainUser = user.toObject();
-
-      if (plainUser.rol.toLowerCase() !== "admin") {
-        await fileDelete(img.path);
-        await fileDelete(file.path);
-        return res.status(403).json({ msg: "No tienes permisos para realizar esta acción" });
-      }
 
       const content = await uploadBook(file.path);
       const coverImage = await uploadCoverImage(img.path);
@@ -100,6 +79,12 @@ export class BooksCrudController {
         subgenre,
         language,
         available,
+        // Flat fields expected by the Books type
+        contentBookId: content.public_id,
+        contentBookUrl: content.secure_url,
+        coverImageId: coverImage.public_id,
+        coverImageUrl: coverImage.secure_url,
+        // Keep nested objects for backward compatibility
         contentBook: {
           idContentBook: content.public_id,
           url_secura: content.secure_url,
@@ -108,6 +93,8 @@ export class BooksCrudController {
           url_secura: coverImage.secure_url,
           idBookCoverImage: coverImage.public_id,
         },
+        // map authors to authorIds expected by repository
+        authorIds: author,
         synopsis,
         yearBook,
         theme,
@@ -126,12 +113,6 @@ export class BooksCrudController {
       await fileDelete(file.path);
       return res.status(200).json({ msg: "libro subido correctamente" });
     } catch (error) {
-      console.log(chalk.yellow("Error en el controlador: createBook"));
-      console.log(chalk.yellow(separator()));
-      console.log();
-      console.log(error);
-      console.log();
-      console.log(chalk.yellow(separator()));
       return res.status(500).json({ msg: "Error inesperado por favor intente de nuevo mas tarde" });
     }
   }
@@ -139,15 +120,19 @@ export class BooksCrudController {
   // ✅
   async getAllBook(req: Request, res: Response): Promise<Response> {
     try {
-      const reqUser = req.user;
 
-      if (!reqUser) {
-        console.log("usuario sin autenticación se le proporcionara todos el contendió para ver pero no para leer");
-        const books = await getAllService.run();
-        return res.status(200).json(books);
-      }
+      const id = req.user?.id;
 
-      const user = await UserModel.findById(reqUser.id);
+      const user = await prisma.user.findUnique({
+        where: {
+          id,
+        },
+        include: {
+          avatar: true,
+          preference: true,
+          progresses: true,
+        },
+      });
 
       if (!user) {
         console.log(
@@ -157,15 +142,11 @@ export class BooksCrudController {
         return res.status(200).json(books);
       }
 
-      console.log(
-        "usuario autenticado en la plataforma se le proporcionara los libros en base a su nivel de lectura y para leer"
-      );
 
-      const plainUser = user?.toObject();
 
       let books;
       try {
-        books = await getAllByLevelService.run(plainUser.nivel);
+        books = await GetAllBooksByLevel.run(user.nivel);
       } catch (err) {
         console.log("Error al obtener libros por nivel:", err);
         return res.status(500).json({
@@ -175,12 +156,9 @@ export class BooksCrudController {
 
       return res.status(200).json(books);
     } catch (error) {
-      console.log(chalk.yellow("Error en el controlador: getAllBook"));
-      console.log(chalk.yellow(separator()));
       console.log();
       console.log(error);
       console.log();
-      console.log(chalk.yellow(separator()));
       return res.status(500).json({
         msg: "Erro inesperado por favor intente de nuevo mas tarde",
       });
@@ -190,27 +168,12 @@ export class BooksCrudController {
   // ✅
   async deleteBook(req: Request, res: Response): Promise<Response> {
     try {
-      const idUser = req.user.id;
-
-      const user = await UserModel.findById(idUser);
-
-      if (!user)
-        return res
-          .status(404)
-          .json({ msg: "debes iniciar session en la plataforma para obtener acceso a esta acción" });
-
-      const plainUser = user?.toObject();
-
-      if (plainUser.rol.toLocaleLowerCase() !== "admin")
-        return res.status(403).json({ msg: "No tienes permisos para realizar esta acción" });
 
       const id = req.params.id;
 
-      if (!mongoose.Types.ObjectId.isValid(id)) return res.json({ msg: "id invalida" });
 
-      const idValid = new mongoose.Types.ObjectId(id);
 
-      const book: BookSearch | null = await deleteService.run(idValid);
+      const book: BookSearch | null = await deleteService.run(id);
 
       if (!book) return res.status(404).json({ msg: "no se encontró el libro para eliminar" });
 
@@ -221,16 +184,11 @@ export class BooksCrudController {
       if (!isDeletingCoverImage || !isDeletingBook)
         console.warn("Ocurrió un error al eliminar la documentación en Cloudinary. Verifica si siguen existiendo.");
 
-      await deleteService.run(idValid);
+      await deleteService.run(id);
 
       return res.status(200).json({ msg: "libro eliminado correctamente" });
     } catch (error) {
-      console.log(chalk.yellow("Error en el controlador: deleteBook"));
-      console.log(chalk.yellow(separator()));
-      console.log();
       console.log(error);
-      console.log();
-      console.log(chalk.yellow(separator()));
       return res.status(500).json({
         msg: "Erro inesperado por favor intente de nuevo mas tarde",
       });

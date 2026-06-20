@@ -55,6 +55,11 @@ export type Preference = Prisma.PreferenceModel
  */
 export type BookProgress = Prisma.BookProgressModel
 /**
+ * Model BookContent
+ * 
+ */
+export type BookContent = Prisma.BookContentModel
+/**
  * Model Author
  * 
  */

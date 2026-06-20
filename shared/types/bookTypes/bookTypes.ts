@@ -1,4 +1,3 @@
-import { Types, Document } from "mongoose";
 import { ContentBook, FullContentBook } from "./contentBookTypes";
 
 // Imagen de portada básica
@@ -15,7 +14,7 @@ export interface BookCoverFull extends BookCover {
 // Entidad base de libro (persistencia)
 export interface BookBase extends Document {
   title: string;
-  author: Types.ObjectId[];
+  author: String[];
   summary: string;
   subgenre: string[];
   language: string;

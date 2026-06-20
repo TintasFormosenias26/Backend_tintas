@@ -1,3 +1,4 @@
+/*
 import { Router, Request, Response } from "express";
 import { BooksMetadataController } from "../controller/booksMetadataController";
 
@@ -15,4 +16,4 @@ metadataRouter.get("/booksYears", (req: Request, res: Response) => { controller.
 metadataRouter.get("/booksFormats", (req: Request, res: Response) => { controller.getAllFormats(req, res) }
 );
 
-export default metadataRouter;
+export default metadataRouter;*/

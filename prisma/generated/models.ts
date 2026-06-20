@@ -11,6 +11,7 @@
 export type * from './models/User'
 export type * from './models/Preference'
 export type * from './models/BookProgress'
+export type * from './models/BookContent'
 export type * from './models/Author'
 export type * from './models/Book'
 export type * from './models/Avatar'

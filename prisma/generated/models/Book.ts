@@ -45,7 +45,7 @@ export type BookMinAggregateOutputType = {
   available: boolean | null
   yearBook: string | null
   genre: string | null
-  level: string | null
+  level: $Enums.Level | null
   format: string | null
   fileExtension: string | null
   totalPages: number | null
@@ -68,7 +68,7 @@ export type BookMaxAggregateOutputType = {
   available: boolean | null
   yearBook: string | null
   genre: string | null
-  level: string | null
+  level: $Enums.Level | null
   format: string | null
   fileExtension: string | null
   totalPages: number | null
@@ -286,7 +286,7 @@ export type BookGroupByOutputType = {
   available: boolean
   yearBook: string
   genre: string
-  level: string
+  level: $Enums.Level
   format: string
   fileExtension: string
   totalPages: number | null
@@ -334,7 +334,7 @@ export type BookWhereInput = {
   available?: Prisma.BoolFilter<"Book"> | boolean
   yearBook?: Prisma.StringFilter<"Book"> | string
   genre?: Prisma.StringFilter<"Book"> | string
-  level?: Prisma.StringFilter<"Book"> | string
+  level?: Prisma.EnumLevelFilter<"Book"> | $Enums.Level
   format?: Prisma.StringFilter<"Book"> | string
   fileExtension?: Prisma.StringFilter<"Book"> | string
   totalPages?: Prisma.IntNullableFilter<"Book"> | number | null
@@ -349,6 +349,7 @@ export type BookWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Book"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Book"> | Date | string
   authors?: Prisma.AuthorListRelationFilter
+  contents?: Prisma.BookContentListRelationFilter
 }
 
 export type BookOrderByWithRelationInput = {
@@ -375,6 +376,7 @@ export type BookOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   authors?: Prisma.AuthorOrderByRelationAggregateInput
+  contents?: Prisma.BookContentOrderByRelationAggregateInput
 }
 
 export type BookWhereUniqueInput = Prisma.AtLeast<{
@@ -389,7 +391,7 @@ export type BookWhereUniqueInput = Prisma.AtLeast<{
   available?: Prisma.BoolFilter<"Book"> | boolean
   yearBook?: Prisma.StringFilter<"Book"> | string
   genre?: Prisma.StringFilter<"Book"> | string
-  level?: Prisma.StringFilter<"Book"> | string
+  level?: Prisma.EnumLevelFilter<"Book"> | $Enums.Level
   format?: Prisma.StringFilter<"Book"> | string
   fileExtension?: Prisma.StringFilter<"Book"> | string
   totalPages?: Prisma.IntNullableFilter<"Book"> | number | null
@@ -404,6 +406,7 @@ export type BookWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Book"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Book"> | Date | string
   authors?: Prisma.AuthorListRelationFilter
+  contents?: Prisma.BookContentListRelationFilter
 }, "id">
 
 export type BookOrderByWithAggregationInput = {
@@ -448,7 +451,7 @@ export type BookScalarWhereWithAggregatesInput = {
   available?: Prisma.BoolWithAggregatesFilter<"Book"> | boolean
   yearBook?: Prisma.StringWithAggregatesFilter<"Book"> | string
   genre?: Prisma.StringWithAggregatesFilter<"Book"> | string
-  level?: Prisma.StringWithAggregatesFilter<"Book"> | string
+  level?: Prisma.EnumLevelWithAggregatesFilter<"Book"> | $Enums.Level
   format?: Prisma.StringWithAggregatesFilter<"Book"> | string
   fileExtension?: Prisma.StringWithAggregatesFilter<"Book"> | string
   totalPages?: Prisma.IntNullableWithAggregatesFilter<"Book"> | number | null
@@ -473,7 +476,7 @@ export type BookCreateInput = {
   available?: boolean
   yearBook: string
   genre: string
-  level: string
+  level: $Enums.Level
   format: string
   fileExtension: string
   totalPages?: number | null
@@ -488,6 +491,7 @@ export type BookCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   authors?: Prisma.AuthorCreateNestedManyWithoutBooksInput
+  contents?: Prisma.BookContentCreateNestedManyWithoutBookInput
 }
 
 export type BookUncheckedCreateInput = {
@@ -499,7 +503,7 @@ export type BookUncheckedCreateInput = {
   available?: boolean
   yearBook: string
   genre: string
-  level: string
+  level: $Enums.Level
   format: string
   fileExtension: string
   totalPages?: number | null
@@ -514,6 +518,7 @@ export type BookUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   authors?: Prisma.AuthorUncheckedCreateNestedManyWithoutBooksInput
+  contents?: Prisma.BookContentUncheckedCreateNestedManyWithoutBookInput
 }
 
 export type BookUpdateInput = {
@@ -525,7 +530,7 @@ export type BookUpdateInput = {
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   yearBook?: Prisma.StringFieldUpdateOperationsInput | string
   genre?: Prisma.StringFieldUpdateOperationsInput | string
-  level?: Prisma.StringFieldUpdateOperationsInput | string
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
   format?: Prisma.StringFieldUpdateOperationsInput | string
   fileExtension?: Prisma.StringFieldUpdateOperationsInput | string
   totalPages?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -540,6 +545,7 @@ export type BookUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   authors?: Prisma.AuthorUpdateManyWithoutBooksNestedInput
+  contents?: Prisma.BookContentUpdateManyWithoutBookNestedInput
 }
 
 export type BookUncheckedUpdateInput = {
@@ -551,7 +557,7 @@ export type BookUncheckedUpdateInput = {
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   yearBook?: Prisma.StringFieldUpdateOperationsInput | string
   genre?: Prisma.StringFieldUpdateOperationsInput | string
-  level?: Prisma.StringFieldUpdateOperationsInput | string
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
   format?: Prisma.StringFieldUpdateOperationsInput | string
   fileExtension?: Prisma.StringFieldUpdateOperationsInput | string
   totalPages?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -566,6 +572,7 @@ export type BookUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   authors?: Prisma.AuthorUncheckedUpdateManyWithoutBooksNestedInput
+  contents?: Prisma.BookContentUncheckedUpdateManyWithoutBookNestedInput
 }
 
 export type BookCreateManyInput = {
@@ -577,7 +584,7 @@ export type BookCreateManyInput = {
   available?: boolean
   yearBook: string
   genre: string
-  level: string
+  level: $Enums.Level
   format: string
   fileExtension: string
   totalPages?: number | null
@@ -602,7 +609,7 @@ export type BookUpdateManyMutationInput = {
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   yearBook?: Prisma.StringFieldUpdateOperationsInput | string
   genre?: Prisma.StringFieldUpdateOperationsInput | string
-  level?: Prisma.StringFieldUpdateOperationsInput | string
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
   format?: Prisma.StringFieldUpdateOperationsInput | string
   fileExtension?: Prisma.StringFieldUpdateOperationsInput | string
   totalPages?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -627,7 +634,7 @@ export type BookUncheckedUpdateManyInput = {
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   yearBook?: Prisma.StringFieldUpdateOperationsInput | string
   genre?: Prisma.StringFieldUpdateOperationsInput | string
-  level?: Prisma.StringFieldUpdateOperationsInput | string
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
   format?: Prisma.StringFieldUpdateOperationsInput | string
   fileExtension?: Prisma.StringFieldUpdateOperationsInput | string
   totalPages?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -641,6 +648,11 @@ export type BookUncheckedUpdateManyInput = {
   subgenre?: Prisma.BookUpdatesubgenreInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BookScalarRelationFilter = {
+  is?: Prisma.BookWhereInput
+  isNot?: Prisma.BookWhereInput
 }
 
 export type BookListRelationFilter = {
@@ -734,6 +746,20 @@ export type BookSumOrderByAggregateInput = {
   duration?: Prisma.SortOrder
 }
 
+export type BookCreateNestedOneWithoutContentsInput = {
+  create?: Prisma.XOR<Prisma.BookCreateWithoutContentsInput, Prisma.BookUncheckedCreateWithoutContentsInput>
+  connectOrCreate?: Prisma.BookCreateOrConnectWithoutContentsInput
+  connect?: Prisma.BookWhereUniqueInput
+}
+
+export type BookUpdateOneRequiredWithoutContentsNestedInput = {
+  create?: Prisma.XOR<Prisma.BookCreateWithoutContentsInput, Prisma.BookUncheckedCreateWithoutContentsInput>
+  connectOrCreate?: Prisma.BookCreateOrConnectWithoutContentsInput
+  upsert?: Prisma.BookUpsertWithoutContentsInput
+  connect?: Prisma.BookWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BookUpdateToOneWithWhereWithoutContentsInput, Prisma.BookUpdateWithoutContentsInput>, Prisma.BookUncheckedUpdateWithoutContentsInput>
+}
+
 export type BookCreateNestedManyWithoutAuthorsInput = {
   create?: Prisma.XOR<Prisma.BookCreateWithoutAuthorsInput, Prisma.BookUncheckedCreateWithoutAuthorsInput> | Prisma.BookCreateWithoutAuthorsInput[] | Prisma.BookUncheckedCreateWithoutAuthorsInput[]
   connectOrCreate?: Prisma.BookCreateOrConnectWithoutAuthorsInput | Prisma.BookCreateOrConnectWithoutAuthorsInput[]
@@ -780,6 +806,10 @@ export type BookCreatesubgenreInput = {
   set: string[]
 }
 
+export type EnumLevelFieldUpdateOperationsInput = {
+  set?: $Enums.Level
+}
+
 export type NullableIntFieldUpdateOperationsInput = {
   set?: number | null
   increment?: number
@@ -798,7 +828,7 @@ export type BookUpdatesubgenreInput = {
   push?: string | string[]
 }
 
-export type BookCreateWithoutAuthorsInput = {
+export type BookCreateWithoutContentsInput = {
   id?: string
   title: string
   summary: string
@@ -807,7 +837,7 @@ export type BookCreateWithoutAuthorsInput = {
   available?: boolean
   yearBook: string
   genre: string
-  level: string
+  level: $Enums.Level
   format: string
   fileExtension: string
   totalPages?: number | null
@@ -821,6 +851,127 @@ export type BookCreateWithoutAuthorsInput = {
   subgenre?: Prisma.BookCreatesubgenreInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
+  authors?: Prisma.AuthorCreateNestedManyWithoutBooksInput
+}
+
+export type BookUncheckedCreateWithoutContentsInput = {
+  id?: string
+  title: string
+  summary: string
+  synopsis: string
+  language: string
+  available?: boolean
+  yearBook: string
+  genre: string
+  level: $Enums.Level
+  format: string
+  fileExtension: string
+  totalPages?: number | null
+  duration?: number | null
+  anthology?: boolean
+  contentBookId: string
+  contentBookUrl: string
+  coverImageId: string
+  coverImageUrl: string
+  theme?: Prisma.BookCreatethemeInput | string[]
+  subgenre?: Prisma.BookCreatesubgenreInput | string[]
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  authors?: Prisma.AuthorUncheckedCreateNestedManyWithoutBooksInput
+}
+
+export type BookCreateOrConnectWithoutContentsInput = {
+  where: Prisma.BookWhereUniqueInput
+  create: Prisma.XOR<Prisma.BookCreateWithoutContentsInput, Prisma.BookUncheckedCreateWithoutContentsInput>
+}
+
+export type BookUpsertWithoutContentsInput = {
+  update: Prisma.XOR<Prisma.BookUpdateWithoutContentsInput, Prisma.BookUncheckedUpdateWithoutContentsInput>
+  create: Prisma.XOR<Prisma.BookCreateWithoutContentsInput, Prisma.BookUncheckedCreateWithoutContentsInput>
+  where?: Prisma.BookWhereInput
+}
+
+export type BookUpdateToOneWithWhereWithoutContentsInput = {
+  where?: Prisma.BookWhereInput
+  data: Prisma.XOR<Prisma.BookUpdateWithoutContentsInput, Prisma.BookUncheckedUpdateWithoutContentsInput>
+}
+
+export type BookUpdateWithoutContentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  summary?: Prisma.StringFieldUpdateOperationsInput | string
+  synopsis?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  available?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  yearBook?: Prisma.StringFieldUpdateOperationsInput | string
+  genre?: Prisma.StringFieldUpdateOperationsInput | string
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  format?: Prisma.StringFieldUpdateOperationsInput | string
+  fileExtension?: Prisma.StringFieldUpdateOperationsInput | string
+  totalPages?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anthology?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  contentBookId?: Prisma.StringFieldUpdateOperationsInput | string
+  contentBookUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImageId?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  theme?: Prisma.BookUpdatethemeInput | string[]
+  subgenre?: Prisma.BookUpdatesubgenreInput | string[]
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  authors?: Prisma.AuthorUpdateManyWithoutBooksNestedInput
+}
+
+export type BookUncheckedUpdateWithoutContentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  summary?: Prisma.StringFieldUpdateOperationsInput | string
+  synopsis?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  available?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  yearBook?: Prisma.StringFieldUpdateOperationsInput | string
+  genre?: Prisma.StringFieldUpdateOperationsInput | string
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  format?: Prisma.StringFieldUpdateOperationsInput | string
+  fileExtension?: Prisma.StringFieldUpdateOperationsInput | string
+  totalPages?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anthology?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  contentBookId?: Prisma.StringFieldUpdateOperationsInput | string
+  contentBookUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImageId?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  theme?: Prisma.BookUpdatethemeInput | string[]
+  subgenre?: Prisma.BookUpdatesubgenreInput | string[]
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  authors?: Prisma.AuthorUncheckedUpdateManyWithoutBooksNestedInput
+}
+
+export type BookCreateWithoutAuthorsInput = {
+  id?: string
+  title: string
+  summary: string
+  synopsis: string
+  language: string
+  available?: boolean
+  yearBook: string
+  genre: string
+  level: $Enums.Level
+  format: string
+  fileExtension: string
+  totalPages?: number | null
+  duration?: number | null
+  anthology?: boolean
+  contentBookId: string
+  contentBookUrl: string
+  coverImageId: string
+  coverImageUrl: string
+  theme?: Prisma.BookCreatethemeInput | string[]
+  subgenre?: Prisma.BookCreatesubgenreInput | string[]
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  contents?: Prisma.BookContentCreateNestedManyWithoutBookInput
 }
 
 export type BookUncheckedCreateWithoutAuthorsInput = {
@@ -832,7 +983,7 @@ export type BookUncheckedCreateWithoutAuthorsInput = {
   available?: boolean
   yearBook: string
   genre: string
-  level: string
+  level: $Enums.Level
   format: string
   fileExtension: string
   totalPages?: number | null
@@ -846,6 +997,7 @@ export type BookUncheckedCreateWithoutAuthorsInput = {
   subgenre?: Prisma.BookCreatesubgenreInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
+  contents?: Prisma.BookContentUncheckedCreateNestedManyWithoutBookInput
 }
 
 export type BookCreateOrConnectWithoutAuthorsInput = {
@@ -881,7 +1033,7 @@ export type BookScalarWhereInput = {
   available?: Prisma.BoolFilter<"Book"> | boolean
   yearBook?: Prisma.StringFilter<"Book"> | string
   genre?: Prisma.StringFilter<"Book"> | string
-  level?: Prisma.StringFilter<"Book"> | string
+  level?: Prisma.EnumLevelFilter<"Book"> | $Enums.Level
   format?: Prisma.StringFilter<"Book"> | string
   fileExtension?: Prisma.StringFilter<"Book"> | string
   totalPages?: Prisma.IntNullableFilter<"Book"> | number | null
@@ -906,7 +1058,7 @@ export type BookUpdateWithoutAuthorsInput = {
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   yearBook?: Prisma.StringFieldUpdateOperationsInput | string
   genre?: Prisma.StringFieldUpdateOperationsInput | string
-  level?: Prisma.StringFieldUpdateOperationsInput | string
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
   format?: Prisma.StringFieldUpdateOperationsInput | string
   fileExtension?: Prisma.StringFieldUpdateOperationsInput | string
   totalPages?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -920,6 +1072,7 @@ export type BookUpdateWithoutAuthorsInput = {
   subgenre?: Prisma.BookUpdatesubgenreInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contents?: Prisma.BookContentUpdateManyWithoutBookNestedInput
 }
 
 export type BookUncheckedUpdateWithoutAuthorsInput = {
@@ -931,7 +1084,7 @@ export type BookUncheckedUpdateWithoutAuthorsInput = {
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   yearBook?: Prisma.StringFieldUpdateOperationsInput | string
   genre?: Prisma.StringFieldUpdateOperationsInput | string
-  level?: Prisma.StringFieldUpdateOperationsInput | string
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
   format?: Prisma.StringFieldUpdateOperationsInput | string
   fileExtension?: Prisma.StringFieldUpdateOperationsInput | string
   totalPages?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -945,6 +1098,7 @@ export type BookUncheckedUpdateWithoutAuthorsInput = {
   subgenre?: Prisma.BookUpdatesubgenreInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contents?: Prisma.BookContentUncheckedUpdateManyWithoutBookNestedInput
 }
 
 export type BookUncheckedUpdateManyWithoutAuthorsInput = {
@@ -956,7 +1110,7 @@ export type BookUncheckedUpdateManyWithoutAuthorsInput = {
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
   yearBook?: Prisma.StringFieldUpdateOperationsInput | string
   genre?: Prisma.StringFieldUpdateOperationsInput | string
-  level?: Prisma.StringFieldUpdateOperationsInput | string
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
   format?: Prisma.StringFieldUpdateOperationsInput | string
   fileExtension?: Prisma.StringFieldUpdateOperationsInput | string
   totalPages?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -979,10 +1133,12 @@ export type BookUncheckedUpdateManyWithoutAuthorsInput = {
 
 export type BookCountOutputType = {
   authors: number
+  contents: number
 }
 
 export type BookCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   authors?: boolean | BookCountOutputTypeCountAuthorsArgs
+  contents?: boolean | BookCountOutputTypeCountContentsArgs
 }
 
 /**
@@ -1000,6 +1156,13 @@ export type BookCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
  */
 export type BookCountOutputTypeCountAuthorsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.AuthorWhereInput
+}
+
+/**
+ * BookCountOutputType without action
+ */
+export type BookCountOutputTypeCountContentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BookContentWhereInput
 }
 
 
@@ -1027,6 +1190,7 @@ export type BookSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdAt?: boolean
   updatedAt?: boolean
   authors?: boolean | Prisma.Book$authorsArgs<ExtArgs>
+  contents?: boolean | Prisma.Book$contentsArgs<ExtArgs>
   _count?: boolean | Prisma.BookCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["book"]>
 
@@ -1108,6 +1272,7 @@ export type BookSelectScalar = {
 export type BookOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "summary" | "synopsis" | "language" | "available" | "yearBook" | "genre" | "level" | "format" | "fileExtension" | "totalPages" | "duration" | "anthology" | "contentBookId" | "contentBookUrl" | "coverImageId" | "coverImageUrl" | "theme" | "subgenre" | "createdAt" | "updatedAt", ExtArgs["result"]["book"]>
 export type BookInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   authors?: boolean | Prisma.Book$authorsArgs<ExtArgs>
+  contents?: boolean | Prisma.Book$contentsArgs<ExtArgs>
   _count?: boolean | Prisma.BookCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BookIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1117,6 +1282,7 @@ export type $BookPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "Book"
   objects: {
     authors: Prisma.$AuthorPayload<ExtArgs>[]
+    contents: Prisma.$BookContentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1127,7 +1293,7 @@ export type $BookPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     available: boolean
     yearBook: string
     genre: string
-    level: string
+    level: $Enums.Level
     format: string
     fileExtension: string
     totalPages: number | null
@@ -1536,6 +1702,7 @@ readonly fields: BookFieldRefs;
 export interface Prisma__BookClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   authors<T extends Prisma.Book$authorsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Book$authorsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuthorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  contents<T extends Prisma.Book$contentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Book$contentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookContentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1573,7 +1740,7 @@ export interface BookFieldRefs {
   readonly available: Prisma.FieldRef<"Book", 'Boolean'>
   readonly yearBook: Prisma.FieldRef<"Book", 'String'>
   readonly genre: Prisma.FieldRef<"Book", 'String'>
-  readonly level: Prisma.FieldRef<"Book", 'String'>
+  readonly level: Prisma.FieldRef<"Book", 'Level'>
   readonly format: Prisma.FieldRef<"Book", 'String'>
   readonly fileExtension: Prisma.FieldRef<"Book", 'String'>
   readonly totalPages: Prisma.FieldRef<"Book", 'Int'>
@@ -2001,6 +2168,30 @@ export type Book$authorsArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   distinct?: Prisma.AuthorScalarFieldEnum | Prisma.AuthorScalarFieldEnum[]
+}
+
+/**
+ * Book.contents
+ */
+export type Book$contentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BookContent
+   */
+  select?: Prisma.BookContentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BookContent
+   */
+  omit?: Prisma.BookContentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BookContentInclude<ExtArgs> | null
+  where?: Prisma.BookContentWhereInput
+  orderBy?: Prisma.BookContentOrderByWithRelationInput | Prisma.BookContentOrderByWithRelationInput[]
+  cursor?: Prisma.BookContentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BookContentScalarFieldEnum | Prisma.BookContentScalarFieldEnum[]
 }
 
 /**

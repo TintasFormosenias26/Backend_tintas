@@ -1,4 +1,4 @@
-import {
+/*import {
   GetIntelligenceBook,
   GetContentBookById,
   GetBooksByFiltering,
@@ -148,3 +148,4 @@ export class BooksQueryController {
     }
   }
 }
+*/

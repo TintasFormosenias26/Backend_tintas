@@ -13,8 +13,6 @@ const controller = new BooksCrudController();
 
 crudRouter.post(
      "/books",
-     validateJWT,
-     validarRol("Admin"),
      upload.fields([{ name: "file", maxCount: 1 }, { name: "img", maxCount: 1 }]),
      parseFormData,
      validatorBooks(bookSchema),

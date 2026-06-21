@@ -32,7 +32,6 @@ export class BooksCrudController {
   // 🔄️
   async createBook(req: Request, res: Response): Promise<Response> {
     try {
-      const idUser = req.user.id;
 
       const {
         title,
@@ -105,7 +104,7 @@ export class BooksCrudController {
         duration,
         anthology,
       };
-
+      console.log(newBook)
       await createService.run(newBook as any);
 
       await fileDelete(img.path);
@@ -197,8 +196,7 @@ export class BooksCrudController {
   // ✅
   async getBookById(req: Request, res: Response): Promise<Response> {
     try {
-      const id = req.params.id;
-
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 
       const book = await getByIdService.run(id);
 

@@ -19,5 +19,5 @@ autorRoutes.get("/author", getAuthorByName);
 autorRoutes.get("/AllAuthores", getAllAuthores);
 autorRoutes.get("/author/:id", getAuthorById);
 autorRoutes.delete("/author/:id", deleteAuthorById);
-autorRoutes.put("/author/:id", validateJWT, validarRol("Admin"), upload.single("photo"), updataAuthors);
+autorRoutes.put("/author/:id", upload.single("photo"), updataAuthors);
 

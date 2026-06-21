@@ -1,0 +1,15 @@
+USUARIOS REGISTRO
+/register
+{
+"name": "Juan",
+"lastName": "Pérez",
+"userName": "juanperez",
+"birthDate": "1995-06-15T00:00:00.000Z",
+"email": "juan.perez2445@example.com",
+"password": "hashedpassword123",
+"preference": {
+"category": ["fantasía", "ciencia ficción"],
+"format": ["ebook", "audiolibro"]
+}
+}
+/upadte

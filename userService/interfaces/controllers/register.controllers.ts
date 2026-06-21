@@ -19,12 +19,14 @@ export const registers = async (req: Request, res: Response) => {
     const newUser = { ...user };
 
     const result = await userService.createUser(newUser);
+
     if ('success' in result && !result.success) {
       res.status(result.status).json(result);
+      return;
     }
-    res.status(200).json({ msg: "user creaded  successful", result });
-  } catch (error) {
 
+    res.status(200).json({ msg: "user created successful", result });
+  } catch (error) {
     console.error("internal server error", error);
     res.status(500).json({ message: "internal server error " });
   }

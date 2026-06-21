@@ -22,7 +22,7 @@ export class SaveAuthorPostgresRepo implements ISaveAuthorRepository {
         nationality: author.nationality,
         itActivo: author.isActive,
         photoIdImage: author.photoIdImage!,
-        photorUrl: author.photoUrl!,
+        photoUrl: author.photoUrl!,
         writingGenre: author.writingGenre ?? [],
       },
     });
@@ -34,9 +34,9 @@ export class SaveAuthorPostgresRepo implements ISaveAuthorRepository {
       createdAuthor.birthplace,
       createdAuthor.nationality,
       createdAuthor.itActivo,
-      createdAuthor.writingGenre,
+      author.writingGenre ?? [],
       createdAuthor.photoIdImage,
-      createdAuthor.photorUrl,
+      createdAuthor.photoUrl,
       createdAuthor.id
     );
 
@@ -55,15 +55,15 @@ export class UpdateAuthorPostgresRepo implements UpdateAuthorRepository {
     if (!currentAuthor) {
       return null;
     }
-
-    if (
-      author.photoIdImage &&
-      currentAuthor.photoIdImage &&
-      currentAuthor.photoIdImage !== author.photoIdImage
-    ) {
-      await deleteCoverImage(currentAuthor.photoIdImage);
-    }
-
+    /*
+        if (
+          author.photoIdImage &&
+          currentAuthor.photoIdImage &&
+          currentAuthor.photoIdImage !== author.photoIdImage
+        ) {
+          await deleteCoverImage(currentAuthor.photoIdImage);
+        }
+    */
     const updatedAuthor = await prisma.author.update({
       where: { id },
       data: {
@@ -104,8 +104,10 @@ export class UpdateAuthorPostgresRepo implements UpdateAuthorRepository {
       nationality: updatedAuthor.nationality,
       isActive: updatedAuthor.itActivo,
       photoIdImage: updatedAuthor.photoIdImage,
-      photoUrl: updatedAuthor.photorUrl,
-      writingGenre: updatedAuthor.writingGenre,
+      photoUrl: updatedAuthor.photoUrl,
+      writingGenre:
+        (updatedAuthor as any).writingGenre ??
+        (currentAuthor as any).writingGenre,
     };
   }
 }
@@ -123,7 +125,7 @@ const mapPrismaAuthorToDomain = (author: any): Author =>
     author.itActivo,
     author.writingGenre,
     author.photoIdImage,
-    author.photorUrl,
+    author.photoUrl,
     author.id
   );
 

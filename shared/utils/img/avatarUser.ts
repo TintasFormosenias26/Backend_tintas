@@ -9,13 +9,24 @@ cloudinary.config({
 
 export async function subirImagen(rutaArchivo: string) {
     try {
-        const result = await cloudinary.uploader.upload(rutaArchivo, { folder: "User_avatar" });
-        return result;
+        console.log("Archivo:", rutaArchivo);
+
+        const fs = await import("fs");
+
+        console.log("Existe:", fs.existsSync(rutaArchivo));
+
+        const stats = fs.statSync(rutaArchivo);
+
+        console.log("Peso:", stats.size);
+
+        return await cloudinary.uploader.upload(rutaArchivo, {
+            folder: "User_avatar",
+        });
     } catch (error) {
-        console.log(error)
+        console.error("Cloudinary Error:", error);
+        throw error;
     }
 }
-
 export async function subirAuthorimg(rutaArchivo: string) {
     try {
         const result = await cloudinary.uploader.upload(rutaArchivo, { folder: "Author_fotos" });

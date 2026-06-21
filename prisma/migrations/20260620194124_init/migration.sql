@@ -23,7 +23,7 @@ CREATE TABLE "User" (
     "imgLevel" TEXT,
     "rol" "Role" NOT NULL DEFAULT 'USER',
     "point" INTEGER NOT NULL DEFAULT 0,
-    "avatarId" TEXT NOT NULL,
+    "avatar" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -147,9 +147,6 @@ CREATE UNIQUE INDEX "book_progress_userId_bookId_key" ON "book_progress"("userId
 
 -- CreateIndex
 CREATE INDEX "_AuthorToBook_B_index" ON "_AuthorToBook"("B");
-
--- AddForeignKey
-ALTER TABLE "User" ADD CONSTRAINT "User_avatarId_fkey" FOREIGN KEY ("avatarId") REFERENCES "Avatar"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Preference" ADD CONSTRAINT "Preference_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

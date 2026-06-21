@@ -190,7 +190,6 @@ export type AvatarWhereInput = {
   gender?: Prisma.StringFilter<"Avatar"> | string
   createdAt?: Prisma.DateTimeFilter<"Avatar"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Avatar"> | Date | string
-  users?: Prisma.UserListRelationFilter
 }
 
 export type AvatarOrderByWithRelationInput = {
@@ -200,7 +199,6 @@ export type AvatarOrderByWithRelationInput = {
   gender?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  users?: Prisma.UserOrderByRelationAggregateInput
 }
 
 export type AvatarWhereUniqueInput = Prisma.AtLeast<{
@@ -213,7 +211,6 @@ export type AvatarWhereUniqueInput = Prisma.AtLeast<{
   gender?: Prisma.StringFilter<"Avatar"> | string
   createdAt?: Prisma.DateTimeFilter<"Avatar"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Avatar"> | Date | string
-  users?: Prisma.UserListRelationFilter
 }, "id">
 
 export type AvatarOrderByWithAggregationInput = {
@@ -247,7 +244,6 @@ export type AvatarCreateInput = {
   gender: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  users?: Prisma.UserCreateNestedManyWithoutAvatarInput
 }
 
 export type AvatarUncheckedCreateInput = {
@@ -257,7 +253,6 @@ export type AvatarUncheckedCreateInput = {
   gender: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  users?: Prisma.UserUncheckedCreateNestedManyWithoutAvatarInput
 }
 
 export type AvatarUpdateInput = {
@@ -267,7 +262,6 @@ export type AvatarUpdateInput = {
   gender?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  users?: Prisma.UserUpdateManyWithoutAvatarNestedInput
 }
 
 export type AvatarUncheckedUpdateInput = {
@@ -277,7 +271,6 @@ export type AvatarUncheckedUpdateInput = {
   gender?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  users?: Prisma.UserUncheckedUpdateManyWithoutAvatarNestedInput
 }
 
 export type AvatarCreateManyInput = {
@@ -307,11 +300,6 @@ export type AvatarUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type AvatarScalarRelationFilter = {
-  is?: Prisma.AvatarWhereInput
-  isNot?: Prisma.AvatarWhereInput
-}
-
 export type AvatarCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   idImage?: Prisma.SortOrder
@@ -339,101 +327,6 @@ export type AvatarMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
-export type AvatarCreateNestedOneWithoutUsersInput = {
-  create?: Prisma.XOR<Prisma.AvatarCreateWithoutUsersInput, Prisma.AvatarUncheckedCreateWithoutUsersInput>
-  connectOrCreate?: Prisma.AvatarCreateOrConnectWithoutUsersInput
-  connect?: Prisma.AvatarWhereUniqueInput
-}
-
-export type AvatarUpdateOneRequiredWithoutUsersNestedInput = {
-  create?: Prisma.XOR<Prisma.AvatarCreateWithoutUsersInput, Prisma.AvatarUncheckedCreateWithoutUsersInput>
-  connectOrCreate?: Prisma.AvatarCreateOrConnectWithoutUsersInput
-  upsert?: Prisma.AvatarUpsertWithoutUsersInput
-  connect?: Prisma.AvatarWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.AvatarUpdateToOneWithWhereWithoutUsersInput, Prisma.AvatarUpdateWithoutUsersInput>, Prisma.AvatarUncheckedUpdateWithoutUsersInput>
-}
-
-export type AvatarCreateWithoutUsersInput = {
-  id?: string
-  idImage: string
-  urlSecura: string
-  gender: string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type AvatarUncheckedCreateWithoutUsersInput = {
-  id?: string
-  idImage: string
-  urlSecura: string
-  gender: string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type AvatarCreateOrConnectWithoutUsersInput = {
-  where: Prisma.AvatarWhereUniqueInput
-  create: Prisma.XOR<Prisma.AvatarCreateWithoutUsersInput, Prisma.AvatarUncheckedCreateWithoutUsersInput>
-}
-
-export type AvatarUpsertWithoutUsersInput = {
-  update: Prisma.XOR<Prisma.AvatarUpdateWithoutUsersInput, Prisma.AvatarUncheckedUpdateWithoutUsersInput>
-  create: Prisma.XOR<Prisma.AvatarCreateWithoutUsersInput, Prisma.AvatarUncheckedCreateWithoutUsersInput>
-  where?: Prisma.AvatarWhereInput
-}
-
-export type AvatarUpdateToOneWithWhereWithoutUsersInput = {
-  where?: Prisma.AvatarWhereInput
-  data: Prisma.XOR<Prisma.AvatarUpdateWithoutUsersInput, Prisma.AvatarUncheckedUpdateWithoutUsersInput>
-}
-
-export type AvatarUpdateWithoutUsersInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  idImage?: Prisma.StringFieldUpdateOperationsInput | string
-  urlSecura?: Prisma.StringFieldUpdateOperationsInput | string
-  gender?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type AvatarUncheckedUpdateWithoutUsersInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  idImage?: Prisma.StringFieldUpdateOperationsInput | string
-  urlSecura?: Prisma.StringFieldUpdateOperationsInput | string
-  gender?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-
-/**
- * Count Type AvatarCountOutputType
- */
-
-export type AvatarCountOutputType = {
-  users: number
-}
-
-export type AvatarCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  users?: boolean | AvatarCountOutputTypeCountUsersArgs
-}
-
-/**
- * AvatarCountOutputType without action
- */
-export type AvatarCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the AvatarCountOutputType
-   */
-  select?: Prisma.AvatarCountOutputTypeSelect<ExtArgs> | null
-}
-
-/**
- * AvatarCountOutputType without action
- */
-export type AvatarCountOutputTypeCountUsersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.UserWhereInput
-}
 
 
 export type AvatarSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -443,8 +336,6 @@ export type AvatarSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   gender?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  users?: boolean | Prisma.Avatar$usersArgs<ExtArgs>
-  _count?: boolean | Prisma.AvatarCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["avatar"]>
 
 export type AvatarSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -475,18 +366,10 @@ export type AvatarSelectScalar = {
 }
 
 export type AvatarOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "idImage" | "urlSecura" | "gender" | "createdAt" | "updatedAt", ExtArgs["result"]["avatar"]>
-export type AvatarInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  users?: boolean | Prisma.Avatar$usersArgs<ExtArgs>
-  _count?: boolean | Prisma.AvatarCountOutputTypeDefaultArgs<ExtArgs>
-}
-export type AvatarIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type AvatarIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $AvatarPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Avatar"
-  objects: {
-    users: Prisma.$UserPayload<ExtArgs>[]
-  }
+  objects: {}
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     idImage: string
@@ -888,7 +771,6 @@ readonly fields: AvatarFieldRefs;
  */
 export interface Prisma__AvatarClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  users<T extends Prisma.Avatar$usersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Avatar$usersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -941,10 +823,6 @@ export type AvatarFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Intern
    */
   omit?: Prisma.AvatarOmit<ExtArgs> | null
   /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.AvatarInclude<ExtArgs> | null
-  /**
    * Filter, which Avatar to fetch.
    */
   where: Prisma.AvatarWhereUniqueInput
@@ -963,10 +841,6 @@ export type AvatarFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensions
    */
   omit?: Prisma.AvatarOmit<ExtArgs> | null
   /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.AvatarInclude<ExtArgs> | null
-  /**
    * Filter, which Avatar to fetch.
    */
   where: Prisma.AvatarWhereUniqueInput
@@ -984,10 +858,6 @@ export type AvatarFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Omit specific fields from the Avatar
    */
   omit?: Prisma.AvatarOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.AvatarInclude<ExtArgs> | null
   /**
    * Filter, which Avatar to fetch.
    */
@@ -1037,10 +907,6 @@ export type AvatarFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions.
    */
   omit?: Prisma.AvatarOmit<ExtArgs> | null
   /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.AvatarInclude<ExtArgs> | null
-  /**
    * Filter, which Avatar to fetch.
    */
   where?: Prisma.AvatarWhereInput
@@ -1088,10 +954,6 @@ export type AvatarFindManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Omit specific fields from the Avatar
    */
   omit?: Prisma.AvatarOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.AvatarInclude<ExtArgs> | null
   /**
    * Filter, which Avatars to fetch.
    */
@@ -1141,10 +1003,6 @@ export type AvatarCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    */
   omit?: Prisma.AvatarOmit<ExtArgs> | null
   /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.AvatarInclude<ExtArgs> | null
-  /**
    * The data needed to create a Avatar.
    */
   data: Prisma.XOR<Prisma.AvatarCreateInput, Prisma.AvatarUncheckedCreateInput>
@@ -1192,10 +1050,6 @@ export type AvatarUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Omit specific fields from the Avatar
    */
   omit?: Prisma.AvatarOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.AvatarInclude<ExtArgs> | null
   /**
    * The data needed to update a Avatar.
    */
@@ -1263,10 +1117,6 @@ export type AvatarUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    */
   omit?: Prisma.AvatarOmit<ExtArgs> | null
   /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.AvatarInclude<ExtArgs> | null
-  /**
    * The filter to search for the Avatar to update in case it exists.
    */
   where: Prisma.AvatarWhereUniqueInput
@@ -1293,10 +1143,6 @@ export type AvatarDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    */
   omit?: Prisma.AvatarOmit<ExtArgs> | null
   /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.AvatarInclude<ExtArgs> | null
-  /**
    * Filter which Avatar to delete.
    */
   where: Prisma.AvatarWhereUniqueInput
@@ -1317,30 +1163,6 @@ export type AvatarDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
 }
 
 /**
- * Avatar.users
- */
-export type Avatar$usersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the User
-   */
-  select?: Prisma.UserSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the User
-   */
-  omit?: Prisma.UserOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.UserInclude<ExtArgs> | null
-  where?: Prisma.UserWhereInput
-  orderBy?: Prisma.UserOrderByWithRelationInput | Prisma.UserOrderByWithRelationInput[]
-  cursor?: Prisma.UserWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.UserScalarFieldEnum | Prisma.UserScalarFieldEnum[]
-}
-
-/**
  * Avatar without action
  */
 export type AvatarDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1352,8 +1174,4 @@ export type AvatarDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Omit specific fields from the Avatar
    */
   omit?: Prisma.AvatarOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.AvatarInclude<ExtArgs> | null
 }

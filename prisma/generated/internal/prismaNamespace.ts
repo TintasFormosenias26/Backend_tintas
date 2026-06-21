@@ -979,7 +979,7 @@ export const UserScalarFieldEnum = {
   imgLevel: 'imgLevel',
   rol: 'rol',
   point: 'point',
-  avatarId: 'avatarId',
+  avatar: 'avatar',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1034,9 +1034,8 @@ export const AuthorScalarFieldEnum = {
   birthplace: 'birthplace',
   nationality: 'nationality',
   itActivo: 'itActivo',
-  writingGenre: 'writingGenre',
   photoIdImage: 'photoIdImage',
-  photorUrl: 'photorUrl'
+  photoUrl: 'photoUrl'
 } as const
 
 export type AuthorScalarFieldEnum = (typeof AuthorScalarFieldEnum)[keyof typeof AuthorScalarFieldEnum]

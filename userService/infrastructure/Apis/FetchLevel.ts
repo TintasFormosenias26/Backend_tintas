@@ -1,6 +1,6 @@
 import ENV from "../../../shared/config/configEnv";
 
-
+/*
 export async function getLevel(): Promise<{ id: any, url: string }> {
     try {
         const response = await fetch(`http://localhost:${ENV.PORT}/firtsLevel`);
@@ -18,3 +18,4 @@ export async function getLevel(): Promise<{ id: any, url: string }> {
         throw new Error('No se pudieron obtener los avatares');
     }
 }
+*/

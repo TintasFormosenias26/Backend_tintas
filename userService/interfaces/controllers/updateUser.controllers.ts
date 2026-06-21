@@ -16,25 +16,46 @@ const findUser = new findAndDeleteMongo()
 
 const updateUserService: UpdateUSerRepository = new UpdateUSer(userRespositoryMongo, authRepositoryMongo, uniqueUsername, findUser);
 
-export const findAndUpdate = async (req: Request, res: Response) => {
+export const findAndUpdate = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const newUser: UserType = req.body;
     const id = req.user?.id;
+
     if (!id) {
-      res.status(400).json({ message: "No user ID found" });
+      return res.status(400).json({
+        message: "No user ID found"
+      });
     }
-    const result = await updateUserService.updateUSer(id, newUser);
+
+    const result = await updateUserService.updateUSer(
+      id,
+      newUser
+    );
 
     if (!result) {
-      res.status(302).json({ msg: "the user not update" });
-    } else {
-      if ('success' in result && !result.success) {
-        res.status(result.status).json(result);
-      }
+      return res.status(404).json({
+        msg: "the user not update"
+      });
     }
-    res.status(200).json({ msg: "user update successful" });
+
+    if ("success" in result && !result.success) {
+      return res.status(result.status).json(result);
+    }
+
+    return res.status(200).json({
+      msg: "user update successful",
+      data: result
+    });
+
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "internal server error", error });
+
+    return res.status(500).json({
+      message: "internal server error",
+      error
+    });
   }
 };

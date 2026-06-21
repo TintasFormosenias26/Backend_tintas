@@ -11,19 +11,18 @@ export class UpdateAuthor implements UpdateAuthorRepository {
     ) { }
 
     async updateAuthor(id: any, author: Author): Promise<Author | null> {
-        if (author.avatar) {
-            const author_file = await this.uniqueAuthor.findById(id)
-            if (author_file) {
-                const result = await deleteCoverImage(author_file?.avatar.id_image)
-                if (!result) {
-                    return null
-                }
-            }
-        }
+        /* const imageId = (author as any).id_image;
+         if (imageId) {
+             const result = await deleteCoverImage(imageId);
+             if (!result) {
+                 return null;
+             }
+         }
+ */
         if (author.fullName) {
             const authorExist = await this.uniqueAuthor.findByName(author.fullName);
 
-            if (authorExist && authorExist._id.toString() !== id.toString()) {
+            if (authorExist && authorExist.id && authorExist.id.toString() !== id.toString()) {
                 return null;
             }
         }

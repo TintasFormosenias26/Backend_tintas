@@ -30,8 +30,7 @@ model User {
   rol         Role     @default(USER)
   point       Int      @default(0)
 
-  avatarId    String
-  avatar      Avatar   @relation(fields: [avatarId], references: [id])
+  avatar  String     
 
   preference  Preference?
 
@@ -113,10 +112,8 @@ model Author {
   nationality   String
   itActivo      Boolean
 
-  writingGenre  String[]
-
   photoIdImage String
-  photorUrl     String
+  photoUrl     String
 
   books         Book[]
 }
@@ -176,7 +173,6 @@ model Avatar {
   urlSecura  String
 
   gender     String
-  users User[]
 
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

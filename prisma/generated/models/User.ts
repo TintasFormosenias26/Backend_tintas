@@ -46,7 +46,7 @@ export type UserMinAggregateOutputType = {
   imgLevel: string | null
   rol: $Enums.Role | null
   point: number | null
-  avatarId: string | null
+  avatar: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -63,7 +63,7 @@ export type UserMaxAggregateOutputType = {
   imgLevel: string | null
   rol: $Enums.Role | null
   point: number | null
-  avatarId: string | null
+  avatar: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -80,7 +80,7 @@ export type UserCountAggregateOutputType = {
   imgLevel: number
   rol: number
   point: number
-  avatarId: number
+  avatar: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -107,7 +107,7 @@ export type UserMinAggregateInputType = {
   imgLevel?: true
   rol?: true
   point?: true
-  avatarId?: true
+  avatar?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -124,7 +124,7 @@ export type UserMaxAggregateInputType = {
   imgLevel?: true
   rol?: true
   point?: true
-  avatarId?: true
+  avatar?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -141,7 +141,7 @@ export type UserCountAggregateInputType = {
   imgLevel?: true
   rol?: true
   point?: true
-  avatarId?: true
+  avatar?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -245,7 +245,7 @@ export type UserGroupByOutputType = {
   imgLevel: string | null
   rol: $Enums.Role
   point: number
-  avatarId: string
+  avatar: string
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -285,10 +285,9 @@ export type UserWhereInput = {
   imgLevel?: Prisma.StringNullableFilter<"User"> | string | null
   rol?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   point?: Prisma.IntFilter<"User"> | number
-  avatarId?: Prisma.StringFilter<"User"> | string
+  avatar?: Prisma.StringFilter<"User"> | string
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
-  avatar?: Prisma.XOR<Prisma.AvatarScalarRelationFilter, Prisma.AvatarWhereInput>
   preference?: Prisma.XOR<Prisma.PreferenceNullableScalarRelationFilter, Prisma.PreferenceWhereInput> | null
   progresses?: Prisma.BookProgressListRelationFilter
 }
@@ -305,10 +304,9 @@ export type UserOrderByWithRelationInput = {
   imgLevel?: Prisma.SortOrderInput | Prisma.SortOrder
   rol?: Prisma.SortOrder
   point?: Prisma.SortOrder
-  avatarId?: Prisma.SortOrder
+  avatar?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  avatar?: Prisma.AvatarOrderByWithRelationInput
   preference?: Prisma.PreferenceOrderByWithRelationInput
   progresses?: Prisma.BookProgressOrderByRelationAggregateInput
 }
@@ -328,10 +326,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   imgLevel?: Prisma.StringNullableFilter<"User"> | string | null
   rol?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   point?: Prisma.IntFilter<"User"> | number
-  avatarId?: Prisma.StringFilter<"User"> | string
+  avatar?: Prisma.StringFilter<"User"> | string
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
-  avatar?: Prisma.XOR<Prisma.AvatarScalarRelationFilter, Prisma.AvatarWhereInput>
   preference?: Prisma.XOR<Prisma.PreferenceNullableScalarRelationFilter, Prisma.PreferenceWhereInput> | null
   progresses?: Prisma.BookProgressListRelationFilter
 }, "id" | "userName" | "email">
@@ -348,7 +345,7 @@ export type UserOrderByWithAggregationInput = {
   imgLevel?: Prisma.SortOrderInput | Prisma.SortOrder
   rol?: Prisma.SortOrder
   point?: Prisma.SortOrder
-  avatarId?: Prisma.SortOrder
+  avatar?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -373,7 +370,7 @@ export type UserScalarWhereWithAggregatesInput = {
   imgLevel?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   rol?: Prisma.EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
   point?: Prisma.IntWithAggregatesFilter<"User"> | number
-  avatarId?: Prisma.StringWithAggregatesFilter<"User"> | string
+  avatar?: Prisma.StringWithAggregatesFilter<"User"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -390,9 +387,9 @@ export type UserCreateInput = {
   imgLevel?: string | null
   rol?: $Enums.Role
   point?: number
+  avatar: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  avatar: Prisma.AvatarCreateNestedOneWithoutUsersInput
   preference?: Prisma.PreferenceCreateNestedOneWithoutUserInput
   progresses?: Prisma.BookProgressCreateNestedManyWithoutUserInput
 }
@@ -409,7 +406,7 @@ export type UserUncheckedCreateInput = {
   imgLevel?: string | null
   rol?: $Enums.Role
   point?: number
-  avatarId: string
+  avatar: string
   createdAt?: Date | string
   updatedAt?: Date | string
   preference?: Prisma.PreferenceUncheckedCreateNestedOneWithoutUserInput
@@ -428,9 +425,9 @@ export type UserUpdateInput = {
   imgLevel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rol?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   point?: Prisma.IntFieldUpdateOperationsInput | number
+  avatar?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  avatar?: Prisma.AvatarUpdateOneRequiredWithoutUsersNestedInput
   preference?: Prisma.PreferenceUpdateOneWithoutUserNestedInput
   progresses?: Prisma.BookProgressUpdateManyWithoutUserNestedInput
 }
@@ -447,7 +444,7 @@ export type UserUncheckedUpdateInput = {
   imgLevel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rol?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   point?: Prisma.IntFieldUpdateOperationsInput | number
-  avatarId?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   preference?: Prisma.PreferenceUncheckedUpdateOneWithoutUserNestedInput
@@ -466,7 +463,7 @@ export type UserCreateManyInput = {
   imgLevel?: string | null
   rol?: $Enums.Role
   point?: number
-  avatarId: string
+  avatar: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -483,6 +480,7 @@ export type UserUpdateManyMutationInput = {
   imgLevel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rol?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   point?: Prisma.IntFieldUpdateOperationsInput | number
+  avatar?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -499,7 +497,7 @@ export type UserUncheckedUpdateManyInput = {
   imgLevel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rol?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   point?: Prisma.IntFieldUpdateOperationsInput | number
-  avatarId?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -516,7 +514,7 @@ export type UserCountOrderByAggregateInput = {
   imgLevel?: Prisma.SortOrder
   rol?: Prisma.SortOrder
   point?: Prisma.SortOrder
-  avatarId?: Prisma.SortOrder
+  avatar?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -537,7 +535,7 @@ export type UserMaxOrderByAggregateInput = {
   imgLevel?: Prisma.SortOrder
   rol?: Prisma.SortOrder
   point?: Prisma.SortOrder
-  avatarId?: Prisma.SortOrder
+  avatar?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -554,7 +552,7 @@ export type UserMinOrderByAggregateInput = {
   imgLevel?: Prisma.SortOrder
   rol?: Prisma.SortOrder
   point?: Prisma.SortOrder
-  avatarId?: Prisma.SortOrder
+  avatar?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -566,16 +564,6 @@ export type UserSumOrderByAggregateInput = {
 export type UserScalarRelationFilter = {
   is?: Prisma.UserWhereInput
   isNot?: Prisma.UserWhereInput
-}
-
-export type UserListRelationFilter = {
-  every?: Prisma.UserWhereInput
-  some?: Prisma.UserWhereInput
-  none?: Prisma.UserWhereInput
-}
-
-export type UserOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
 }
 
 export type StringFieldUpdateOperationsInput = {
@@ -630,48 +618,6 @@ export type UserUpdateOneRequiredWithoutProgressesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutProgressesInput, Prisma.UserUpdateWithoutProgressesInput>, Prisma.UserUncheckedUpdateWithoutProgressesInput>
 }
 
-export type UserCreateNestedManyWithoutAvatarInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutAvatarInput, Prisma.UserUncheckedCreateWithoutAvatarInput> | Prisma.UserCreateWithoutAvatarInput[] | Prisma.UserUncheckedCreateWithoutAvatarInput[]
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAvatarInput | Prisma.UserCreateOrConnectWithoutAvatarInput[]
-  createMany?: Prisma.UserCreateManyAvatarInputEnvelope
-  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
-}
-
-export type UserUncheckedCreateNestedManyWithoutAvatarInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutAvatarInput, Prisma.UserUncheckedCreateWithoutAvatarInput> | Prisma.UserCreateWithoutAvatarInput[] | Prisma.UserUncheckedCreateWithoutAvatarInput[]
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAvatarInput | Prisma.UserCreateOrConnectWithoutAvatarInput[]
-  createMany?: Prisma.UserCreateManyAvatarInputEnvelope
-  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
-}
-
-export type UserUpdateManyWithoutAvatarNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutAvatarInput, Prisma.UserUncheckedCreateWithoutAvatarInput> | Prisma.UserCreateWithoutAvatarInput[] | Prisma.UserUncheckedCreateWithoutAvatarInput[]
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAvatarInput | Prisma.UserCreateOrConnectWithoutAvatarInput[]
-  upsert?: Prisma.UserUpsertWithWhereUniqueWithoutAvatarInput | Prisma.UserUpsertWithWhereUniqueWithoutAvatarInput[]
-  createMany?: Prisma.UserCreateManyAvatarInputEnvelope
-  set?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
-  disconnect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
-  delete?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
-  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
-  update?: Prisma.UserUpdateWithWhereUniqueWithoutAvatarInput | Prisma.UserUpdateWithWhereUniqueWithoutAvatarInput[]
-  updateMany?: Prisma.UserUpdateManyWithWhereWithoutAvatarInput | Prisma.UserUpdateManyWithWhereWithoutAvatarInput[]
-  deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
-}
-
-export type UserUncheckedUpdateManyWithoutAvatarNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutAvatarInput, Prisma.UserUncheckedCreateWithoutAvatarInput> | Prisma.UserCreateWithoutAvatarInput[] | Prisma.UserUncheckedCreateWithoutAvatarInput[]
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAvatarInput | Prisma.UserCreateOrConnectWithoutAvatarInput[]
-  upsert?: Prisma.UserUpsertWithWhereUniqueWithoutAvatarInput | Prisma.UserUpsertWithWhereUniqueWithoutAvatarInput[]
-  createMany?: Prisma.UserCreateManyAvatarInputEnvelope
-  set?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
-  disconnect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
-  delete?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
-  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
-  update?: Prisma.UserUpdateWithWhereUniqueWithoutAvatarInput | Prisma.UserUpdateWithWhereUniqueWithoutAvatarInput[]
-  updateMany?: Prisma.UserUpdateManyWithWhereWithoutAvatarInput | Prisma.UserUpdateManyWithWhereWithoutAvatarInput[]
-  deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
-}
-
 export type UserCreateWithoutPreferenceInput = {
   id?: string
   name: string
@@ -684,9 +630,9 @@ export type UserCreateWithoutPreferenceInput = {
   imgLevel?: string | null
   rol?: $Enums.Role
   point?: number
+  avatar: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  avatar: Prisma.AvatarCreateNestedOneWithoutUsersInput
   progresses?: Prisma.BookProgressCreateNestedManyWithoutUserInput
 }
 
@@ -702,7 +648,7 @@ export type UserUncheckedCreateWithoutPreferenceInput = {
   imgLevel?: string | null
   rol?: $Enums.Role
   point?: number
-  avatarId: string
+  avatar: string
   createdAt?: Date | string
   updatedAt?: Date | string
   progresses?: Prisma.BookProgressUncheckedCreateNestedManyWithoutUserInput
@@ -736,9 +682,9 @@ export type UserUpdateWithoutPreferenceInput = {
   imgLevel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rol?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   point?: Prisma.IntFieldUpdateOperationsInput | number
+  avatar?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  avatar?: Prisma.AvatarUpdateOneRequiredWithoutUsersNestedInput
   progresses?: Prisma.BookProgressUpdateManyWithoutUserNestedInput
 }
 
@@ -754,7 +700,7 @@ export type UserUncheckedUpdateWithoutPreferenceInput = {
   imgLevel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rol?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   point?: Prisma.IntFieldUpdateOperationsInput | number
-  avatarId?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   progresses?: Prisma.BookProgressUncheckedUpdateManyWithoutUserNestedInput
@@ -772,9 +718,9 @@ export type UserCreateWithoutProgressesInput = {
   imgLevel?: string | null
   rol?: $Enums.Role
   point?: number
+  avatar: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  avatar: Prisma.AvatarCreateNestedOneWithoutUsersInput
   preference?: Prisma.PreferenceCreateNestedOneWithoutUserInput
 }
 
@@ -790,7 +736,7 @@ export type UserUncheckedCreateWithoutProgressesInput = {
   imgLevel?: string | null
   rol?: $Enums.Role
   point?: number
-  avatarId: string
+  avatar: string
   createdAt?: Date | string
   updatedAt?: Date | string
   preference?: Prisma.PreferenceUncheckedCreateNestedOneWithoutUserInput
@@ -824,9 +770,9 @@ export type UserUpdateWithoutProgressesInput = {
   imgLevel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rol?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   point?: Prisma.IntFieldUpdateOperationsInput | number
+  avatar?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  avatar?: Prisma.AvatarUpdateOneRequiredWithoutUsersNestedInput
   preference?: Prisma.PreferenceUpdateOneWithoutUserNestedInput
 }
 
@@ -842,160 +788,10 @@ export type UserUncheckedUpdateWithoutProgressesInput = {
   imgLevel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rol?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   point?: Prisma.IntFieldUpdateOperationsInput | number
-  avatarId?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   preference?: Prisma.PreferenceUncheckedUpdateOneWithoutUserNestedInput
-}
-
-export type UserCreateWithoutAvatarInput = {
-  id?: string
-  name: string
-  lastName: string
-  userName: string
-  birthDate: Date | string
-  email: string
-  password: string
-  nivel?: string | null
-  imgLevel?: string | null
-  rol?: $Enums.Role
-  point?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  preference?: Prisma.PreferenceCreateNestedOneWithoutUserInput
-  progresses?: Prisma.BookProgressCreateNestedManyWithoutUserInput
-}
-
-export type UserUncheckedCreateWithoutAvatarInput = {
-  id?: string
-  name: string
-  lastName: string
-  userName: string
-  birthDate: Date | string
-  email: string
-  password: string
-  nivel?: string | null
-  imgLevel?: string | null
-  rol?: $Enums.Role
-  point?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  preference?: Prisma.PreferenceUncheckedCreateNestedOneWithoutUserInput
-  progresses?: Prisma.BookProgressUncheckedCreateNestedManyWithoutUserInput
-}
-
-export type UserCreateOrConnectWithoutAvatarInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutAvatarInput, Prisma.UserUncheckedCreateWithoutAvatarInput>
-}
-
-export type UserCreateManyAvatarInputEnvelope = {
-  data: Prisma.UserCreateManyAvatarInput | Prisma.UserCreateManyAvatarInput[]
-  skipDuplicates?: boolean
-}
-
-export type UserUpsertWithWhereUniqueWithoutAvatarInput = {
-  where: Prisma.UserWhereUniqueInput
-  update: Prisma.XOR<Prisma.UserUpdateWithoutAvatarInput, Prisma.UserUncheckedUpdateWithoutAvatarInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutAvatarInput, Prisma.UserUncheckedCreateWithoutAvatarInput>
-}
-
-export type UserUpdateWithWhereUniqueWithoutAvatarInput = {
-  where: Prisma.UserWhereUniqueInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutAvatarInput, Prisma.UserUncheckedUpdateWithoutAvatarInput>
-}
-
-export type UserUpdateManyWithWhereWithoutAvatarInput = {
-  where: Prisma.UserScalarWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateManyMutationInput, Prisma.UserUncheckedUpdateManyWithoutAvatarInput>
-}
-
-export type UserScalarWhereInput = {
-  AND?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
-  OR?: Prisma.UserScalarWhereInput[]
-  NOT?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
-  id?: Prisma.StringFilter<"User"> | string
-  name?: Prisma.StringFilter<"User"> | string
-  lastName?: Prisma.StringFilter<"User"> | string
-  userName?: Prisma.StringFilter<"User"> | string
-  birthDate?: Prisma.DateTimeFilter<"User"> | Date | string
-  email?: Prisma.StringFilter<"User"> | string
-  password?: Prisma.StringFilter<"User"> | string
-  nivel?: Prisma.StringNullableFilter<"User"> | string | null
-  imgLevel?: Prisma.StringNullableFilter<"User"> | string | null
-  rol?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
-  point?: Prisma.IntFilter<"User"> | number
-  avatarId?: Prisma.StringFilter<"User"> | string
-  createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
-}
-
-export type UserCreateManyAvatarInput = {
-  id?: string
-  name: string
-  lastName: string
-  userName: string
-  birthDate: Date | string
-  email: string
-  password: string
-  nivel?: string | null
-  imgLevel?: string | null
-  rol?: $Enums.Role
-  point?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type UserUpdateWithoutAvatarInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
-  userName?: Prisma.StringFieldUpdateOperationsInput | string
-  birthDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.StringFieldUpdateOperationsInput | string
-  nivel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  imgLevel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  rol?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  point?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  preference?: Prisma.PreferenceUpdateOneWithoutUserNestedInput
-  progresses?: Prisma.BookProgressUpdateManyWithoutUserNestedInput
-}
-
-export type UserUncheckedUpdateWithoutAvatarInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
-  userName?: Prisma.StringFieldUpdateOperationsInput | string
-  birthDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.StringFieldUpdateOperationsInput | string
-  nivel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  imgLevel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  rol?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  point?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  preference?: Prisma.PreferenceUncheckedUpdateOneWithoutUserNestedInput
-  progresses?: Prisma.BookProgressUncheckedUpdateManyWithoutUserNestedInput
-}
-
-export type UserUncheckedUpdateManyWithoutAvatarInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
-  userName?: Prisma.StringFieldUpdateOperationsInput | string
-  birthDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.StringFieldUpdateOperationsInput | string
-  nivel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  imgLevel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  rol?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  point?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -1041,10 +837,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   imgLevel?: boolean
   rol?: boolean
   point?: boolean
-  avatarId?: boolean
+  avatar?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  avatar?: boolean | Prisma.AvatarDefaultArgs<ExtArgs>
   preference?: boolean | Prisma.User$preferenceArgs<ExtArgs>
   progresses?: boolean | Prisma.User$progressesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1062,10 +857,9 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   imgLevel?: boolean
   rol?: boolean
   point?: boolean
-  avatarId?: boolean
+  avatar?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  avatar?: boolean | Prisma.AvatarDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1080,10 +874,9 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   imgLevel?: boolean
   rol?: boolean
   point?: boolean
-  avatarId?: boolean
+  avatar?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  avatar?: boolean | Prisma.AvatarDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -1098,29 +891,23 @@ export type UserSelectScalar = {
   imgLevel?: boolean
   rol?: boolean
   point?: boolean
-  avatarId?: boolean
+  avatar?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "lastName" | "userName" | "birthDate" | "email" | "password" | "nivel" | "imgLevel" | "rol" | "point" | "avatarId" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "lastName" | "userName" | "birthDate" | "email" | "password" | "nivel" | "imgLevel" | "rol" | "point" | "avatar" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  avatar?: boolean | Prisma.AvatarDefaultArgs<ExtArgs>
   preference?: boolean | Prisma.User$preferenceArgs<ExtArgs>
   progresses?: boolean | Prisma.User$progressesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  avatar?: boolean | Prisma.AvatarDefaultArgs<ExtArgs>
-}
-export type UserIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  avatar?: boolean | Prisma.AvatarDefaultArgs<ExtArgs>
-}
+export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type UserIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "User"
   objects: {
-    avatar: Prisma.$AvatarPayload<ExtArgs>
     preference: Prisma.$PreferencePayload<ExtArgs> | null
     progresses: Prisma.$BookProgressPayload<ExtArgs>[]
   }
@@ -1136,7 +923,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     imgLevel: string | null
     rol: $Enums.Role
     point: number
-    avatarId: string
+    avatar: string
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -1533,7 +1320,6 @@ readonly fields: UserFieldRefs;
  */
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  avatar<T extends Prisma.AvatarDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AvatarDefaultArgs<ExtArgs>>): Prisma.Prisma__AvatarClient<runtime.Types.Result.GetResult<Prisma.$AvatarPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   preference<T extends Prisma.User$preferenceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$preferenceArgs<ExtArgs>>): Prisma.Prisma__PreferenceClient<runtime.Types.Result.GetResult<Prisma.$PreferencePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   progresses<T extends Prisma.User$progressesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$progressesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -1576,7 +1362,7 @@ export interface UserFieldRefs {
   readonly imgLevel: Prisma.FieldRef<"User", 'String'>
   readonly rol: Prisma.FieldRef<"User", 'Role'>
   readonly point: Prisma.FieldRef<"User", 'Int'>
-  readonly avatarId: Prisma.FieldRef<"User", 'String'>
+  readonly avatar: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }
@@ -1833,10 +1619,6 @@ export type UserCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions
    */
   data: Prisma.UserCreateManyInput | Prisma.UserCreateManyInput[]
   skipDuplicates?: boolean
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.UserIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1907,10 +1689,6 @@ export type UserUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions
    * Limit how many Users to update.
    */
   limit?: number
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.UserIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**

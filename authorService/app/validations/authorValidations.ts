@@ -7,7 +7,7 @@ import { Author } from "../../domain/entidades/author.Types";
 type AuthorValidationResult =
     | {
         success: true;
-        data: Omit<Author, "_id" | "avatar">;
+        data: z.infer<typeof AuthorZodSchema>;
         status: 200;
     }
     | {
@@ -42,9 +42,9 @@ export function authorValidation(data: Author): AuthorValidationResult {
         return {
             success: false,
             message: "Datos de usuario inválidos",
-            errors: parsed.error.errors.map((error) => ({
+            errors: parsed.error.issues.map((error) => ({
                 path: error.path,
-                field: error.path.join("."),
+                field: Array.isArray(error.path) ? error.path.join(".") : String(error.path),
                 message: error.message,
             })),
             status: 400,
@@ -66,9 +66,9 @@ export function authorUpdateValidation(
         return {
             success: false,
             message: "Datos de usuario inválidos",
-            errors: parsed.error.errors.map((error) => ({
-                path: error.path,
-                field: error.path.join("."),
+            errors: parsed.error.issues.map((error) => ({
+                path: error.path.filter((p) => typeof p !== "symbol") as (string | number)[],
+                field: Array.isArray(error.path) ? error.path.join(".") : String(error.path),
                 message: error.message,
             })),
             status: 400,
@@ -77,7 +77,7 @@ export function authorUpdateValidation(
 
     return {
         success: true,
-        data: parsed.data,
+        data: parsed.data as Partial<Omit<Author, "_id" | "avatar">>,
         status: 200,
     };
 

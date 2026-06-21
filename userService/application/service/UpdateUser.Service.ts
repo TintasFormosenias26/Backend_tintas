@@ -1,5 +1,5 @@
 import { UpdateUSerRepository } from "../../domain/ports/UpdateUserRepository";
-import { User } from "../../domain/entities/UserTypes";
+import { UserType } from "../../domain/entities/UserTypes";
 import { AuthUserRepository } from "../../domain/ports/AuthUserRepository";
 import { UniqueUserName } from "../../domain/ports/UniqueUserName";
 import bcrypt from 'bcrypt';
@@ -14,7 +14,7 @@ export class UpdateUSer implements UpdateUSerRepository {
         private readonly uniqueRepo: UniqueUserName,
         private readonly findUser: FindAndDeleteRepo
     ) { }
-    async updateUSer(id: any, user: Partial<User>): Promise<User | null | api_response> {
+    async updateUSer(id: any, user: Partial<UserType>): Promise<UserType | null | api_response> {
         if (user.email) {
             const emailExists = await this.authRepo.findByEmail(user.email);
             if (emailExists) {

@@ -11,8 +11,8 @@ export class BookProgresPostgres {
         const progress = await prisma.bookProgress.create({
             data: {
                 user: { connect: { id: datos.idUser } },
-                bookId: datos.idBook,
-                unit: datos.unit,
+                book: { connect: { id: datos.idBook } },
+                unit: datos.unit?.toUpperCase() as any,
                 position: datos.position,
                 percent: datos.percent,
                 total: datos.total,
@@ -34,6 +34,7 @@ export class UpdateProgressPostgres implements UpdateProgresPort {
             const updateData = {
                 ...data,
                 status: data.status?.toUpperCase() as any,
+                unit: data.unit?.toUpperCase() as any,
             };
             const result = await prisma.bookProgress.update({
                 where: {

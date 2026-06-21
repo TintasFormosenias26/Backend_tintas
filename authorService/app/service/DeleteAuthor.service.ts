@@ -14,10 +14,10 @@ export class DeleteAuthors implements DeleteAuthor {
             throw new Error("author not found");
         }
 
-        if (author.avatar.id_image) {
-            const deleted = await deleteCoverImage(author.avatar.id_image);
+        if (author.photoIdImage) {
+            const deleted = await deleteCoverImage(author.photoIdImage);
             if (!deleted) {
-                console.warn(`No se pudo eliminar la imagen de Cloudinary: ${author.avatar.id_image}`);
+                console.warn(`No se pudo eliminar la imagen de Cloudinary: ${author.photoIdImage}`);
             }
         }
         await this.deleteAuthors.deleteAuthor(id)

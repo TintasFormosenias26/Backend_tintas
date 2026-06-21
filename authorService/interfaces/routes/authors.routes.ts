@@ -12,12 +12,12 @@ const upload = multer({ dest: "uploads/" });
 
 autorRoutes.post(
   "/author/create",
-  upload.single("avatar"),
+  upload.single("avatar"), validateJWT, validarRol("Admin"),
   createAuthor
 );
 autorRoutes.get("/author", getAuthorByName);
 autorRoutes.get("/AllAuthores", getAllAuthores);
 autorRoutes.get("/author/:id", getAuthorById);
-autorRoutes.delete("/author/:id", validateJWT, validarRol("Admin"), deleteAuthorById);
-autorRoutes.put("/author/:id", validateJWT, validarRol("Admin"), upload.single("avatar"), updataAuthors);
+autorRoutes.delete("/author/:id", deleteAuthorById);
+autorRoutes.put("/author/:id", validateJWT, validarRol("Admin"), upload.single("photo"), updataAuthors);
 

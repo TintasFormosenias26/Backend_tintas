@@ -6,17 +6,28 @@ export class UploadAuthorService {
     static async uploadAuthor(file: Express.Multer.File): Promise<photoProfile> {
         if (!file) throw new Error("No se recibió ningún archivo");
 
-        const result = await subirAuthorimg(file.path);
-        if (!result || !result.secure_url || !result.public_id) {
-            throw new Error("Error al subir la imagen");
-        }
+        console.log("Archivo:", file.path);
 
-        const deleted = await fileDelete(file.path);
-        if (!deleted) {
-            throw new Error(`No se pudo eliminar la imagen temporal en ${file.path}`);
-        }
+        try {
+            const result = await subirAuthorimg(file.path);
 
-        return new photoProfile(result.public_id, result.secure_url);
+            console.log("Resultado Cloudinary:", result);
+
+            if (!result?.secure_url || !result?.public_id) {
+                throw new Error("Cloudinary no devolvió secure_url o public_id");
+            }
+
+            await fileDelete(file.path);
+
+            return new photoProfile(
+                result.public_id,
+                result.secure_url
+            );
+
+        } catch (error) {
+            console.error("ERROR CLOUDINARY:", error);
+            throw error;
+        }
     }
 }
 

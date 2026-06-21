@@ -17,11 +17,7 @@ export class UserPostgres implements IRegisterRepository {
         birthDate: user.birthDate,
         email: user.email,
         password: user.password,
-        nivel: user.nivel,
-        imgLevel: user.imgLevel,
-        rol: user.rol,
-        point: user.point,
-        avatarId: user.avatarId,
+        avatar: user.avatar,
       },
     });
   }
@@ -48,13 +44,11 @@ export class UniqueUsernamePostgre implements UniqueUserName {
 }
 
 export class UpdateUserPostgresRepository implements UpdateUSerRepository {
-  updateUSer(id: string, user: UpdateUserDTO): Promise<UserType | null | api_response> {
-    throw new Error("Method not implemented.");
-  }
-  async updateUser(
+  updateUSer(id: string, user: UpdateUserDTO): Promise<UserType>
+  async updateUSer(
     id: string,
     user: UpdateUserDTO
-  ): Promise<UserType | null> {
+  ): Promise<UserType> {
 
     return await prisma.user.update({
       where: {
@@ -70,12 +64,7 @@ export class findAndDeleteMongo implements FindAndDeleteRepo {
     return await prisma.user.findUnique({
       where: {
         id,
-      },
-      include: {
-        avatar: true,
-        preference: true,
-        progresses: true,
-      },
+      }
     });
   }
 
@@ -90,9 +79,7 @@ export class findAndDeleteMongo implements FindAndDeleteRepo {
   }
   async findUser() {
     return await prisma.user.findMany({
-      include: {
-        avatar: true,
-      },
+
     });
   }
 }

@@ -15,8 +15,7 @@ export class UserType {
     public imgLevel: string | null,
     public rol: Role,
     public point: number,
-    public avatarId: string,
-    public avatar?: AvatarType | null,
+    public avatar: string,
     public preference?: Preference | null,
     public progresses?: BookProgress[],
   ) { }

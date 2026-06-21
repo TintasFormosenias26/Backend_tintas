@@ -34,7 +34,7 @@ export type AuthorMinAggregateOutputType = {
   nationality: string | null
   itActivo: boolean | null
   photoIdImage: string | null
-  photorUrl: string | null
+  photoUrl: string | null
 }
 
 export type AuthorMaxAggregateOutputType = {
@@ -47,7 +47,7 @@ export type AuthorMaxAggregateOutputType = {
   nationality: string | null
   itActivo: boolean | null
   photoIdImage: string | null
-  photorUrl: string | null
+  photoUrl: string | null
 }
 
 export type AuthorCountAggregateOutputType = {
@@ -59,9 +59,8 @@ export type AuthorCountAggregateOutputType = {
   birthplace: number
   nationality: number
   itActivo: number
-  writingGenre: number
   photoIdImage: number
-  photorUrl: number
+  photoUrl: number
   _all: number
 }
 
@@ -76,7 +75,7 @@ export type AuthorMinAggregateInputType = {
   nationality?: true
   itActivo?: true
   photoIdImage?: true
-  photorUrl?: true
+  photoUrl?: true
 }
 
 export type AuthorMaxAggregateInputType = {
@@ -89,7 +88,7 @@ export type AuthorMaxAggregateInputType = {
   nationality?: true
   itActivo?: true
   photoIdImage?: true
-  photorUrl?: true
+  photoUrl?: true
 }
 
 export type AuthorCountAggregateInputType = {
@@ -101,9 +100,8 @@ export type AuthorCountAggregateInputType = {
   birthplace?: true
   nationality?: true
   itActivo?: true
-  writingGenre?: true
   photoIdImage?: true
-  photorUrl?: true
+  photoUrl?: true
   _all?: true
 }
 
@@ -188,9 +186,8 @@ export type AuthorGroupByOutputType = {
   birthplace: string
   nationality: string
   itActivo: boolean
-  writingGenre: string[]
   photoIdImage: string
-  photorUrl: string
+  photoUrl: string
   _count: AuthorCountAggregateOutputType | null
   _min: AuthorMinAggregateOutputType | null
   _max: AuthorMaxAggregateOutputType | null
@@ -223,9 +220,8 @@ export type AuthorWhereInput = {
   birthplace?: Prisma.StringFilter<"Author"> | string
   nationality?: Prisma.StringFilter<"Author"> | string
   itActivo?: Prisma.BoolFilter<"Author"> | boolean
-  writingGenre?: Prisma.StringNullableListFilter<"Author">
   photoIdImage?: Prisma.StringFilter<"Author"> | string
-  photorUrl?: Prisma.StringFilter<"Author"> | string
+  photoUrl?: Prisma.StringFilter<"Author"> | string
   books?: Prisma.BookListRelationFilter
 }
 
@@ -238,9 +234,8 @@ export type AuthorOrderByWithRelationInput = {
   birthplace?: Prisma.SortOrder
   nationality?: Prisma.SortOrder
   itActivo?: Prisma.SortOrder
-  writingGenre?: Prisma.SortOrder
   photoIdImage?: Prisma.SortOrder
-  photorUrl?: Prisma.SortOrder
+  photoUrl?: Prisma.SortOrder
   books?: Prisma.BookOrderByRelationAggregateInput
 }
 
@@ -256,9 +251,8 @@ export type AuthorWhereUniqueInput = Prisma.AtLeast<{
   birthplace?: Prisma.StringFilter<"Author"> | string
   nationality?: Prisma.StringFilter<"Author"> | string
   itActivo?: Prisma.BoolFilter<"Author"> | boolean
-  writingGenre?: Prisma.StringNullableListFilter<"Author">
   photoIdImage?: Prisma.StringFilter<"Author"> | string
-  photorUrl?: Prisma.StringFilter<"Author"> | string
+  photoUrl?: Prisma.StringFilter<"Author"> | string
   books?: Prisma.BookListRelationFilter
 }, "id">
 
@@ -271,9 +265,8 @@ export type AuthorOrderByWithAggregationInput = {
   birthplace?: Prisma.SortOrder
   nationality?: Prisma.SortOrder
   itActivo?: Prisma.SortOrder
-  writingGenre?: Prisma.SortOrder
   photoIdImage?: Prisma.SortOrder
-  photorUrl?: Prisma.SortOrder
+  photoUrl?: Prisma.SortOrder
   _count?: Prisma.AuthorCountOrderByAggregateInput
   _max?: Prisma.AuthorMaxOrderByAggregateInput
   _min?: Prisma.AuthorMinOrderByAggregateInput
@@ -291,9 +284,8 @@ export type AuthorScalarWhereWithAggregatesInput = {
   birthplace?: Prisma.StringWithAggregatesFilter<"Author"> | string
   nationality?: Prisma.StringWithAggregatesFilter<"Author"> | string
   itActivo?: Prisma.BoolWithAggregatesFilter<"Author"> | boolean
-  writingGenre?: Prisma.StringNullableListFilter<"Author">
   photoIdImage?: Prisma.StringWithAggregatesFilter<"Author"> | string
-  photorUrl?: Prisma.StringWithAggregatesFilter<"Author"> | string
+  photoUrl?: Prisma.StringWithAggregatesFilter<"Author"> | string
 }
 
 export type AuthorCreateInput = {
@@ -305,9 +297,8 @@ export type AuthorCreateInput = {
   birthplace: string
   nationality: string
   itActivo: boolean
-  writingGenre?: Prisma.AuthorCreatewritingGenreInput | string[]
   photoIdImage: string
-  photorUrl: string
+  photoUrl: string
   books?: Prisma.BookCreateNestedManyWithoutAuthorsInput
 }
 
@@ -320,9 +311,8 @@ export type AuthorUncheckedCreateInput = {
   birthplace: string
   nationality: string
   itActivo: boolean
-  writingGenre?: Prisma.AuthorCreatewritingGenreInput | string[]
   photoIdImage: string
-  photorUrl: string
+  photoUrl: string
   books?: Prisma.BookUncheckedCreateNestedManyWithoutAuthorsInput
 }
 
@@ -335,9 +325,8 @@ export type AuthorUpdateInput = {
   birthplace?: Prisma.StringFieldUpdateOperationsInput | string
   nationality?: Prisma.StringFieldUpdateOperationsInput | string
   itActivo?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  writingGenre?: Prisma.AuthorUpdatewritingGenreInput | string[]
   photoIdImage?: Prisma.StringFieldUpdateOperationsInput | string
-  photorUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  photoUrl?: Prisma.StringFieldUpdateOperationsInput | string
   books?: Prisma.BookUpdateManyWithoutAuthorsNestedInput
 }
 
@@ -350,9 +339,8 @@ export type AuthorUncheckedUpdateInput = {
   birthplace?: Prisma.StringFieldUpdateOperationsInput | string
   nationality?: Prisma.StringFieldUpdateOperationsInput | string
   itActivo?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  writingGenre?: Prisma.AuthorUpdatewritingGenreInput | string[]
   photoIdImage?: Prisma.StringFieldUpdateOperationsInput | string
-  photorUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  photoUrl?: Prisma.StringFieldUpdateOperationsInput | string
   books?: Prisma.BookUncheckedUpdateManyWithoutAuthorsNestedInput
 }
 
@@ -365,9 +353,8 @@ export type AuthorCreateManyInput = {
   birthplace: string
   nationality: string
   itActivo: boolean
-  writingGenre?: Prisma.AuthorCreatewritingGenreInput | string[]
   photoIdImage: string
-  photorUrl: string
+  photoUrl: string
 }
 
 export type AuthorUpdateManyMutationInput = {
@@ -379,9 +366,8 @@ export type AuthorUpdateManyMutationInput = {
   birthplace?: Prisma.StringFieldUpdateOperationsInput | string
   nationality?: Prisma.StringFieldUpdateOperationsInput | string
   itActivo?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  writingGenre?: Prisma.AuthorUpdatewritingGenreInput | string[]
   photoIdImage?: Prisma.StringFieldUpdateOperationsInput | string
-  photorUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  photoUrl?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type AuthorUncheckedUpdateManyInput = {
@@ -393,9 +379,8 @@ export type AuthorUncheckedUpdateManyInput = {
   birthplace?: Prisma.StringFieldUpdateOperationsInput | string
   nationality?: Prisma.StringFieldUpdateOperationsInput | string
   itActivo?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  writingGenre?: Prisma.AuthorUpdatewritingGenreInput | string[]
   photoIdImage?: Prisma.StringFieldUpdateOperationsInput | string
-  photorUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  photoUrl?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type AuthorCountOrderByAggregateInput = {
@@ -407,9 +392,8 @@ export type AuthorCountOrderByAggregateInput = {
   birthplace?: Prisma.SortOrder
   nationality?: Prisma.SortOrder
   itActivo?: Prisma.SortOrder
-  writingGenre?: Prisma.SortOrder
   photoIdImage?: Prisma.SortOrder
-  photorUrl?: Prisma.SortOrder
+  photoUrl?: Prisma.SortOrder
 }
 
 export type AuthorMaxOrderByAggregateInput = {
@@ -422,7 +406,7 @@ export type AuthorMaxOrderByAggregateInput = {
   nationality?: Prisma.SortOrder
   itActivo?: Prisma.SortOrder
   photoIdImage?: Prisma.SortOrder
-  photorUrl?: Prisma.SortOrder
+  photoUrl?: Prisma.SortOrder
 }
 
 export type AuthorMinOrderByAggregateInput = {
@@ -435,7 +419,7 @@ export type AuthorMinOrderByAggregateInput = {
   nationality?: Prisma.SortOrder
   itActivo?: Prisma.SortOrder
   photoIdImage?: Prisma.SortOrder
-  photorUrl?: Prisma.SortOrder
+  photoUrl?: Prisma.SortOrder
 }
 
 export type AuthorListRelationFilter = {
@@ -448,17 +432,8 @@ export type AuthorOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type AuthorCreatewritingGenreInput = {
-  set: string[]
-}
-
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
-}
-
-export type AuthorUpdatewritingGenreInput = {
-  set?: string[]
-  push?: string | string[]
 }
 
 export type AuthorCreateNestedManyWithoutBooksInput = {
@@ -508,9 +483,8 @@ export type AuthorCreateWithoutBooksInput = {
   birthplace: string
   nationality: string
   itActivo: boolean
-  writingGenre?: Prisma.AuthorCreatewritingGenreInput | string[]
   photoIdImage: string
-  photorUrl: string
+  photoUrl: string
 }
 
 export type AuthorUncheckedCreateWithoutBooksInput = {
@@ -522,9 +496,8 @@ export type AuthorUncheckedCreateWithoutBooksInput = {
   birthplace: string
   nationality: string
   itActivo: boolean
-  writingGenre?: Prisma.AuthorCreatewritingGenreInput | string[]
   photoIdImage: string
-  photorUrl: string
+  photoUrl: string
 }
 
 export type AuthorCreateOrConnectWithoutBooksInput = {
@@ -560,9 +533,8 @@ export type AuthorScalarWhereInput = {
   birthplace?: Prisma.StringFilter<"Author"> | string
   nationality?: Prisma.StringFilter<"Author"> | string
   itActivo?: Prisma.BoolFilter<"Author"> | boolean
-  writingGenre?: Prisma.StringNullableListFilter<"Author">
   photoIdImage?: Prisma.StringFilter<"Author"> | string
-  photorUrl?: Prisma.StringFilter<"Author"> | string
+  photoUrl?: Prisma.StringFilter<"Author"> | string
 }
 
 export type AuthorUpdateWithoutBooksInput = {
@@ -574,9 +546,8 @@ export type AuthorUpdateWithoutBooksInput = {
   birthplace?: Prisma.StringFieldUpdateOperationsInput | string
   nationality?: Prisma.StringFieldUpdateOperationsInput | string
   itActivo?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  writingGenre?: Prisma.AuthorUpdatewritingGenreInput | string[]
   photoIdImage?: Prisma.StringFieldUpdateOperationsInput | string
-  photorUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  photoUrl?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type AuthorUncheckedUpdateWithoutBooksInput = {
@@ -588,9 +559,8 @@ export type AuthorUncheckedUpdateWithoutBooksInput = {
   birthplace?: Prisma.StringFieldUpdateOperationsInput | string
   nationality?: Prisma.StringFieldUpdateOperationsInput | string
   itActivo?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  writingGenre?: Prisma.AuthorUpdatewritingGenreInput | string[]
   photoIdImage?: Prisma.StringFieldUpdateOperationsInput | string
-  photorUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  photoUrl?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type AuthorUncheckedUpdateManyWithoutBooksInput = {
@@ -602,9 +572,8 @@ export type AuthorUncheckedUpdateManyWithoutBooksInput = {
   birthplace?: Prisma.StringFieldUpdateOperationsInput | string
   nationality?: Prisma.StringFieldUpdateOperationsInput | string
   itActivo?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  writingGenre?: Prisma.AuthorUpdatewritingGenreInput | string[]
   photoIdImage?: Prisma.StringFieldUpdateOperationsInput | string
-  photorUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  photoUrl?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 
@@ -647,9 +616,8 @@ export type AuthorSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   birthplace?: boolean
   nationality?: boolean
   itActivo?: boolean
-  writingGenre?: boolean
   photoIdImage?: boolean
-  photorUrl?: boolean
+  photoUrl?: boolean
   books?: boolean | Prisma.Author$booksArgs<ExtArgs>
   _count?: boolean | Prisma.AuthorCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["author"]>
@@ -663,9 +631,8 @@ export type AuthorSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   birthplace?: boolean
   nationality?: boolean
   itActivo?: boolean
-  writingGenre?: boolean
   photoIdImage?: boolean
-  photorUrl?: boolean
+  photoUrl?: boolean
 }, ExtArgs["result"]["author"]>
 
 export type AuthorSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -677,9 +644,8 @@ export type AuthorSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   birthplace?: boolean
   nationality?: boolean
   itActivo?: boolean
-  writingGenre?: boolean
   photoIdImage?: boolean
-  photorUrl?: boolean
+  photoUrl?: boolean
 }, ExtArgs["result"]["author"]>
 
 export type AuthorSelectScalar = {
@@ -691,12 +657,11 @@ export type AuthorSelectScalar = {
   birthplace?: boolean
   nationality?: boolean
   itActivo?: boolean
-  writingGenre?: boolean
   photoIdImage?: boolean
-  photorUrl?: boolean
+  photoUrl?: boolean
 }
 
-export type AuthorOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fullName" | "biography" | "profession" | "birthdate" | "birthplace" | "nationality" | "itActivo" | "writingGenre" | "photoIdImage" | "photorUrl", ExtArgs["result"]["author"]>
+export type AuthorOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fullName" | "biography" | "profession" | "birthdate" | "birthplace" | "nationality" | "itActivo" | "photoIdImage" | "photoUrl", ExtArgs["result"]["author"]>
 export type AuthorInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   books?: boolean | Prisma.Author$booksArgs<ExtArgs>
   _count?: boolean | Prisma.AuthorCountOutputTypeDefaultArgs<ExtArgs>
@@ -718,9 +683,8 @@ export type $AuthorPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     birthplace: string
     nationality: string
     itActivo: boolean
-    writingGenre: string[]
     photoIdImage: string
-    photorUrl: string
+    photoUrl: string
   }, ExtArgs["result"]["author"]>
   composites: {}
 }
@@ -1153,9 +1117,8 @@ export interface AuthorFieldRefs {
   readonly birthplace: Prisma.FieldRef<"Author", 'String'>
   readonly nationality: Prisma.FieldRef<"Author", 'String'>
   readonly itActivo: Prisma.FieldRef<"Author", 'Boolean'>
-  readonly writingGenre: Prisma.FieldRef<"Author", 'String[]'>
   readonly photoIdImage: Prisma.FieldRef<"Author", 'String'>
-  readonly photorUrl: Prisma.FieldRef<"Author", 'String'>
+  readonly photoUrl: Prisma.FieldRef<"Author", 'String'>
 }
     
 

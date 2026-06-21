@@ -1,17 +1,19 @@
-[# 👥 API Reference - Users, Authors & Avatars
+👥 API Reference — Users, Authors & Avatars
 
-Este módulo de la API se encarga de la gestión de usuarios (autenticación y perfiles), administración de autores y la gestión de archivos multimedia (avatares).
+Este módulo de la API gestiona:
 
-## 🛠️ Endpoints de Usuarios (`/users` o raíz de rutas de usuario)
+👤 Usuarios (registro, autenticación y perfil)
+✍️ Autores (CRUD completo con control de roles)
+🖼️ Avatares (gestión de imágenes y archivos multimedia)
+🧑‍💻 Users API
 
-### Registro de Usuario
+Base path: /users (o rutas raíz según configuración)
 
-- **URL:** `/register`
-- **Método:** `POST`
-- **Descripción:** Registra un nuevo usuario en la plataforma.
-- **Cuerpo de la petición (JSON):**
-
-```json
+🔐 Registro de usuario
+URL: /register
+Método: POST
+Descripción: Crea un nuevo usuario en la plataforma.
+📦 Body (JSON)
 {
   "name": "Juan",
   "lastName": "Pérez",
@@ -24,94 +26,73 @@ Este módulo de la API se encarga de la gestión de usuarios (autenticación y p
     "format": ["ebook", "audiolibro"]
   }
 }
-```
+🔑 Login
+URL: /login
+Método: POST
+Descripción: Autentica un usuario y devuelve un token JWT válido.
+✏️ Actualizar usuario
+URL: /updateUser
+Método: PUT
+Middlewares: validateJWT
+Descripción: Actualiza la información del usuario autenticado.
+👤 Obtener usuarios
+URL: /users
+Método: GET
+Descripción: Obtiene usuarios filtrados mediante criterios de búsqueda.
+👤 Obtener usuario autenticado
+URL: /oneUser
+Método: GET
+Middlewares: validateJWT
+Descripción: Devuelve la información del usuario autenticado según el token JWT.
+🗑️ Eliminar usuario
+URL: /delete
+Método: DELETE
+Middlewares: validateJWT
+Descripción: Elimina la cuenta del usuario autenticado.
+✍️ Authors API
 
-### Autenticación (Login)
+🔐 Acceso restringido: Las operaciones de creación, actualización y eliminación requieren rol Admin.
 
-- **URL:** `/login`
-- **Método:** `POST`
-- **Descripción:** Autentica a un usuario y devuelve un token JWT.
+Método	Endpoint	Middlewares	Descripción
+POST	/author/create	upload.single("avatar"), validateJWT, validarRol("Admin")	Crea un autor con imagen de perfil
+GET	/author	Ninguno	Busca autores por nombre (query param)
+GET	/AllAuthores	Ninguno	Lista todos los autores registrados
+GET	/author/:id	Ninguno	Obtiene un autor por ID
+PUT	/author/:id	validateJWT, validarRol("Admin")	Actualiza un autor por ID
+DELETE	/author/:id	validateJWT, validarRol("Admin")	Elimina un autor por ID
+🖼️ Avatars API
 
-### Actualizar Usuario
+Gestión de imágenes de perfil para usuarios o autores.
 
-- **URL:** `/updateUser`
-- **Método:** `PUT`
-- **Middlewares:** `validateJWT`
-- **Descripción:** Modifica los datos del usuario autenticado.
+📤 Subir avatar
+URL: /saveAvatar
+Método: POST
+Middlewares: upload.single("avatars")
+Descripción: Sube una nueva imagen al servidor.
+📥 Obtener avatares
+URL: /getAvatars
+Método: GET
+Descripción: Lista todos los avatares disponibles.
+🔄 Actualizar avatar
+URL: /updateAvatar/:id
+Método: PUT
+Middlewares: validateJWT, validarRol("Admin"), upload.single("avatars")
+Descripción: Reemplaza un avatar existente por uno nuevo.
+🗑️ Eliminar avatar
+URL: /deleteAvatar/:id
+Método: DELETE
+Middlewares: validateJWT, validarRol("Admin")
+Descripción: Elimina un avatar permanentemente del servidor.
+🔒 Middlewares
+validateJWT
 
-### Obtener Usuarios (Búsqueda general)
+Verifica la autenticación del usuario mediante un token JWT enviado en:
 
-- **URL:** `/users`
-- **Método:** `GET`
-- **Descripción:** Recupera una lista de usuarios basada en criterios de búsqueda.
+Authorization: Bearer <token>
+validarRol("Admin")
 
-### Obtener un Usuario por Perfil
+Restringe el acceso a usuarios con rol de administrador.
 
-- **URL:** `/oneUser`
-- **Método:** `GET`
-- **Middlewares:** `validateJWT`
-- **Descripción:** Obtiene la información detallada del usuario que realizó la petición a través de su token.
+upload.single(field)
 
-### Eliminar Usuario
-
-- **URL:** `/delete`
-- **Método:** `DELETE`
-- **Middlewares:** `validateJWT`
-- **Descripción:** Da de baja la cuenta del usuario autenticado.
-
----
-
-## ✍️ Endpoints de Autores
-
-> 🔐 **Nota de Seguridad:** Las operaciones de creación, modificación y eliminación requieren privilegios de Administrador (`Admin`).
-
-| Método   | Endpoint         | Middlewares                                                     | Descripción                                                        |
-| -------- | ---------------- | --------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `POST`   | `/author/create` | `upload.single("avatar")`, `validateJWT`, `validarRol("Admin")` | Crea un nuevo autor permitiendo la subida de una imagen de perfil. |
-| `GET`    | `/author`        | _Ninguno_                                                       | Busca un autor específico por su nombre (parámetro de consulta).   |
-| `GET`    | `/AllAuthores`   | _Ninguno_                                                       | Obtiene el listado completo de los autores registrados.            |
-| `GET`    | `/author/:id`    | _Ninguno_                                                       | Obtiene el detalle de un autor mediante su ID.                     |
-| `PUT`    | `/author/:id`    | `validateJWT`, `validarRol("Admin")`                            | Actualiza la información de un autor existente por su ID.          |
-| `DELETE` | `/author/:id`    | `validateJWT`, `validarRol("Admin")`                            | Elimina un autor del sistema por su ID.                            |
-
----
-
-## 🖼️ Endpoints de Avatares
-
-Gestión de imágenes de perfil y recursos estáticos para los usuarios o autores.
-
-### Guardar Avatar
-
-- **URL:** `/saveAvatar`
-- **Método:** `POST`
-- **Middlewares:** `upload.single("avatars")`
-- **Descripción:** Sube un nuevo archivo de imagen al servidor.
-
-### Obtener Avatares
-
-- **URL:** `/getAvatars`
-- **Método:** `GET`
-- **Descripción:** Recupera la lista de avatares disponibles.
-
-### Actualizar Avatar
-
-- **URL:** `/updateAvatar/:id`
-- **Método:** `PUT`
-- **Middlewares:** `validateJWT`, `validarRol("Admin")`, `upload.single("avatars")`
-- **Descripción:** Reemplaza el archivo de un avatar existente mediante su ID.
-
-### Eliminar Avatar
-
-- **URL:** `/deleteAvatar/:id`
-- **Método:** `DELETE`
-- **Middlewares:** `validateJWT`, `validarRol("Admin")`
-- **Descripción:** Remueve un avatar del servidor permanentemente.
-
----
-
-## 🔒 Middlewares Utilizados
-
-- **`validateJWT`**: Verifica que la petición incluya un token de autenticación válido en las cabeceras (`Authorization: Bearer <token>`).
-- **`validarRol("Admin")`**: Restringe el acceso al endpoint únicamente a usuarios cuyo rol asignado sea Administrador.
-- **`upload.single("campo")`**: Middleware encargado de procesar la subida de archivos multipart/form-data (utilizando librerías como `multer`).
-  ]
+Middleware para manejo de archivos multipart/form-data (ej: Multer).

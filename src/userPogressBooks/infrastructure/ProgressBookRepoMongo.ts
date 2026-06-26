@@ -19,6 +19,7 @@ export class BookProgresPostgres {
                 status: datos.status?.toUpperCase() as any,
                 startDate: datos.startDate,
                 finishDate: datos.finishDate,
+
             },
         });
 
@@ -64,10 +65,12 @@ export class FindProgressPostgres implements FindProgressPort {
         return await prisma.bookProgress.findMany({
             where: {
                 userId: id,
-            },
+            }, include: {
+                user: true,        // Incluye todos los campos del usuario
+                book: true
+            }
         }) as unknown as BookUserProgresRepo[];
     }
-
     async findByBook(
         id: string,
         idUser: string
@@ -76,7 +79,10 @@ export class FindProgressPostgres implements FindProgressPort {
             where: {
                 bookId: id,
                 userId: idUser,
-            },
+            }, include: {
+                user: true,        // Incluye todos los campos del usuario
+                book: true        // Incluye todos los campos de los libros
+            }
         }) as unknown as BookUserProgresRepo[];
     }
 
@@ -86,7 +92,10 @@ export class FindProgressPostgres implements FindProgressPort {
         return await prisma.bookProgress.findUnique({
             where: {
                 id,
-            },
+            }, include: {
+                user: true,        // Incluye todos los campos del usuario
+                book: true        // Incluye todos los campos de los libros
+            }
         }) as unknown as BookUserProgresRepo | null;
     }
 }

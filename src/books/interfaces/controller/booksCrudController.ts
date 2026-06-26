@@ -32,6 +32,34 @@ const updateService = new UpdateBooksById(mongoCrudRepo);
 const findUserByIdPrisma: FindByIdRepo = new UserFindById()
 const findUserService: FindByID = new FindByID(findUserByIdPrisma)
 
+// Helper: parsea un campo que puede llegar como string JSON, string simple, o array
+function parseArrayField(value: unknown): string[] {
+  if (!value) return [];
+  if (Array.isArray(value)) {
+    // Cada elemento del array puede ser a su vez un string JSON
+    return value.flatMap((item) => {
+      if (typeof item === "string") {
+        try {
+          const parsed = JSON.parse(item);
+          return Array.isArray(parsed) ? parsed : [item];
+        } catch {
+          return [item];
+        }
+      }
+      return [String(item)];
+    });
+  }
+  if (typeof value === "string") {
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed : [value];
+    } catch {
+      return [value];
+    }
+  }
+  return [];
+}
+
 export class BooksCrudController {
   // 🔄️
   async createBook(req: Request, res: Response): Promise<Response> {
@@ -39,14 +67,11 @@ export class BooksCrudController {
 
       const {
         title,
-        author,
         summary,
-        subgenre,
         available,
         language,
         yearBook,
         synopsis,
-        theme,
         genre,
         level,
         format,
@@ -55,7 +80,24 @@ export class BooksCrudController {
         fileExtension,
         anthology,
       }: BookBase = req.body;
+      console.log(title,
+        summary,
+        available,
+        language,
+        yearBook,
+        synopsis,
+        genre,
+        level,
+        format,
+        totalPages,
+        duration,
+        fileExtension,
+        anthology)
 
+      // Parsear campos que pueden llegar como strings JSON desde multipart/form-data
+      const authorIds: string[] = parseArrayField(req.body.authorIds);
+      const subgenre: string[] = parseArrayField(req.body.subgenre);
+      const theme: string[] = parseArrayField(req.body.theme);
 
       const files = req.files as {
         [key: string]: Express.Multer.File[];
@@ -69,28 +111,29 @@ export class BooksCrudController {
 
       const content = await uploadBook(file.path);
       const coverImage = await uploadCoverImage(img.path);
+      console.log(coverImage)
 
       if (!coverImage || !content) {
         await fileDelete(img.path);
         await fileDelete(file.path);
+        console.log("no file in clou")
         if (coverImage && coverImage.public_id !== undefined) await deleteCoverImage(coverImage.public_id);
         if (content && content.public_id !== undefined) await deleteBookInCloudinary(content.public_id);
+        console.log("no se pudo almacenar el contenido o la portada del libro")
         return res.status(400).json({ msg: "no se pudo almacenar el contenido o la portada del libro" });
       }
 
       const newBook = {
         title,
         summary,
-        author,
         subgenre,
         language,
         available,
-        // Flat fields expected by Books type
         contentBookId: content.public_id,
         contentBookUrl: content.secure_url,
         coverImageId: coverImage.public_id,
         coverImageUrl: coverImage.secure_url,
-        authorIds: author,
+        authorIds,
         contentBook: {
           idContentBook: content.public_id,
           url_secura: content.secure_url,
@@ -125,31 +168,18 @@ export class BooksCrudController {
   async getAllBook(req: Request, res: Response): Promise<Response> {
     try {
 
+      const reqUser = req.user;
 
-      try {
-        /*
-           const id = req.user?.id;
-      const user = await findUserService.findByID(id)
 
-      if (!user) {
-        console.log(
-          "usuario con autenticación invalida se le proporcionara todos los libros para ver pero no para leer"
-        );
-        
+      const user = await findUserService.findByID(reqUser.id);
+
+      if (user) {
+
+        const books = await getAllByLevelService.run(user.level);
+        return res.status(200).json({ msg: "books for level ", books })
       }
-
-      let books;
-        books = await getAllByLevelService.run(user.level)*/
-        const books = await getAllService.run();
-        return res.status(200).json(books);
-
-      } catch (err) {
-        console.log("Error al obtener libros por nivel:", err);
-        return res.status(500).json({
-          msg: "Error al obtener libros por nivel",
-        });
-      }
-
+      const books = await getAllService.run();
+      return res.status(200).json(books);
 
     } catch (error) {
       console.log();
@@ -217,9 +247,7 @@ export class BooksCrudController {
 
       const {
         title,
-        author,
         summary,
-        subgenre,
         available,
         language,
         yearBook,
@@ -233,7 +261,9 @@ export class BooksCrudController {
         fileExtension,
       }: BookBase = req.body;
 
-
+      // Parsear authorIds y subgenre (pueden llegar como strings JSON desde multipart/form-data)
+      const authorIds: string[] = parseArrayField(req.body.authorIds);
+      const subgenre: string[] = parseArrayField(req.body.subgenre);
 
       const existingBook: BookSearch | null = await getByIdService.run(id);
       if (!existingBook) return res.status(404).json({ msg: "no se encontró el libro para actualizar" });
@@ -286,14 +316,14 @@ export class BooksCrudController {
       const updatedBook = {
         _id: existingBook.id,
         title: title || existingBook.title,
-        author: author || existingBook.author,
+        authorIds: authorIds.length > 0 ? authorIds : [],
         summary: summary || existingBook.summary,
-        subgenre: subgenre || existingBook.subgenre,
+        subgenre: subgenre.length > 0 ? subgenre : existingBook.subgenre,
         available: available !== undefined ? available : existingBook.available,
         language: language || existingBook.language,
         yearBook: yearBook || existingBook.yearBook,
         synopsis: synopsis || existingBook.synopsis,
-        theme: theme || existingBook.theme,
+        theme: (theme as unknown as string[]) || existingBook.theme,
         genre: genre || existingBook.genre,
         level: level || existingBook.level,
         format: format || existingBook.format,
@@ -302,6 +332,11 @@ export class BooksCrudController {
         fileExtension: fileExtension || existingBook.fileExtension,
         bookCoverImage: coverImage || existingBook.bookCoverImage,
         contentBook: contentBook || existingBook.contentBook,
+        // Campos requeridos por el repositorio Prisma
+        contentBookId: contentBook.idContentBook,
+        contentBookUrl: contentBook.url_secura,
+        coverImageId: coverImage.idBookCoverImage,
+        coverImageUrl: coverImage.url_secura,
       };
 
       await updateService.run(id, updatedBook);

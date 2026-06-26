@@ -13,7 +13,10 @@ export class PrismaCrudRepository implements BooksCrudRepository {
       id: book.id,
       __v: 0, // Prisma doesn't use __v like MongoDB
       title: book.title,
-      author: [], // Will be populated from authors relation
+      // Mapea los autores desde la relación de Prisma
+      author: Array.isArray(book.authors)
+        ? book.authors.map((a: any) => a.fullName ?? a.id)
+        : [],
       summary: book.summary,
       subgenre: book.subgenre || [],
       language: book.language,
@@ -74,6 +77,8 @@ export class PrismaCrudRepository implements BooksCrudRepository {
 
         theme: book.theme ?? [],
         subgenre: book.subgenre ?? [],
+
+        authors: { connect: { id: book.authorIds } },
       },
     });
     if (!created) {
@@ -132,6 +137,8 @@ export class PrismaCrudRepository implements BooksCrudRepository {
 
         theme: book.theme,
         subgenre: book.subgenre,
+
+        authors: { connect: { id: book.authorIds } },
       },
     });
 
@@ -160,7 +167,6 @@ export class PrismaCrudRepository implements BooksCrudRepository {
     const books = await prisma.book.findMany({
       include: {
         authors: true,
-        contents: true,
       },
       orderBy: {
         createdAt: "desc",
@@ -193,7 +199,6 @@ export class PrismaCrudRepository implements BooksCrudRepository {
       where: { id },
       include: {
         authors: true,
-        contents: true,
       },
     });
 
@@ -201,15 +206,15 @@ export class PrismaCrudRepository implements BooksCrudRepository {
   }
   async getAllBooksByLevel(nivel: string): Promise<BookSearch[]> {
     const levelHierarchy: Record<string, string[]> = {
-      "Inicial": ["Inicial"],
-      "Secundario": ["Secundario", "Inicial"],
-      "Joven Adulto": ["Joven Adulto", "Secundario", "Inicial"],
-      "Adulto Mayor": ["Adulto Mayor", "Joven Adulto", "Secundario", "Inicial"]
+      "INICIAL": ["INICIAL"],
+      "SECUNDARIO": ["SECUNDARIO", "INICIAL"],
+      "JOVEN ADULTO": ["JOVEN ADULTO", "SECUNDARIO", "INICIAL"],
+      "ADULTO MAYOR": ["ADULTO MAYOR", "JOVEN ADULTO", "SECUNDARIO", "INICIAL"]
     };
 
     const allowedLevels =
       levelHierarchy[nivel] ??
-      ["Inicial", "Secundario", "Joven Adulto", "Adulto Mayor"];
+      ["ADULTO MAYOR", "JOVEN ADULTO", "SECUNDARIO", "INICIAL"];
 
     const result = await prisma.book.findMany({
       where: {
@@ -218,12 +223,7 @@ export class PrismaCrudRepository implements BooksCrudRepository {
         }
       },
       include: {
-        authors: {
-          select: {
-            id: true,
-            fullName: true
-          }
-        }
+        authors: true,
       },
       orderBy: {
         createdAt: "desc"
@@ -240,13 +240,12 @@ export class GetBooksByIdPrisma implements GetBookById {
       where: { id },
       include: {
         authors: true,
-        contents: true,
       },
     });
 
     return book ? this.mapToBookSearch(book) : null;
   }
-  mapToBookSearch(book: { authors: { id: string; fullName: string; biography: string; profession: string; birthdate: Date; birthplace: string; nationality: string; isActivo: boolean; photoIdImage: string; photoUrl: string; }[]; contents: { id: string; page: number; content: string; bookId: string; }[]; } & { title: string; summary: string; synopsis: string; language: string; available: boolean; yearBook: string; genre: string; level: Level; format: string; fileExtension: string; contentBookId: string; contentBookUrl: string; coverImageId: string; coverImageUrl: string; theme: string[]; subgenre: string[]; totalPages: number | null; duration: number | null; anthology: boolean; id: string; createdAt: Date; updatedAt: Date; }): BookSearch | PromiseLike<BookSearch | null> | null {
+  mapToBookSearch(book: any): BookSearch | PromiseLike<BookSearch | null> | null {
     throw new Error("Method not implemented.");
   }
 }

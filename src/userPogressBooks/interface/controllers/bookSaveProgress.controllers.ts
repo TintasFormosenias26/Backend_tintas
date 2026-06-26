@@ -4,7 +4,7 @@ import { BookProgresPort } from "../../domain/ports/saveProgres.Ports";
 import { BookUserProgresRepo } from "../../domain/entities/BookPogress.types";
 import { GetBooksById, GetBooksByIds } from "../../../books/application";
 import { PrismaCrudRepository } from "../../../books/infrastructure/mongo";
-import { BookProgresPostgres } from "../../infrastructure/bookProgressRepoMongo";
+import { BookProgresPostgres } from "../../infrastructure/ProgressBookRepoMongo";
 
 
 // Repositorios
@@ -18,12 +18,15 @@ const bookService = new BookSaveProgres(saveRepoMongo, getBooks as any);
 
 export const saveBookProgress = async (req: Request, res: Response) => {
     try {
-
+        const idUser = req.user?.id;
+        if (!idUser) {
+            res.status(401).json({ msg: "Unauthorized" });
+        }
 
         // Crear el DTO (BookUserProgresRepo) con los datos del request
         const bookData: BookUserProgresRepo = {
             ...req.body,
-
+            idUser,
         };
 
         const result = await bookService.saveBookProgres(bookData);

@@ -30,7 +30,7 @@ export class Books {
     public subgenre: string[],
 
     // relación (Prisma many-to-many o relación intermedia)
-    public authorIds: string[],
+    public authorIds: string,
 
     public totalPages?: number,
     public duration?: number,

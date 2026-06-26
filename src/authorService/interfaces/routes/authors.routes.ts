@@ -11,13 +11,16 @@ export const autorRoutes = Router();
 const upload = multer({ dest: "uploads/" });
 
 autorRoutes.post(
-  "/author/create",
+  "/author/create", validateJWT, validarRol("Admin"),
+
   upload.single("avatar"),
   createAuthor
 );
 autorRoutes.get("/author", getAuthorByName);
 autorRoutes.get("/AllAuthores", getAllAuthores);
 autorRoutes.get("/author/:id", getAuthorById);
-autorRoutes.delete("/author/:id", deleteAuthorById);
-autorRoutes.put("/author/:id", upload.single("photo"), updataAuthors);
+autorRoutes.delete("/author/:id", validateJWT, validarRol("Admin"),
+  deleteAuthorById);
+autorRoutes.put("/author/:id", validateJWT, validarRol("Admin"),
+  upload.single("photo"), updataAuthors);
 

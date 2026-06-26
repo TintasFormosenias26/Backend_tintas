@@ -23,11 +23,6 @@ export const bookSchema = z.object({
     'en': ingles`,
     }),
 
-
-  synopsis: z
-    .string({ message: "la sinopsis no puede ser un numero" })
-    .min(1, { message: "La sinopsis es obligatoria" })
-  ,
   genre: z
     .string({ message: "el genero no puede ser un numero" })
     .min(1, { message: "El género es obligatorio" })

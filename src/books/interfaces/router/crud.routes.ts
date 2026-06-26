@@ -13,6 +13,7 @@ const controller = new BooksCrudController();
 
 crudRouter.post(
      "/books",
+     validateJWT, validarRol("Admin"),
      upload.fields([{ name: "file", maxCount: 1 }, { name: "img", maxCount: 1 }]),
      parseFormData,
      validatorBooks(bookSchema),
@@ -21,8 +22,8 @@ crudRouter.post(
 
 crudRouter.patch(
      "/book/:id",
-     validateJWT,
-     validarRol("Admin"),
+     validateJWT, validarRol("Admin"),
+
      upload.fields([{ name: "file", maxCount: 1 }, { name: "img", maxCount: 1 }]),
      parseFormData,
      (req: Request, res: Response) => { controller.updateBookById(req, res) }
@@ -30,14 +31,14 @@ crudRouter.patch(
 
 crudRouter.delete(
      "/book/:id",
-     validateJWT,
-     validarRol("Admin"),
+     validateJWT, validarRol("Admin"),
+
      (req: Request, res: Response) => { controller.deleteBook(req, res) }
 
 
 );
 
-crudRouter.get("/books", (req: Request, res: Response) => { controller.getAllBook(req, res) }
+crudRouter.get("/books", validateJWT, (req: Request, res: Response) => { controller.getAllBook(req, res) }
 );
 
 crudRouter.get("/book/:id", validateJWT, (req: Request, res: Response) => { controller.getBookById(req, res) }

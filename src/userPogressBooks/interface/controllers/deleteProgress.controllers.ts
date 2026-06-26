@@ -1,4 +1,4 @@
-import { DeleteRepo } from "../../infrastructure/bookProgressRepoMongo";
+import { DeleteRepo } from "../../infrastructure/ProgressBookRepoMongo";
 import { deleteProgress } from '../../domain/ports/deleteProgress.Ports'
 import { DeleteProgresService } from "../../aplication/service/DeleteProgress.Service";
 import { Request, Response } from "express";

@@ -11,7 +11,7 @@ export const avaRoutes = Router()
 const upload = multer({ dest: "uploads/" });
 
 
-avaRoutes.post("/saveAvatar", upload.single("avatars"), saveAvatar)
+avaRoutes.post("/saveAvatar", validateJWT, validarRol("Admin"), upload.single("avatars"), saveAvatar)
 avaRoutes.delete("/deleteAvatar/:id", validateJWT, validarRol("Admin"), deleteAvatar)
 avaRoutes.get("/getAvatars", getAvatars)
 avaRoutes.put("/updateAvatar/:id", validateJWT, validarRol("Admin"), upload.single("avatars"), updateAvatar)

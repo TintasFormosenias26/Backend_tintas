@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { UpdateProgressService } from "../../aplication/service/UpdateProgress.Service";
 import { findAndDeleteMongo, UpdateUserPostgresRepository, } from "../../../userService/infrastructure/userRespositoryMongo";
-import { FindProgressPostgres, UpdateProgressPostgres } from "../../infrastructure/bookProgressRepoMongo";
+import { FindProgressPostgres, UpdateProgressPostgres } from "../../infrastructure/ProgressBookRepoMongo";
 
 // Instancias
 const updateRepo = new UpdateProgressPostgres();

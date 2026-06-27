@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { FindAuthors } from "../../app/service/FindAuthor.service";
 import { FindAuthor as findAuthorRepo } from "../../domain/ports/findAuthorRepository";
-import { MetricEventDetails } from "../../../shared/types/metricTypes/metricDetails";
 import { FindAuthorPostgresRepo } from "../../infrastructure/authores.MongoRepo";
 
 const findAuthorRepo = new FindAuthorPostgresRepo();
@@ -25,12 +24,6 @@ export const getAuthorById = async (req: Request, res: Response) => {
       return;
     }
 
-    const data: MetricEventDetails = {
-      idBook: undefined,
-      idAuthor: author.id,
-      subgenre: undefined,
-      format: undefined,
-    };
 
     res.status(200).json(author);
     return;

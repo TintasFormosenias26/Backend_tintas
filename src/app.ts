@@ -51,7 +51,9 @@ app.use(cookies());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.get("/test", (req, res) => {
+    res.json({ ok: true });
+});
 // Sesiones
 app.use(
     session({

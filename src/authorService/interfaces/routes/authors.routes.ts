@@ -11,7 +11,7 @@ export const autorRoutes = Router();
 const upload = multer({ dest: "uploads/" });
 
 autorRoutes.post(
-  "/author/create", validateJWT, validarRol("Admin"),
+  "/author/create", validateJWT, validarRol("ADMIN"),
 
   upload.single("avatar"),
   createAuthor
@@ -19,8 +19,8 @@ autorRoutes.post(
 autorRoutes.get("/author", getAuthorByName);
 autorRoutes.get("/AllAuthores", getAllAuthores);
 autorRoutes.get("/author/:id", getAuthorById);
-autorRoutes.delete("/author/:id", validateJWT, validarRol("Admin"),
+autorRoutes.delete("/author/:id", validateJWT, validarRol("ADMIN"),
   deleteAuthorById);
-autorRoutes.put("/author/:id", validateJWT, validarRol("Admin"),
+autorRoutes.put("/author/:id", validateJWT, validarRol("ADMIN"),
   upload.single("photo"), updataAuthors);
 

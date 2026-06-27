@@ -14,7 +14,7 @@ export interface BookCoverFull extends BookCover {
 // Entidad base de libro (persistencia)
 export interface BookBase extends Document {
   title: string;
-  author: String[];
+  author: string[];
   summary: string;
   subgenre: string[];
   language: string;
@@ -39,7 +39,7 @@ export interface BookDetail extends BookBase {
 
 // Libro usado en búsquedas
 export interface BookSearch extends BookDetail {
-  id: unknown;
+  _id: unknown;
   __v: number;
 }
 

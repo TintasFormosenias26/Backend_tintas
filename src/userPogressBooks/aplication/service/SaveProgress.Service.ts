@@ -1,6 +1,5 @@
 import { BookUserProgresRepo } from "../../domain/entities/BookPogress.types";
 import { BookProgresPort } from "../../domain/ports/saveProgres.Ports";
-import { GetBooksByIds } from "../../../books/application";
 import { PrismaCrudRepository } from "../../../books/infrastructure/mongo";
 
 export class BookSaveProgres {

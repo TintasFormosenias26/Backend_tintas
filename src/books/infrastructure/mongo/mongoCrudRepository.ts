@@ -1,7 +1,6 @@
 import { BooksCrudRepository, GetBookById } from "../../domain/booksCrudRepository";
 import { Books } from "../../domain/entities/books";
 import { BookSearch } from "../../../shared/types/bookTypes/bookTypes";
-import { serviceContainer } from "../../../shared/services/serviceContainer";
 import { prisma } from "../../../shared/lib/prisma";
 import { Level } from "../../../prisma/generated/enums";
 
@@ -15,7 +14,20 @@ export class PrismaCrudRepository implements BooksCrudRepository {
       title: book.title,
       // Mapea los autores desde la relación de Prisma
       author: Array.isArray(book.authors)
-        ? book.authors.map((a: any) => a.fullName ?? a.id)
+        ? book.authors.map((a: any) => ({
+          id: a.id,
+          fullName: a.fullName,
+          biography: a.biography,
+          profession: a.profession,
+          birthdate: a.birthdate,
+          birthplace: a.birthplace,
+          nationality: a.nationality,
+          isActivo: a.isActivo,
+          photoIdImage: a.photoIdImage,
+          photoUrl: a.photoUrl,
+          createdAt: a.createdAt,
+          updatedAt: a.updatedAt,
+        }))
         : [],
       summary: book.summary,
       subgenre: book.subgenre || [],
@@ -46,6 +58,12 @@ export class PrismaCrudRepository implements BooksCrudRepository {
   // CREATE BOOK
   // =========================
   async createBook(book: Books): Promise<void> {
+
+    const authorConnect = Array.isArray(book.authorIds)
+      ? book.authorIds.map((id: any) => ({ id }))
+      : book.authorIds
+        ? [{ id: book.authorIds }]
+        : [];
 
     const created = await prisma.book.create({
       data: {
@@ -78,7 +96,7 @@ export class PrismaCrudRepository implements BooksCrudRepository {
         theme: book.theme ?? [],
         subgenre: book.subgenre ?? [],
 
-        authors: { connect: { id: book.authorIds } },
+        ...(authorConnect.length > 0 ? { authors: { connect: authorConnect } } : {}),
       },
     });
     if (!created) {
@@ -106,59 +124,65 @@ export class PrismaCrudRepository implements BooksCrudRepository {
   // =========================
   async updateBookById(id: string, book: Books): Promise<void> {
 
+
+    const authorConnect = Array.isArray(book.authorIds)
+      ? book.authorIds.map((id: any) => ({ id }))
+      : book.authorIds
+        ? [{ id: book.authorIds }]
+        : [];
+    const currentBook = await prisma.book.findUnique({
+      where: { id: id },
+      include: {
+        authors: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+
+    if (!currentBook) {
+      throw new Error("Libro no encontrado");
+    }
+
+    const currentAuthorIds = currentBook.authors.map(a => a.id);
+
+    const newAuthors = authorConnect.filter(
+      author => !currentAuthorIds.includes(author.id)
+    );
+
+
     const updated = await prisma.book.update({
       where: { id },
       data: {
         title: book.title,
         summary: book.summary,
         synopsis: book.synopsis,
-
         language: book.language,
         available: book.available,
-
         yearBook: book.yearBook,
-
         genre: book.genre,
         level: book.level,
-
         format: book.format,
         fileExtension: book.fileExtension,
-
         totalPages: book.totalPages,
         duration: book.duration,
-
         anthology: book.anthology,
-
         contentBookId: book.contentBookId,
         contentBookUrl: book.contentBookUrl,
-
         coverImageId: book.coverImageId,
         coverImageUrl: book.coverImageUrl,
-
         theme: book.theme,
         subgenre: book.subgenre,
 
-        authors: { connect: { id: book.authorIds } },
+        ...(authorConnect.length > 0 && {
+          authors: {
+            set: authorConnect,
+          },
+        }),
       },
     });
-
-    if (updated.genre === "Narrativo") {
-      const url = updated.contentBookUrl ?? "";
-      const title = updated.title;
-
-      await serviceContainer.bookContent.createBookContent.run(
-        updated.id,
-        title,
-        [
-          {
-            page: 1,
-            content: url,
-          },
-        ]
-      );
-    }
   }
-
   // =========================
   // GET ALL BOOKS
   // =========================
@@ -204,17 +228,17 @@ export class PrismaCrudRepository implements BooksCrudRepository {
 
     return book ? this.mapToBookSearch(book) : null;
   }
-  async getAllBooksByLevel(nivel: string): Promise<BookSearch[]> {
-    const levelHierarchy: Record<string, string[]> = {
+  async getAllBooksByLevel(nivel: Level): Promise<BookSearch[]> {
+    const levelHierarchy: Record<string, Level[]> = {
       "INICIAL": ["INICIAL"],
       "SECUNDARIO": ["SECUNDARIO", "INICIAL"],
-      "JOVEN ADULTO": ["JOVEN ADULTO", "SECUNDARIO", "INICIAL"],
-      "ADULTO MAYOR": ["ADULTO MAYOR", "JOVEN ADULTO", "SECUNDARIO", "INICIAL"]
+      "JOVEN_ADULTO": ["JOVEN_ADULTO", "SECUNDARIO", "INICIAL"],
+      "ADULTO_MAYOR": ["ADULTO_MAYOR", "JOVEN_ADULTO", "SECUNDARIO", "INICIAL"]
     };
 
     const allowedLevels =
       levelHierarchy[nivel] ??
-      ["ADULTO MAYOR", "JOVEN ADULTO", "SECUNDARIO", "INICIAL"];
+      ["ADULTO_MAYOR", "JOVEN_ADULTO", "SECUNDARIO", "INICIAL"];
 
     const result = await prisma.book.findMany({
       where: {

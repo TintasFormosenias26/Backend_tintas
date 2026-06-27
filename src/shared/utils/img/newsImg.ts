@@ -1,6 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
 import ENV from "../../config/configEnv";
-import chalk from "chalk";
 
 cloudinary.config({
     cloud_name: ENV.CLOUD_NAME,
@@ -15,7 +14,6 @@ export async function uploadNewsImage(filePath: string) {
         return result;
     } catch (error) {
         console.log();
-        console.error(chalk.red("Error en la utilidad: uploadNewsImage"));
         console.log();
         console.log(error);
         console.log();
@@ -29,7 +27,6 @@ export async function deleteNewsImage(publicId: string): Promise<boolean> {
         return result.result === "ok";
     } catch (error) {
         console.log();
-        console.error(chalk.red("Error en la utilidad: deleteNewsImage"));
         console.log();
         console.log(error);
         console.log();

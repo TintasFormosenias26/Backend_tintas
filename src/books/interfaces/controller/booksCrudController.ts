@@ -4,7 +4,6 @@ import {
   GetAllBooks,
   GetBooksById,
   UpdateBooksById,
-  GetAllBooksByLevel,
 } from "../../application";
 
 import { Request, Response } from "express";
@@ -20,6 +19,7 @@ import { PrismaCrudRepository } from "../../infrastructure/mongo";
 import { FindAndDeleteUser, FindByID } from "../../../userService/application/service/FindAndDelete.service";
 import { UserFindById } from "../../../userService/infrastructure/userRespositoryMongo";
 import { FindByIdRepo } from "../../../userService/domain/ports/FindAndDeleteRepo";
+import { GetAllBooksByLevel } from "../../application/crud/getBookByLevel";
 
 const mongoCrudRepo = new PrismaCrudRepository();
 const createService = new CreateBook(mongoCrudRepo);
@@ -167,19 +167,18 @@ export class BooksCrudController {
   // ✅
   async getAllBook(req: Request, res: Response): Promise<Response> {
     try {
-
-      const reqUser = req.user;
-
-
-      const user = await findUserService.findByID(reqUser.id);
-
+      let book;
+      const id = req.user?.id;
+      const findUserService: FindByID = new FindByID(findUserByIdPrisma)
+      const user = await findUserService.findByID(id)
       if (user) {
-
-        const books = await getAllByLevelService.run(user.level);
-        return res.status(200).json({ msg: "books for level ", books })
+        console.log("LEVEL USER", user.level)
+        book = await getAllByLevelService.run(user.level)
+        return res.status(200).json(book)
       }
-      const books = await getAllService.run();
-      return res.status(200).json(books);
+      book = await getAllService.run();
+      return res.status(200).json(book);
+
 
     } catch (error) {
       console.log();
@@ -195,13 +194,12 @@ export class BooksCrudController {
   async deleteBook(req: Request, res: Response): Promise<Response> {
     try {
 
-      const id = req.params.id;
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 
+      const book = await getByIdService.run(id);
 
+      if (!book) return res.status(200).json({ msg: "libro no encontrado" });
 
-      const book: BookSearch | null = await deleteService.run(id);
-
-      if (!book) return res.status(404).json({ msg: "no se encontró el libro para eliminar" });
 
       const isDeletingCoverImage: boolean = await deleteCoverImage(book.bookCoverImage.idBookCoverImage);
 
@@ -314,7 +312,6 @@ export class BooksCrudController {
       }
 
       const updatedBook = {
-        _id: existingBook.id,
         title: title || existingBook.title,
         authorIds: authorIds.length > 0 ? authorIds : [],
         summary: summary || existingBook.summary,

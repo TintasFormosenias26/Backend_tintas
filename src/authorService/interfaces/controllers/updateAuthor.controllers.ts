@@ -56,7 +56,7 @@ export const updataAuthors = async (
 
         // Ajusta estos nombres según tu clase photoProfile
         photoIdImage: avatar.photoIdImage,
-        photoUrl: avatar.photorUrl,
+        photoUrl: avatar.photoUrl,
       };
 
       const result = await updataAuthor.updateAuthor(

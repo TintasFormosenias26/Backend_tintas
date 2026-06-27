@@ -1,10 +1,12 @@
-import { UpdateUSerRepository } from "../../domain/ports/UpdateUserRepository";
+import { UpdateRolRepo, UpdateUSerRepository } from "../../domain/ports/UpdateUserRepository";
 import { UserType } from "../../domain/entities/UserTypes";
 import { AuthUserRepository } from "../../domain/ports/AuthUserRepository";
 import { UniqueUserName } from "../../domain/ports/UniqueUserName";
 import bcrypt from 'bcrypt';
 import { api_response } from "../../../shared/types/reponse.types";
-import { FindAndDeleteRepo } from "../../domain/ports/FindAndDeleteRepo";
+import { FindAndDeleteRepo, FindByIdRepo } from "../../domain/ports/FindAndDeleteRepo";
+import { UpdateRoleRepository } from "../../infrastructure/userRespositoryMongo";
+import { Role } from "../../../prisma/generated/enums";
 
 
 export class UpdateUSer implements UpdateUSerRepository {
@@ -12,7 +14,7 @@ export class UpdateUSer implements UpdateUSerRepository {
         private readonly userRepo: UpdateUSerRepository,
         private readonly authRepo: AuthUserRepository,
         private readonly uniqueRepo: UniqueUserName,
-        private readonly findUser: FindAndDeleteRepo
+        private readonly findUser: FindByIdRepo
     ) { }
     async updateUSer(id: any, user: Partial<UserType>): Promise<UserType | null | api_response> {
         if (user.email) {
@@ -55,3 +57,12 @@ export class UpdateUSer implements UpdateUSerRepository {
         return await this.userRepo.updateUSer(id, user);
     }
 }
+export class UpdaRolService implements UpdateRolRepo {
+    constructor(
+        private readonly userRepo: UpdateRolRepo,
+    ) { }
+    async updateRol(id: String, rol: Role): Promise<UserType | null | api_response> {
+
+        return await this.userRepo.updateRol(id, rol)
+    }
+} 

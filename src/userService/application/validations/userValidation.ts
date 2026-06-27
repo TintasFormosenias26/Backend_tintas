@@ -9,7 +9,7 @@ export function UserValidation(req: Request, res: Response, next: NextFunction) 
             console.log(parsed.error);
             res.status(400).json({
                 error: 'Datos de validación inválidos',
-                details: parsed.error.errors
+                details: parsed.error
             });
         }
 

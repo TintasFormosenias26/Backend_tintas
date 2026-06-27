@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 export function validarRol(...rolesPermitidos: string[]) {
   return (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.user.rol)
     if (!req.user) {
       res.status(401).json({ mensaje: "unauthenticated user" });
       return;

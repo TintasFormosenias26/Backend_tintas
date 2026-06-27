@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { BookSaveProgres } from "../../aplication/service/SaveProgress.Service";
 import { BookProgresPort } from "../../domain/ports/saveProgres.Ports";
 import { BookUserProgresRepo } from "../../domain/entities/BookPogress.types";
-import { GetBooksById, GetBooksByIds } from "../../../books/application";
+import { GetBooksById } from "../../../books/application";
 import { PrismaCrudRepository } from "../../../books/infrastructure/mongo";
 import { BookProgresPostgres } from "../../infrastructure/ProgressBookRepoMongo";
 

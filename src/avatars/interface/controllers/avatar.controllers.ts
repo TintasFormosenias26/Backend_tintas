@@ -41,10 +41,11 @@ export const saveAvatar = async (req: MulterRequest, res: Response) => {
 
 export const deleteAvatar = async (req: Request, res: Response) => {
 	try {
-		const id = req.params.id;
+		const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 		const result = await avatarControllers.deleteAvatar(id);
 		if (result === null) {
 			res.status(404).json({ msg: "Avatar no encontrado " });
+			return;
 		}
 		res.status(200).json({ msg: "Avatar eliminado exitosamente" });
 	} catch (error) {
@@ -65,7 +66,7 @@ export const getAvatars = async (req: Request, res: Response) => {
 
 export const updateAvatar = async (req: MulterRequest, res: Response) => {
 	try {
-		const id = req.params.id
+		const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 		const gender = req.body.gender;
 		const file = req.file;
 

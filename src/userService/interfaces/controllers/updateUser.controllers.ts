@@ -61,6 +61,8 @@ export const findAndUpdate = async (
     });
   }
 };
+
+//UPDATE ROL OF USER 
 export const updateRolController = async (req: Request, res: Response) => {
   try {
     const idParam = req.params.id;

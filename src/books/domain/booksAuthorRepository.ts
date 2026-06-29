@@ -1,6 +1,7 @@
 // repositories/booksAuthorRepository.ts
-import { BookSearch } from "../../shared/types/bookTypes/bookTypes";
+
+import { Books } from "./entities/books";
 
 export interface BooksAuthorRepository {
-  getBookByAuthorId(idAuthor: String): Promise<BookSearch[]>;
+  getBookByAuthorId(idAuthor: String): Promise<Books[]>;
 }

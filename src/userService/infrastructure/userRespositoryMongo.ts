@@ -3,7 +3,7 @@ import { prisma } from "../../shared/lib/prisma";
 import { api_response } from "../../shared/types/reponse.types";
 import { UpdateUserDTO, UserType } from "../domain/entities/UserTypes";
 import { AuthUserRepository } from "../domain/ports/AuthUserRepository";
-import { FindAndDeleteRepo, FindByIdRepo } from "../domain/ports/FindAndDeleteRepo";
+import { FindAndDeleteRepo, FindByEmailRepo, FindByIdRepo } from "../domain/ports/FindAndDeleteRepo";
 import { IRegisterRepository } from "../domain/ports/RegisterRepositoryPorts";
 import { UniqueUserName } from "../domain/ports/UniqueUserName";
 import { UpdateRolRepo, UpdateUSerRepository } from "../domain/ports/UpdateUserRepository";
@@ -74,10 +74,6 @@ export class UpdateUserPostgresRepository implements UpdateUSerRepository {
   }
 }
 export class findAndDeleteMongo implements FindAndDeleteRepo {
-
-
-
-
   async deleteUser(id: string): Promise<boolean> {
     await prisma.user.delete({
       where: {
@@ -90,6 +86,15 @@ export class findAndDeleteMongo implements FindAndDeleteRepo {
     return await prisma.user.findMany({
 
     });
+  }
+}
+export class UserFindByEmail implements FindByEmailRepo {
+  async findByEmail(email: string): Promise<UserType | null> {
+    return await prisma.user.findUnique({
+      where: {
+        email: email
+      }
+    })
   }
 }
 export class UserFindById implements FindByIdRepo {

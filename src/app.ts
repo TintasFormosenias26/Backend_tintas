@@ -18,6 +18,7 @@ import bookRouter from "./books/interfaces/router/index";
 import { authRoutes } from "./authService/interfaces/routes/auth.routes";
 import { progressRouter } from "./userPogressBooks/interface/routes/bookProgress.routes";
 import { avaRoutes } from "./avatars/interface/routes/avatar.routes";
+import { searchRouter } from "./books/interfaces/router/search.routes";
 
 // Crear aplicación
 export const app = express();
@@ -68,15 +69,15 @@ app.use(
 );
 
 // Rutas
-app.use(userRoutes);
-app.use(authRoutes);
-app.use(autorRoutes);
-app.use(progressRouter);
-app.use(avaRoutes);
-app.use(bookRouter);
+app.use("/api/user", userRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/author", autorRoutes);
+app.use("/api/progress", progressRouter);
+app.use("/api/avatar", avaRoutes);
+app.use("/api/book", bookRouter);
+app.use("/api", searchRouter);
 
 // Servidor
 app.listen(Number(ENV.PORT), () => {
     console.log(`🚀 Servidor ejecutándose en puerto ${ENV.PORT}`);
-    console.log(`📡 Health check: http://localhost:${ENV.PORT}`);
 });

@@ -8,3 +8,6 @@ export interface FindAndDeleteRepo {
 export interface FindByIdRepo {
     findByID(id: any): Promise<UserType | null>
 }
+export interface FindByEmailRepo {
+    findByEmail(email: string): Promise<UserType | null>
+}

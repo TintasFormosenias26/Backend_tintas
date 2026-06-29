@@ -9,8 +9,8 @@ import { findByProgressIdControllers, findProgressByBook } from "../controllers/
 
 
 progressRouter.post('/SaveProgress', validateJWT, saveBookProgress)
-progressRouter.get('/Progress', validateJWT, findByProgressIdControllers)
-progressRouter.get("/progress/id", validateJWT, findProgressByBook)
-progressRouter.put('/progress', validateJWT, updateProgresBook)
-progressRouter.delete('/progress', validateJWT, deleteProgresBook)
+progressRouter.get('/', validateJWT, findByProgressIdControllers)
+progressRouter.get("/Book/id", validateJWT, findProgressByBook)
+progressRouter.put('/', validateJWT, updateProgresBook)
+progressRouter.delete('/', validateJWT, deleteProgresBook)
 

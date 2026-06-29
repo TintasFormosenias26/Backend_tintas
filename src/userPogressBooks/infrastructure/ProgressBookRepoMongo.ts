@@ -10,21 +10,30 @@ export class BookProgresPostgres {
     ): Promise<BookUserProgresRepo> {
         const progress = await prisma.bookProgress.create({
             data: {
-                user: { connect: { id: datos.idUser } },
-                book: { connect: { id: datos.idBook } },
-                unit: datos.unit?.toUpperCase() as any,
+                user: {
+                    connect: {
+                        id: datos.idUser,
+                    },
+                },
+                book: {
+                    connect: {
+                        id: datos.idBook,
+                    },
+                },
+                unit: datos.unit!.toUpperCase() as any,
                 position: datos.position,
                 percent: datos.percent,
                 total: datos.total,
-                status: datos.status?.toUpperCase() as any,
-                startDate: datos.startDate,
-                finishDate: datos.finishDate,
-
+                status: (datos.status ?? "READING").toUpperCase() as any,
+                startDate: datos.startDate ?? new Date(),
+                finishDate: datos.finishDate ?? null,
             },
         });
 
         return progress as unknown as BookUserProgresRepo;
     }
+
+
 }
 export class UpdateProgressPostgres implements UpdateProgresPort {
     async updateProgres(

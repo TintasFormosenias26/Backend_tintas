@@ -4,12 +4,13 @@ import { validateJWT } from "../../../shared/middlewares/validateJWT";
 import { findAndUpdate, updateRolController } from "../controllers/updateUser.controllers";
 import { deleteUser, findById, findUser } from "../controllers/findAndDelete.controllers";
 import { UserValidation } from "../../application/validations/userValidation";
+import { validarRol } from "../../../shared/middlewares/validateRol";
 
 export const userRoutes = Router();
 
 userRoutes.post("/register", UserValidation, registers);
 userRoutes.put("/updateUser", validateJWT, findAndUpdate);
-userRoutes.get("/users", findUser);
-userRoutes.get("/oneUser", validateJWT, findById);
+userRoutes.get("/", validateJWT, validarRol("SUPERADMIN"), findUser);
+userRoutes.get("/me", validateJWT, findById);
 userRoutes.delete("/delete", validateJWT, deleteUser);
-userRoutes.put("/updateRol/:id", updateRolController)
+userRoutes.put("/updateRol/:id", validateJWT, validarRol("SUPERADMIN"), updateRolController)

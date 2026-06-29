@@ -226,7 +226,7 @@ export class BooksCrudController {
 
       const book = await getByIdService.run(id);
 
-      if (!book) return res.status(200).json({ msg: "libro no encontrado" });
+      if (!book) return res.status(200).json({ msg: "libro no encontrado,buscado por id" });
 
       return res.json(book);
     } catch (error) {

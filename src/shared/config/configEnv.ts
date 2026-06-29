@@ -7,6 +7,7 @@ interface Env {
   API_KEY: string | undefined;
   API_SECRET: string | undefined;
   JWT_SECRET: string | undefined;
+  api_render: string | undefined;
 }
 
 const ENV: Env = {
@@ -14,7 +15,8 @@ const ENV: Env = {
   CLOUD_NAME: process.env.CLOUD_NAME,
   API_KEY: process.env.API_KEY,
   API_SECRET: process.env.API_SECRET,
-  JWT_SECRET: process.env.JWT_SECRET
+  JWT_SECRET: process.env.JWT_SECRET,
+  api_render: process.env.api_render
 };
 
 export default ENV;

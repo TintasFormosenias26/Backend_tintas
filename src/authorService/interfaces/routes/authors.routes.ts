@@ -16,11 +16,11 @@ autorRoutes.post(
   upload.single("avatar"),
   createAuthor
 );
-autorRoutes.get("/author", getAuthorByName);
+autorRoutes.get("/name/", getAuthorByName);
 autorRoutes.get("/AllAuthores", getAllAuthores);
-autorRoutes.get("/author/:id", getAuthorById);
-autorRoutes.delete("/author/:id", validateJWT, validarRol("ADMIN"),
+autorRoutes.get("/:id", getAuthorById);
+autorRoutes.delete("/:id", validateJWT, validarRol("ADMIN"),
   deleteAuthorById);
-autorRoutes.put("/author/:id", validateJWT, validarRol("ADMIN"),
+autorRoutes.put("/:id", validateJWT, validarRol("ADMIN"),
   upload.single("photo"), updataAuthors);
 

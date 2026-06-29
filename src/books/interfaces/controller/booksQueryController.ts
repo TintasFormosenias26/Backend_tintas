@@ -1,151 +1,78 @@
-/*import {
-  GetIntelligenceBook,
-  GetContentBookById,
-  GetBooksByFiltering,
-} from "../../application";
-import { MongoQueryRepository } from "../../infrastructure/mongo";
 import { Request, Response } from "express";
-import { UserModel } from "../../../userService/infrastructure/models/userModels";
-import chalk from "chalk";
-import { separator } from "../../../shared/utils/consoleSeparator";
-import mongoose from "mongoose";
-import { Types } from "mongoose";
-import { token } from "../../../shared/types/IToken";
-import { MongoIndexMetric } from "../../../metrics/infrastructure";
-import { CreateMetric } from "../../../metrics/app";
-import { MetricEventDetails } from "../../../shared/types/metricTypes/metricDetails";
+import { BookSearchType } from "../../domain/entities/bookSearch";
+import { PrismaBookRepository } from "../../infrastructure/mongo/SearchBooksPrisma";
+import { SearchBookService } from "../../application/crud/SearchBooks";
+import { PrismaAuthorRepository } from "../../infrastructure/mongo";
+import { GetBookByAuthor } from "../../application/crud/getBookbyAuthor";
 
-const mongoQueyRepo = new MongoQueryRepository();
 
-const getIntelligenceService = new GetIntelligenceBook(mongoQueyRepo);
-const getContentService = new GetContentBookById(mongoQueyRepo);
-const getForFilteringService = new GetBooksByFiltering(mongoQueyRepo);
 
-const MetricRepo = new MongoIndexMetric();
-const createMetric = new CreateMetric(MetricRepo);
+// Instancias
+const searchBookRepo = new PrismaBookRepository();
+const searchBookService = new SearchBookService(searchBookRepo as any);
 
-export class BooksQueryController {
-  // ✅
-  async getIntelligenceBooks(req: Request, res: Response): Promise<Response> {
-    try {
-      const idUser = req.user.id;
 
-      const user = await UserModel.findById(idUser);
+export const searchBooksController = async (req: Request, res: Response) => {
 
-      if (!user)
-        return res
-          .status(404)
-          .json({ msg: "debes iniciar session en la plataforma para obtener acceso a esta acción" });
+  try {
 
-      const query = decodeURIComponent(req.params.query);
+    const filters = new BookSearchType();
 
-      const books = await getIntelligenceService.run(query.split(" "));
+    filters.title = req.query.title as string;
+    filters.synopsis = req.query.synopsis as string;
+    filters.language = req.query.language as string;
+    filters.genre = req.query.genre as string;
+    filters.level = req.query.level as any;
+    filters.format = req.query.format as string;
+    filters.yearBook = req.query.yearBook as string;
+    filters.authorName = req.query.authorName as string;
 
-      return res.status(200).json(books);
-    } catch (error) {
-      console.log(chalk.yellow("Error en el controlador: getIntelligenceBooks"));
-      console.log(chalk.yellow(separator()));
-      console.log();
-      console.log(error);
-      console.log();
-      console.log(chalk.yellow(separator()));
-      return res.status(500).json({ msg: "Erro inesperado por favor intente de nuevo mas tarde" });
-    }
+    if (req.query.available !== undefined)
+      filters.available = req.query.available === "true";
+
+    if (req.query.anthology !== undefined)
+      filters.anthology = req.query.anthology === "true";
+
+    if (req.query.theme)
+      filters.theme = (req.query.theme as string).split(",");
+
+    if (req.query.subgenre)
+      filters.subgenre = (req.query.subgenre as string).split(",");
+    console.log(filters)
+    const books = await searchBookService.search(filters);
+
+
+    res.status(200).json(books);
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message: "Internal server error"
+    });
+
   }
 
-  // ✅
-  async getContentBookById(req: Request, res: Response): Promise<Response> {
-    try {
-      const id = req.params.id;
+};
+const getBookByAuthorPrisma = new PrismaAuthorRepository()
+const getBookAuthorServi = new GetBookByAuthor(getBookByAuthorPrisma)
 
-      if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({ msg: "ID inválida" });
+export const getBookByAuthor = async (req: Request, res: Response) => {
+  try {
+    const author = Array.isArray(req.params.author) ? req.params.author[0] : req.params.author;
+    const result = await getBookAuthorServi.getByAuthor(author)
 
-      const idValid = new mongoose.Types.ObjectId(id);
-
-      const urlContentBook = await getContentService.run(idValid);
-
-      if (!urlContentBook) return res.status(200).json({ msg: "Libro no encontrado" });
-
-      return res.status(200).json({ urlContentBook });
-    } catch (error) {
-      console.log(chalk.yellow("Error en el controlador: getContentBookById"));
-      console.log(chalk.yellow(separator()));
-      console.log();
-      console.log(error);
-      console.log();
-      console.log(chalk.yellow(separator()));
-      return res.status(500).json({ msg: "Erro inesperado por favor intente de nuevo mas tarde" });
+    if (!result) {
+      res.status(404).json({ msg: 'books not found' })
     }
-  }
+    res.status(200).json({ result });
+  } catch (error) {
+    console.error(error);
 
-  // ✅
-  async getBooksByFiltering(req: Request, res: Response): Promise<Response> {
-    const idUser = req.user.id;
-    if (!Types.ObjectId.isValid(idUser)) return res.status(400).json({ msg: "credenciales de usuairo invalida" });
+    res.status(500).json({
+      message: "Internal server error"
+    });
 
-    const idValid = new Types.ObjectId(idUser as string);
-
-    const user = await UserModel.findById(idValid);
-
-    const plainUser = user?.toObject();
-
-    const {
-      theme,
-      subgenre,
-      yearBook,
-      genre,
-      format,
-      idAuthor,
-    }: { theme: string[]; subgenre: string[]; yearBook: string[]; genre: string[]; format: string[]; idAuthor: string[] } = req.body;
-    const level = plainUser?.nivel;
-    const books = await getForFilteringService.run(theme, subgenre, yearBook, genre, format, idAuthor, level);
-
-    if (subgenre.length !== 0) {
-      for (let i = 0; i < subgenre.length; i++) {
-        const data: MetricEventDetails = {
-          idBook: undefined,
-          idAuthor: undefined,
-          subgenre: subgenre[i],
-          format: undefined,
-        };
-        await createMetric.exec(data);
-      }
-    }
-
-    if (format.length !== 0) {
-      for (let i = 0; i < format.length; i++) {
-        const data: MetricEventDetails = {
-          idBook: undefined,
-          idAuthor: undefined,
-          subgenre: undefined,
-          format: format[i],
-        };
-        await createMetric.exec(data);
-      }
-    }
-
-    return res.status(200).json(books);
-  }
-
-  // ✅
-  async getBookByProgress(req: Request, res: Response): Promise<Response> {
-    try {
-      const token: token = req.user;
-
-      const idValid = new Types.ObjectId(token.id);
-
-      const progress: any = await mongoQueyRepo.getBooksByUserProgress(idValid);
-
-      return res.status(200).json(progress);
-    } catch (error) {
-      console.log(chalk.yellow("Error en el controlador: getBookByProgress"));
-      console.log(chalk.yellow(separator()));
-      console.log();
-      console.log(error);
-      console.log();
-      console.log(chalk.yellow(separator()));
-      return res.status(500).json({ msg: "Erro inesperado por favor intente de nuevo mas tarde" });
-    }
   }
 }
-*/

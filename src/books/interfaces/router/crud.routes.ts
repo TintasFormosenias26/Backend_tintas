@@ -7,12 +7,13 @@ import { bookSchema } from "../../../shared/validations/book.validations";
 import { validateJWT } from "../../../shared/middlewares/validateJWT";
 import { validarRol } from "../../../shared/middlewares/validateRol";
 import { validateLevel } from "../../../shared/middlewares/validateLevel";
+import { searchBooksController } from "../controller/booksQueryController";
 
 const crudRouter = Router();
 const controller = new BooksCrudController();
 
 crudRouter.post(
-     "/books",
+     "/saveBook",
      validateJWT, validarRol("ADMIN"),
      upload.fields([{ name: "file", maxCount: 1 }, { name: "img", maxCount: 1 }]),
      parseFormData,
@@ -21,7 +22,7 @@ crudRouter.post(
 );
 
 crudRouter.patch(
-     "/book/:id",
+     "/updateBook/:id",
      validateJWT, validarRol("ADMIN"),
 
      upload.fields([{ name: "file", maxCount: 1 }, { name: "img", maxCount: 1 }]),
@@ -30,7 +31,7 @@ crudRouter.patch(
 );
 
 crudRouter.delete(
-     "/book/:id",
+     "/:id",
      validateJWT, validarRol("ADMIN"),
 
      (req: Request, res: Response) => { controller.deleteBook(req, res) }
@@ -38,10 +39,10 @@ crudRouter.delete(
 
 );
 
-crudRouter.get("/books", validateJWT, (req: Request, res: Response) => { controller.getAllBook(req, res) }
+crudRouter.get("/", validateJWT, (req: Request, res: Response) => { controller.getAllBook(req, res) }
 );
 
-crudRouter.get("/book/:id", (req: Request, res: Response) => { controller.getBookById(req, res) }
+crudRouter.get("/:id", (req: Request, res: Response) => { controller.getBookById(req, res) }
 );
 
 

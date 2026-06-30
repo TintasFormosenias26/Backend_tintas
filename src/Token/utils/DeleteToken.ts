@@ -1,7 +1,7 @@
-import { DeleteToken } from "../MongoRepository/TokenMongo";
+import { DeleteTokenPrisma } from "../MongoRepository/TokenMongo";
 
 export function programarEliminacionDeToken(token: string, delayMs: number = 3600000) {
-    const deleteService = new DeleteToken();
+    const deleteService = new DeleteTokenPrisma();
 
     setTimeout(async () => {
         try {

@@ -11,7 +11,7 @@ const findByEmail = new UserFindByEmail()
 
 const resetPassword = new ResetPassword(findByEmail, userRespositoryMongo)
 
-const ResetPasswordController = async (req: Request, res: Response) => {
+export const ResetPasswordController = async (req: Request, res: Response) => {
     try {
         const { token, password } = req.body;
 

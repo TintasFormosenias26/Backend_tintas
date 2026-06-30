@@ -5,5 +5,5 @@ dist
 uploads/**
 uploads
 src/prisma/generated
-node_modules
+
 docker-compose

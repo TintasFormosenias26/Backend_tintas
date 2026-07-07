@@ -14,8 +14,8 @@ const authorService = new CreateAuthor(saveAuthorMongo, findAuthorRepo);
 
 export const createAuthor = async (req: Request, res: Response) => {
   try {
-    if (typeof req.body.itActivo === "string") {
-      req.body.itActivo = req.body.itActivo === "true" || req.body.itActivo === "1";
+    if (typeof req.body.iSActivo === "string") {
+      req.body.iSActivo = req.body.iSActivo === "true" || req.body.iSActivo === "1";
     }
     const author: Author = req.body;
     const file = req.file;

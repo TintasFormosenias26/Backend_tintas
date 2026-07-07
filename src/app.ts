@@ -1,4 +1,5 @@
 import express from "express";
+import type { NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -8,6 +9,9 @@ import fs from "fs";
 import path from "path";
 import cookies from "cookie-parser";
 import session from "express-session";
+import swaggerUi from "swagger-ui-express";
+import type { JsonObject } from "swagger-ui-express";
+import YAML from "yamljs";
 
 import ENV from "./shared/config/configEnv";
 
@@ -25,6 +29,51 @@ export const app = express();
 
 // Directorio de uploads
 const fileUpload = path.join(process.cwd(), "uploads");
+const openapiPath = path.join(process.cwd(), "openapi.yaml");
+const swaggerDocument = YAML.load(openapiPath) as JsonObject;
+const isProduction = ENV.NODE_ENV === "production";
+const shouldExposeSwagger =
+    !isProduction || Boolean(ENV.SWAGGER_USER && ENV.SWAGGER_PASSWORD);
+
+const swaggerAuth = (req: Request, res: Response, next: NextFunction) => {
+    if (!isProduction) {
+        return next();
+    }
+
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+        res.setHeader("WWW-Authenticate", "Basic");
+        return res.status(401).send("Authentication required");
+    }
+
+    const [scheme, encodedCredentials] = authHeader.split(" ");
+
+    if (scheme !== "Basic" || !encodedCredentials) {
+        res.setHeader("WWW-Authenticate", "Basic");
+        return res.status(401).send("Authentication required");
+    }
+
+    try {
+        const credentials = Buffer.from(encodedCredentials, "base64").toString("utf8");
+        const separatorIndex = credentials.indexOf(":");
+        const user = credentials.slice(0, separatorIndex);
+        const password = credentials.slice(separatorIndex + 1);
+        const validCredentials =
+            separatorIndex > -1 &&
+            user === ENV.SWAGGER_USER &&
+            password === ENV.SWAGGER_PASSWORD;
+
+        if (validCredentials) {
+            return next();
+        }
+    } catch {
+        // Invalid Basic Auth header.
+    }
+
+    res.setHeader("WWW-Authenticate", "Basic");
+    return res.status(401).send("Authentication required");
+};
 
 // Crear carpeta uploads si no existe
 if (!fs.existsSync(fileUpload)) {
@@ -42,6 +91,7 @@ app.use(
             "http://localhost:5500",
             "http://localhost:3402",
             "http://localhost:5173",
+            "http://localhost:3000",
         ],
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
         credentials: true,
@@ -67,6 +117,25 @@ app.use(
         },
     })
 );
+
+if (shouldExposeSwagger) {
+    app.use(
+        "/api/docs",
+        swaggerAuth,
+        swaggerUi.serve,
+        swaggerUi.setup(swaggerDocument, {
+            customSiteTitle: "TINTAS API Docs",
+        })
+    );
+
+    app.get("/openapi.yaml", swaggerAuth, (req, res) => {
+        res.sendFile(openapiPath);
+    });
+
+    app.get("/openapi.json", swaggerAuth, (req, res) => {
+        res.json(swaggerDocument);
+    });
+}
 
 // Rutas
 app.use("/api/user", userRoutes);

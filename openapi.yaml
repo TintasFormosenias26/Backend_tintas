@@ -1,0 +1,1692 @@
+openapi: 3.0.3
+info:
+  title: TINTAS Backend API
+  version: 1.0.0
+  description: |
+    Documentacion OpenAPI generada desde las rutas y controladores del backend.
+    Se puede pegar directamente en https://editor.swagger.io/.
+
+    Autenticacion: varias rutas usan JWT por cookie `token` o header
+    `Authorization: Bearer <token>`.
+servers:
+  - url: http://localhost:3000
+    description: Local
+
+tags:
+  - name: Test
+  - name: Auth
+  - name: Users
+  - name: Authors
+  - name: Avatars
+  - name: Books
+  - name: Search
+  - name: Progress
+
+security:
+  - bearerAuth: []
+  - cookieAuth: []
+
+paths:
+  /test:
+    get:
+      tags: [Test]
+      summary: Health check
+      security: []
+      responses:
+        "200":
+          description: API activa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+
+  /api/auth/login:
+    post:
+      tags: [Auth]
+      summary: Iniciar sesion
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Autenticacion correcta. Tambien setea cookie `token`.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Authentication successful
+                  token:
+                    type: string
+        "400":
+          $ref: "#/components/responses/BadCredentials"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/auth/getUser:
+    get:
+      tags: [Auth]
+      summary: Obtener datos del usuario autenticado desde el JWT
+      responses:
+        "200":
+          description: Datos cargados por el middleware validateJWT
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: data
+                  user_data:
+                    $ref: "#/components/schemas/JwtUser"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/auth/logout:
+    post:
+      tags: [Auth]
+      summary: Cerrar sesion
+      responses:
+        "200":
+          description: Sesion cerrada y cookies limpiadas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Session closed successfully
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/auth/sendEmail:
+    post:
+      tags: [Auth]
+      summary: Enviar email de recuperacion de password
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: juan@example.com
+      responses:
+        "200":
+          description: Email procesado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Si el email existe, recibiras un codigo de recuperacion
+        "400":
+          description: Email faltante o no encontrado
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/ErrorResponse"
+                  - type: object
+                    properties:
+                      msg:
+                        type: string
+                        example: the email is not found
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/auth/resetPassword:
+    post:
+      tags: [Auth]
+      summary: Restablecer password con token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, password]
+              properties:
+                token:
+                  type: string
+                password:
+                  type: string
+                  minLength: 8
+                  example: securePassword123
+      responses:
+        "200":
+          description: Password actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: password update success
+        "301":
+          description: Token incorrecto
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/user/register:
+    post:
+      tags: [Users]
+      summary: Registrar usuario
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserRegisterRequest"
+      responses:
+        "200":
+          description: Usuario creado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: user created successful
+                  result:
+                    $ref: "#/components/schemas/User"
+        "400":
+          description: Error de validacion
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+        "409":
+          description: Usuario o email existente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiFailure"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/user/updateUser:
+    put:
+      tags: [Users]
+      summary: Actualizar usuario autenticado
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdateRequest"
+      responses:
+        "200":
+          description: Usuario actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: user update successful
+                  data:
+                    $ref: "#/components/schemas/User"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/user:
+    get:
+      tags: [Users]
+      summary: Listar usuarios
+      description: Requiere JWT y rol SUPERADMIN.
+      responses:
+        "200":
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: the users
+                  users:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/User"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/user/me:
+    get:
+      tags: [Users]
+      summary: Obtener usuario autenticado
+      responses:
+        "200":
+          description: Usuario encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: user
+                  result:
+                    $ref: "#/components/schemas/User"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "302":
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/user/delete:
+    delete:
+      tags: [Users]
+      summary: Eliminar usuario autenticado
+      responses:
+        "200":
+          description: Usuario eliminado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "302":
+          description: Usuario no eliminado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/user/updateRol/{id}:
+    put:
+      tags: [Users]
+      summary: Actualizar rol de usuario
+      description: Requiere JWT y rol SUPERADMIN.
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [rol]
+              properties:
+                rol:
+                  $ref: "#/components/schemas/Role"
+      responses:
+        "200":
+          description: Rol actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: role update successful
+                  data:
+                    $ref: "#/components/schemas/User"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/author/author/create:
+    post:
+      tags: [Authors]
+      summary: Crear autor
+      description: Requiere JWT y rol ADMIN. Usa multipart/form-data con archivo `avatar`.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/AuthorCreateMultipart"
+      responses:
+        "201":
+          description: Autor creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Error de validacion
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: El autor ya existe
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/author/name/:
+    get:
+      tags: [Authors]
+      summary: Buscar autor por nombre
+      description: El controlador lee `name` desde el body aunque el metodo sea GET.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Jorge Luis Borges
+      responses:
+        "200":
+          description: Autor encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Author"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/author/AllAuthores:
+    get:
+      tags: [Authors]
+      summary: Listar autores
+      security: []
+      responses:
+        "200":
+          description: Lista de autores
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: the authors
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Author"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/author/{id}:
+    get:
+      tags: [Authors]
+      summary: Obtener autor por id
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Autor encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Author"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    put:
+      tags: [Authors]
+      summary: Actualizar autor
+      description: Requiere JWT y rol ADMIN. Si se envia imagen, el campo de archivo es `photo`.
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/AuthorUpdateMultipart"
+      responses:
+        "200":
+          description: Autor actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: author update successful
+                  result:
+                    $ref: "#/components/schemas/Author"
+        "400":
+          description: Error de validacion
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    delete:
+      tags: [Authors]
+      summary: Eliminar autor
+      description: Requiere JWT y rol ADMIN.
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Autor eliminado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/avatar/saveAvatar:
+    post:
+      tags: [Avatars]
+      summary: Crear avatar
+      description: Requiere JWT y rol Admin segun el codigo. Usa multipart/form-data con archivo `avatars`.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/AvatarMultipart"
+      responses:
+        "201":
+          description: Avatar creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "304":
+          description: Avatar no guardado
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/avatar/getAvatars:
+    get:
+      tags: [Avatars]
+      summary: Listar avatares
+      security: []
+      responses:
+        "200":
+          description: Lista de avatares
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Avatar"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/avatar/updateAvatar/{id}:
+    put:
+      tags: [Avatars]
+      summary: Actualizar avatar
+      description: Requiere JWT y rol Admin segun el codigo. El archivo `avatars` es opcional.
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/AvatarMultipart"
+      responses:
+        "200":
+          description: Avatar actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Avatar actualizado exitosamente
+                  avatar:
+                    $ref: "#/components/schemas/Avatar"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/avatar/deleteAvatar/{id}:
+    delete:
+      tags: [Avatars]
+      summary: Eliminar avatar
+      description: Requiere JWT y rol Admin segun el codigo.
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Avatar eliminado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/book/saveBook:
+    post:
+      tags: [Books]
+      summary: Crear libro
+      description: |
+        Requiere JWT y rol ADMIN. Usa multipart/form-data.
+        `authorIds`, `theme` y `subgenre` pueden enviarse como arrays o como string JSON.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/BookCreateMultipart"
+      responses:
+        "200":
+          description: Libro subido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/book:
+    get:
+      tags: [Books]
+      summary: Listar libros
+      description: Requiere JWT. Si el usuario tiene nivel, devuelve libros habilitados para ese nivel.
+      responses:
+        "200":
+          description: Lista de libros
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Book"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/book/{id}:
+    get:
+      tags: [Books]
+      summary: Obtener libro por id
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Libro encontrado o mensaje si no existe
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Book"
+                  - $ref: "#/components/schemas/MessageResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    delete:
+      tags: [Books]
+      summary: Eliminar libro
+      description: Requiere JWT y rol ADMIN.
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Libro eliminado o no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/book/updateBook/{id}:
+    patch:
+      tags: [Books]
+      summary: Actualizar libro
+      description: |
+        Requiere JWT y rol ADMIN. Usa multipart/form-data.
+        Los archivos `file` e `img` son opcionales. `authorIds` y `subgenre`
+        pueden enviarse como arrays o como string JSON.
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/BookUpdateMultipart"
+      responses:
+        "200":
+          description: Libro actualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/search:
+    get:
+      tags: [Search]
+      summary: Buscar libros
+      security: []
+      parameters:
+        - name: title
+          in: query
+          schema:
+            type: string
+        - name: synopsis
+          in: query
+          schema:
+            type: string
+        - name: language
+          in: query
+          schema:
+            type: string
+            example: es
+        - name: genre
+          in: query
+          schema:
+            type: string
+        - name: level
+          in: query
+          schema:
+            $ref: "#/components/schemas/Level"
+        - name: format
+          in: query
+          schema:
+            type: string
+        - name: yearBook
+          in: query
+          schema:
+            type: string
+        - name: authorName
+          in: query
+          schema:
+            type: string
+        - name: available
+          in: query
+          schema:
+            type: boolean
+        - name: anthology
+          in: query
+          schema:
+            type: boolean
+        - name: theme
+          in: query
+          description: Valores separados por coma.
+          schema:
+            type: string
+            example: aventura,fantasia
+        - name: subgenre
+          in: query
+          description: Valores separados por coma.
+          schema:
+            type: string
+            example: cuento,novela
+      responses:
+        "200":
+          description: Resultados de busqueda
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BookPrisma"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/{author}:
+    get:
+      tags: [Search]
+      summary: Buscar libros por id de autor
+      description: Esta ruta captura cualquier primer segmento bajo `/api` que no coincida antes con otra ruta.
+      security: []
+      parameters:
+        - name: author
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id del autor.
+      responses:
+        "200":
+          description: Libros del autor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/BookPrisma"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/progress/SaveProgress:
+    post:
+      tags: [Progress]
+      summary: Guardar progreso de lectura
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProgressCreateRequest"
+      responses:
+        "201":
+          description: Progreso guardado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: The book-progress was saved successfully
+                  data:
+                    $ref: "#/components/schemas/BookProgress"
+        "304":
+          description: No guardado
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/progress:
+    get:
+      tags: [Progress]
+      summary: Obtener progresos del usuario autenticado
+      description: El controlador usa `req.user.id`; si no existe, intenta `idUser` desde body.
+      responses:
+        "200":
+          description: Progresos del usuario
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/BookProgressExpanded"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    put:
+      tags: [Progress]
+      summary: Actualizar progreso
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProgressUpdateRequest"
+      responses:
+        "200":
+          description: Progreso actualizado, o eliminado si la actualizacion no devuelve resultado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Progress updated successfully.
+                  result:
+                    $ref: "#/components/schemas/BookProgress"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    delete:
+      tags: [Progress]
+      summary: Eliminar progreso
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id]
+              properties:
+                id:
+                  type: string
+      responses:
+        "200":
+          description: Progreso eliminado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/progress/Book/id:
+    get:
+      tags: [Progress]
+      summary: Obtener progreso por libro
+      description: |
+        Ruta actual en codigo: `/Book/id` literal. El controlador intenta leer
+        `req.params.id`, por lo que probablemente deberia ser `/Book/:id`.
+      responses:
+        "200":
+          description: Progreso del libro para el usuario autenticado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/BookProgressExpanded"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
+
+  parameters:
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+
+  responses:
+    BadCredentials:
+      description: Credenciales incorrectas
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MessageResponse"
+    BadRequest:
+      description: Solicitud invalida
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MessageResponse"
+    Unauthorized:
+      description: No autenticado o token invalido
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MessageResponse"
+    Forbidden:
+      description: Sin permisos suficientes
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MessageResponse"
+    NotFound:
+      description: Recurso no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MessageResponse"
+    InternalError:
+      description: Error interno del servidor
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
+  schemas:
+    Role:
+      type: string
+      enum: [USER, ADMIN, SUPERADMIN]
+
+    Level:
+      type: string
+      enum: [INICIAL, SECUNDARIO, JOVEN_ADULTO, ADULTO_MAYOR]
+
+    ProgressUnit:
+      type: string
+      enum: [page, pages, second, seconds]
+      description: En base de datos se guarda en mayusculas.
+
+    ProgressStatus:
+      type: string
+      enum: [reading, finished, pending, abandoned]
+      description: En base de datos solo existen READING, FINISHED y PENDING.
+
+    MessageResponse:
+      type: object
+      properties:
+        msg:
+          type: string
+          example: operation successful
+        message:
+          type: string
+          example: operation successful
+
+    ErrorResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        msg:
+          type: string
+        message:
+          type: string
+        error:
+          nullable: true
+
+    ApiFailure:
+      type: object
+      additionalProperties: true
+      properties:
+        success:
+          type: boolean
+          example: false
+        status:
+          type: integer
+          example: 409
+        message:
+          type: string
+
+    ValidationError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Datos de validacion invalidos
+        details:
+          type: object
+          additionalProperties: true
+
+    AuthorValidationError:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Datos de autor invalidos
+        status:
+          type: integer
+          example: 400
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          example: juan@example.com
+        password:
+          type: string
+          format: password
+          example: securePassword123
+
+    PreferenceInput:
+      type: object
+      properties:
+        category:
+          type: array
+          minItems: 1
+          items:
+            type: string
+          example: [fantasia, ciencia ficcion]
+      description: El schema Zod valida `category`; el modelo Prisma usa `categories` y `formats`.
+
+    UserRegisterRequest:
+      type: object
+      required: [name, lastName, userName, birthDate, email, password]
+      properties:
+        name:
+          type: string
+          example: Juan
+        lastName:
+          type: string
+          example: Perez
+        userName:
+          type: string
+          minLength: 5
+          example: juanperez
+        birthDate:
+          type: string
+          format: date-time
+          example: "1995-06-15T00:00:00.000Z"
+        email:
+          type: string
+          format: email
+          example: juan@example.com
+        password:
+          type: string
+          minLength: 8
+          example: securePassword123
+        level:
+          $ref: "#/components/schemas/Level"
+        avatar:
+          type: string
+          description: URL o id de avatar, requerido por persistencia aunque no por Zod.
+        preference:
+          $ref: "#/components/schemas/PreferenceInput"
+
+    UserUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        lastName:
+          type: string
+        userName:
+          type: string
+          minLength: 5
+        birthDate:
+          type: string
+          format: date-time
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+        nivel:
+          type: string
+        imgLevel:
+          type: string
+          nullable: true
+        point:
+          type: integer
+        avatar:
+          type: string
+        preference:
+          $ref: "#/components/schemas/PreferenceInput"
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        lastName:
+          type: string
+        userName:
+          type: string
+        birthDate:
+          type: string
+          format: date-time
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          description: Hash de password.
+        nivel:
+          type: string
+          nullable: true
+        imgLevel:
+          type: string
+          nullable: true
+        level:
+          $ref: "#/components/schemas/Level"
+        rol:
+          $ref: "#/components/schemas/Role"
+        point:
+          type: integer
+        avatar:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    JwtUser:
+      type: object
+      additionalProperties: true
+      properties:
+        id:
+          type: string
+        rol:
+          $ref: "#/components/schemas/Role"
+
+    Author:
+      type: object
+      properties:
+        id:
+          type: string
+        fullName:
+          type: string
+        biography:
+          type: string
+        profession:
+          type: string
+        birthdate:
+          type: string
+          format: date-time
+        birthplace:
+          type: string
+        nationality:
+          type: string
+        isActivo:
+          type: boolean
+        photoIdImage:
+          type: string
+        photoUrl:
+          type: string
+          format: uri
+
+    AuthorCreateMultipart:
+      type: object
+      required: [fullName, biography, profession, birthdate, birthplace, nationality, avatar]
+      properties:
+        fullName:
+          type: string
+          maxLength: 100
+          example: Jorge Luis Borges
+        biography:
+          type: string
+          minLength: 10
+        profession:
+          type: string
+          maxLength: 100
+          example: Escritor
+        birthdate:
+          type: string
+          format: date
+          example: "1899-08-24"
+        birthplace:
+          type: string
+          maxLength: 100
+          example: Buenos Aires
+        nationality:
+          type: string
+          maxLength: 50
+          example: Argentina
+        isActivo:
+          type: boolean
+          example: true
+        avatar:
+          type: string
+          format: binary
+
+    AuthorUpdateMultipart:
+      type: object
+      properties:
+        fullName:
+          type: string
+        biography:
+          type: string
+          minLength: 10
+        profession:
+          type: string
+        birthdate:
+          type: string
+          format: date
+        birthplace:
+          type: string
+          description: El schema de update actual no lo valida, pero la entidad lo soporta.
+        nationality:
+          type: string
+        isActivo:
+          type: boolean
+        photo:
+          type: string
+          format: binary
+
+    Avatar:
+      type: object
+      properties:
+        id:
+          type: string
+        idImage:
+          type: string
+        urlSecura:
+          type: string
+          format: uri
+        gender:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    AvatarMultipart:
+      type: object
+      required: [gender]
+      properties:
+        gender:
+          type: string
+          example: female
+        avatars:
+          type: string
+          format: binary
+
+    ContentBook:
+      type: object
+      properties:
+        idContentBook:
+          type: string
+        url_secura:
+          type: string
+          format: uri
+
+    BookCover:
+      type: object
+      properties:
+        idBookCoverImage:
+          type: string
+        url_secura:
+          type: string
+          format: uri
+
+    Book:
+      type: object
+      properties:
+        id:
+          type: string
+        _id:
+          nullable: true
+        __v:
+          type: integer
+          example: 0
+        title:
+          type: string
+        author:
+          type: array
+          items:
+            $ref: "#/components/schemas/Author"
+        summary:
+          type: string
+        subgenre:
+          type: array
+          items:
+            type: string
+        language:
+          type: string
+        available:
+          type: boolean
+        yearBook:
+          type: string
+        synopsis:
+          type: string
+        theme:
+          type: array
+          items:
+            type: string
+        genre:
+          type: string
+        level:
+          $ref: "#/components/schemas/Level"
+        format:
+          type: string
+        totalPages:
+          type: integer
+          nullable: true
+        duration:
+          type: integer
+          nullable: true
+        anthology:
+          type: boolean
+        fileExtension:
+          type: string
+        contentBook:
+          $ref: "#/components/schemas/ContentBook"
+        bookCoverImage:
+          $ref: "#/components/schemas/BookCover"
+
+    BookPrisma:
+      allOf:
+        - $ref: "#/components/schemas/Book"
+        - type: object
+          properties:
+            authors:
+              type: array
+              items:
+                $ref: "#/components/schemas/Author"
+            contentBookId:
+              type: string
+            contentBookUrl:
+              type: string
+            coverImageId:
+              type: string
+            coverImageUrl:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+
+    BookCreateMultipart:
+      type: object
+      required: [title, summary, language, genre, level, format, file, img]
+      properties:
+        title:
+          type: string
+          maxLength: 100
+        summary:
+          type: string
+          maxLength: 2500
+        synopsis:
+          type: string
+        language:
+          type: string
+          maxLength: 3
+          example: es
+        available:
+          type: boolean
+          default: true
+        yearBook:
+          type: string
+          example: "2024"
+        genre:
+          type: string
+          maxLength: 50
+        level:
+          $ref: "#/components/schemas/Level"
+        format:
+          type: string
+          maxLength: 20
+          example: ebook
+        fileExtension:
+          type: string
+          example: pdf
+        totalPages:
+          type: integer
+          nullable: true
+        duration:
+          type: integer
+          nullable: true
+          description: Duracion en segundos si aplica.
+        anthology:
+          type: boolean
+          default: false
+        authorIds:
+          type: array
+          items:
+            type: string
+        theme:
+          type: array
+          items:
+            type: string
+        subgenre:
+          type: array
+          items:
+            type: string
+        file:
+          type: string
+          format: binary
+          description: Archivo del libro.
+        img:
+          type: string
+          format: binary
+          description: Imagen de portada.
+
+    BookUpdateMultipart:
+      type: object
+      properties:
+        title:
+          type: string
+        summary:
+          type: string
+        synopsis:
+          type: string
+        language:
+          type: string
+        available:
+          type: boolean
+        yearBook:
+          type: string
+        genre:
+          type: string
+        level:
+          $ref: "#/components/schemas/Level"
+        format:
+          type: string
+        fileExtension:
+          type: string
+        totalPages:
+          type: integer
+        duration:
+          type: integer
+        anthology:
+          type: boolean
+        authorIds:
+          type: array
+          items:
+            type: string
+        theme:
+          type: array
+          items:
+            type: string
+        subgenre:
+          type: array
+          items:
+            type: string
+        file:
+          type: string
+          format: binary
+        img:
+          type: string
+          format: binary
+
+    ProgressCreateRequest:
+      type: object
+      required: [idBook, unit, position, percent, total]
+      properties:
+        idBook:
+          type: string
+        unit:
+          $ref: "#/components/schemas/ProgressUnit"
+        position:
+          type: integer
+          example: 15
+        percent:
+          type: number
+          format: float
+          example: 23.5
+        total:
+          type: integer
+          example: 120
+        status:
+          $ref: "#/components/schemas/ProgressStatus"
+        startDate:
+          type: string
+          format: date-time
+        finishDate:
+          type: string
+          format: date-time
+          nullable: true
+
+    ProgressUpdateRequest:
+      allOf:
+        - type: object
+          required: [id]
+          properties:
+            id:
+              type: string
+        - $ref: "#/components/schemas/ProgressCreateRequest"
+
+    BookProgress:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        bookId:
+          type: string
+        unit:
+          type: string
+          enum: [PAGE, PAGES, SECOND, SECONDS]
+        position:
+          type: integer
+        percent:
+          type: number
+          format: float
+        total:
+          type: integer
+        status:
+          type: string
+          enum: [READING, FINISHED, PENDING]
+        startDate:
+          type: string
+          format: date-time
+        finishDate:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    BookProgressExpanded:
+      allOf:
+        - $ref: "#/components/schemas/BookProgress"
+        - type: object
+          properties:
+            user:
+              $ref: "#/components/schemas/User"
+            book:
+              $ref: "#/components/schemas/BookPrisma"

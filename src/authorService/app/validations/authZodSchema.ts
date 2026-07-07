@@ -1,87 +1,86 @@
-import { z } from 'zod';
+import { z } from "zod";
+
+const authorNameRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ.\s]+$/;
+
+const birthdateSchema = z.union([
+  z
+    .string()
+    .min(1, { message: "La fecha de nacimiento es obligatoria." })
+    .regex(/^\d{4}-\d{2}-\d{2}$/, {
+      message: "La fecha debe tener el formato YYYY-MM-DD.",
+    })
+    .refine((value) => !Number.isNaN(Date.parse(value)), {
+      message: "La fecha no es valida.",
+    })
+    .refine((value) => new Date(value) <= new Date(), {
+      message: "La fecha de nacimiento no puede ser futura.",
+    }),
+  z.date().refine((value) => value <= new Date(), {
+    message: "La fecha de nacimiento no puede ser futura.",
+  }),
+]);
 
 export const AuthorZodSchema = z.object({
-    fullName: z.string()
-        .min(1, { message: "El nombre completo es requerido" })
-        .max(100, { message: "El nombre completo no puede exceder 100 caracteres" })
-        .regex(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, { message: "El nombre solo puede contener letras y espacios" }),
+  fullName: z
+    .string()
+    .min(2, { message: "El nombre completo debe tener al menos 2 caracteres." })
+    .max(100, { message: "El nombre completo no puede exceder 100 caracteres." })
+    .regex(authorNameRegex, { message: "El nombre solo puede contener letras, puntos y espacios." }),
 
-    biography: z.string()
-        .min(10, { message: "La biografía debe tener al menos 10 caracteres" })
-        .max(2000, { message: "La biografía no puede exceder 2000 caracteres" }),
+  biography: z
+    .string()
+    .min(10, { message: "La biografia debe tener al menos 10 caracteres." })
+    .max(2000, { message: "La biografia no puede exceder 2000 caracteres." }),
 
-    profession: z.string()
-        .min(1, { message: "La profesión es requerida" })
-        .max(100, { message: "La profesión no puede exceder 100 caracteres" }),
+  profession: z
+    .string()
+    .min(2, { message: "La profesion debe tener al menos 2 caracteres." })
+    .max(100, { message: "La profesion no puede exceder 100 caracteres." }),
 
-    birthdate: z.union([
-        z.string()
-            .regex(/^\d{4}-\d{2}-\d{2}$/, {
-                message: "La fecha debe tener el formato YYYY-MM-DD"
-            })
-            .refine((val) => !isNaN(Date.parse(val)), {
-                message: "La fecha no es válida"
-            })
-            .refine((val) => new Date(val) <= new Date(), {
-                message: "La fecha de nacimiento no puede ser futura"
-            }),
-        z.date()
-            .refine((val) => val <= new Date(), {
-                message: "La fecha de nacimiento no puede ser futura"
-            })
-    ]),
+  birthdate: birthdateSchema,
 
-    birthplace: z.string()
-        .min(1, { message: "El lugar de nacimiento es requerido" })
-        .max(100, { message: "El lugar de nacimiento no puede exceder 100 caracteres" }),
+  birthplace: z
+    .string()
+    .min(2, { message: "El lugar debe tener al menos 2 caracteres." })
+    .max(100, { message: "El lugar no puede exceder 100 caracteres." }),
 
-    nationality: z.string()
-        .min(1, { message: "La nacionalidad es requerida" })
-        .max(50, { message: "La nacionalidad no puede exceder 50 caracteres" }),
-
-
-
+  nationality: z
+    .string()
+    .min(2, { message: "La nacionalidad debe tener al menos 2 caracteres." })
+    .max(50, { message: "La nacionalidad no puede exceder 50 caracteres." }),
 });
 
-// Tipo TypeScript
 export const updataAuthorsZodSchema = z.object({
-    fullName: z.string()
-        .min(1, { message: "El nombre completo es requerido" })
-        .max(100, { message: "El nombre completo no puede exceder 100 caracteres" })
-        .regex(/^[a.-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, { message: "El nombre solo puede contener letras y espacios" })
-        .optional(),
+  fullName: z
+    .string()
+    .min(2, { message: "El nombre completo debe tener al menos 2 caracteres." })
+    .max(100, { message: "El nombre completo no puede exceder 100 caracteres." })
+    .regex(authorNameRegex, { message: "El nombre solo puede contener letras, puntos y espacios." })
+    .optional(),
 
-    biography: z.string()
-        .min(10, { message: "La biografía debe tener al menos 10 caracteres" })
-        .max(20000, { message: "La biografía no puede exceder 2000 caracteres" })
-        .optional(),
+  biography: z
+    .string()
+    .min(10, { message: "La biografia debe tener al menos 10 caracteres." })
+    .max(2000, { message: "La biografia no puede exceder 2000 caracteres." })
+    .optional(),
 
-    profession: z.string()
-        .min(1, { message: "La profesión es requerida" })
-        .max(100, { message: "La profesión no puede exceder 100 caracteres" })
-        .optional(),
+  profession: z
+    .string()
+    .min(2, { message: "La profesion debe tener al menos 2 caracteres." })
+    .max(100, { message: "La profesion no puede exceder 100 caracteres." })
+    .optional(),
 
-    birthdate: z.union([
-        z.string()
-            .regex(/^\d{4}-\d{2}-\d{2}$/, {
-                message: "La fecha debe tener el formato YYYY-MM-DD"
-            })
-            .refine((val) => !isNaN(Date.parse(val)), {
-                message: "La fecha no es válida"
-            })
-            .refine((val) => new Date(val) <= new Date(), {
-                message: "La fecha de nacimiento no puede ser futura"
-            }),
-        z.date()
-            .refine((val) => val <= new Date(), {
-                message: "La fecha de nacimiento no puede ser futura"
-            })
-    ]).optional(),
+  birthdate: birthdateSchema.optional(),
 
-    nationality: z.string()
-        .min(1, { message: "La nacionalidad es requerida" })
-        .max(50, { message: "La nacionalidad no puede exceder 50 caracteres" })
-        .optional(),
+  birthplace: z
+    .string()
+    .min(2, { message: "El lugar debe tener al menos 2 caracteres." })
+    .max(100, { message: "El lugar no puede exceder 100 caracteres." })
+    .optional(),
 
-
+  nationality: z
+    .string()
+    .min(2, { message: "La nacionalidad debe tener al menos 2 caracteres." })
+    .max(50, { message: "La nacionalidad no puede exceder 50 caracteres." })
+    .optional(),
 });

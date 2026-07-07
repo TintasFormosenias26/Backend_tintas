@@ -20,10 +20,10 @@ export const updataAuthors = async (
   res: Response
 ) => {
   try {
-    if (typeof req.body.itActivo === "string") {
-      req.body.itActivo =
-        req.body.itActivo === "true" ||
-        req.body.itActivo === "1";
+    if (typeof req.body.isActivo === "string") {
+      req.body.isActivo =
+        req.body.isActivo === "true" ||
+        req.body.isActivo === "1";
     }
 
     const { id } = req.params;

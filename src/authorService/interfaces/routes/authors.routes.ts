@@ -11,8 +11,8 @@ export const autorRoutes = Router();
 const upload = multer({ dest: "uploads/" });
 
 autorRoutes.post(
-  "/author/create", validateJWT, validarRol("ADMIN"),
-
+  "/authors/create",
+  validateJWT, validarRol("ADMIN"),
   upload.single("avatar"),
   createAuthor
 );

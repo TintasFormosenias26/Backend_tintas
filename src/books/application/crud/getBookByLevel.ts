@@ -1,8 +1,8 @@
 import { BookSearch } from "../../../shared/types/bookTypes/bookTypes";
-import { BooksQueryRepository } from "../../domain/booksQueryRepository";
+import { GetAllBooksByLevelRepo } from "../../domain/booksCrudRepository";
 
 export class GetAllBooksByLevel {
-    constructor(private readonly booksRepository: BooksQueryRepository) { }
+    constructor(private readonly booksRepository: GetAllBooksByLevelRepo) { }
 
     async run(nivel?: string): Promise<BookSearch[]> {
         const books = await this.booksRepository.getAllBooksByLevel(nivel);

@@ -7,7 +7,10 @@ export interface BooksCrudRepository {
      updateBookById(id: String, book: Partial<Books>): Promise<void>;
      deleteBook(id: String): Promise<BookSearch | null>;
      getBookById(id: String): Promise<BookSearch | null>;
+}
+export interface GetAllBooksByLevelRepo {
      getAllBooksByLevel(nivel?: string): Promise<BookSearch[]>;
+
 }
 export interface GetBookById {
      getBookById(id: String): Promise<BookSearch | null>;

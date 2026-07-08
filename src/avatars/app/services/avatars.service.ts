@@ -1,6 +1,7 @@
 import { AvatarType } from "../../domain/entities/AvatarsTypes";
 import { IAvatar } from "../../domain/ports/AvatarPorts";
 import { deleteCoverImage } from "../../../shared/utils/deleteCoverImage";
+import { HttpError } from "../../../authorService/app/service/UpdateAuthor.service";
 
 
 export class AvatarsService implements IAvatar {
@@ -16,7 +17,7 @@ export class AvatarsService implements IAvatar {
 		const avatar = await this.avatarRepo.findAvatarById(id);
 		if (!avatar) {
 			console.warn("level not found")
-			throw new Error("level not found");
+			throw new HttpError(404, "level not found.");
 		}
 
 		if (avatar.idImage) {

@@ -14,8 +14,8 @@ const authorService = new CreateAuthor(saveAuthorMongo, findAuthorRepo);
 
 export const createAuthor = async (req: Request, res: Response) => {
   try {
-    if (typeof req.body.itActivo === "string") {
-      req.body.itActivo = req.body.itActivo === "true" || req.body.itActivo === "1";
+    if (typeof req.body.isActivo === "string") {
+      req.body.isActivo = req.body.isActivo === "true" || req.body.isActivo === "1";
     }
     const author: Author = req.body;
     const file = req.file;
@@ -63,8 +63,10 @@ export const createAuthor = async (req: Request, res: Response) => {
     res.status(201).json({ msg: "the author save successful" });
 
 
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ msg: "the internal server error" });
+  } catch (error: any) {
+    return res.status(error.statusCode ?? 500).json({
+      success: false,
+      message: error.message
+    });
   }
 };

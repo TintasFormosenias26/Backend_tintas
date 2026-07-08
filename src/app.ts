@@ -71,7 +71,7 @@ app.use(
 // Rutas
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/author", autorRoutes);
+app.use("/api/authors", autorRoutes);
 app.use("/api/progress", progressRouter);
 app.use("/api/avatar", avaRoutes);
 app.use("/api/book", bookRouter);

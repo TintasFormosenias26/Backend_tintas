@@ -78,7 +78,7 @@ export class UpdateAuthorPostgresRepo implements UpdateAuthorRepository {
           nationality: author.nationality,
         }),
         ...(author.isActivo !== undefined && {
-          iSActivo: author.isActivo,
+          isActivo: author.isActivo,
         }),
         ...(author.photoIdImage && {
           photoIdImage: author.photoIdImage,

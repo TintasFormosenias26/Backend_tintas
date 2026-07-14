@@ -1,20 +1,20 @@
-import { fileDelete } from "../utils/deleteFile";
 import { photoProfile } from "../types/photo.Types";
+import { fileDelete } from "../utils/deleteFile";
 import { subirAuthorimg } from "../utils/img/avatarUser";
+import { BadRequestError } from "./BadReuestError";
 
 export class UploadAuthorService {
     static async uploadAuthor(file: Express.Multer.File): Promise<photoProfile> {
-        if (!file) throw new Error("No se recibió ningún archivo");
 
-        console.log("Archivo:", file.path);
+        if (!file) {
+            throw new BadRequestError("No se recibió ningún archivo");
+        }
 
         try {
             const result = await subirAuthorimg(file.path);
 
-            console.log("Resultado Cloudinary:", result);
-
             if (!result?.secure_url || !result?.public_id) {
-                throw new Error("Cloudinary no devolvió secure_url o public_id");
+                throw new BadRequestError("Cloudinary no devolvió la información esperada");
             }
 
             await fileDelete(file.path);
@@ -25,9 +25,7 @@ export class UploadAuthorService {
             );
 
         } catch (error) {
-            console.error("ERROR CLOUDINARY:", error);
             throw error;
         }
     }
 }
-

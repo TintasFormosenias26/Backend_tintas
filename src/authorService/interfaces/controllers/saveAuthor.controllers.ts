@@ -63,8 +63,10 @@ export const createAuthor = async (req: Request, res: Response) => {
     res.status(201).json({ msg: "the author save successful" });
 
 
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ msg: "the internal server error" });
+  } catch (error: any) {
+    return res.status(error.statusCode ?? 500).json({
+      success: false,
+      message: error.message
+    });
   }
 };

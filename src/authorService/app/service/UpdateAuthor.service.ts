@@ -10,22 +10,43 @@ export class UpdateAuthor implements UpdateAuthorRepository {
         private readonly uniqueAuthor: FindAuthor,
     ) { }
 
-    async updateAuthor(id: any, author: Author): Promise<Author | null> {
+    async updateAuthor(id: any, author: Author): Promise<Author> {
         const photoIdImage = (author as any).photoIdImage;
+
         if (photoIdImage) {
             const result = await deleteCoverImage(photoIdImage);
+
             if (!result) {
-                return null;
+                throw new HttpError(400, "No se pudo eliminar la imagen.");
             }
         }
 
         if (author.fullName) {
             const authorExist = await this.uniqueAuthor.findByName(author.fullName);
 
-            if (authorExist && authorExist.id && authorExist.id.toString() !== id.toString()) {
-                return null;
+            if (
+                authorExist &&
+                authorExist.id &&
+                authorExist.id.toString() !== id.toString()
+            ) {
+                throw new HttpError(409, "Ya existe un autor con ese nombre.");
             }
         }
-        return await this.updateAuthors.updateAuthor(id, author);
+
+        const updated = await this.updateAuthors.updateAuthor(id, author);
+
+        if (!updated) {
+            throw new HttpError(404, "Autor no encontrado.");
+        }
+
+        return updated;
+    }
+}
+export class HttpError extends Error {
+    constructor(
+        public statusCode: number,
+        message: string
+    ) {
+        super(message);
     }
 }

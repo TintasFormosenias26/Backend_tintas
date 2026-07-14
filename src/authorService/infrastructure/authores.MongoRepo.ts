@@ -53,15 +53,13 @@ export class UpdateAuthorPostgresRepo implements UpdateAuthorRepository {
     if (!currentAuthor) {
       return null;
     }
-    /*
-        if (
-          author.photoIdImage &&
-          currentAuthor.photoIdImage &&
-          currentAuthor.photoIdImage !== author.photoIdImage
-        ) {
-          await deleteCoverImage(currentAuthor.photoIdImage);
-        }
-    */
+    if (
+      author.photoIdImage &&
+      currentAuthor.photoIdImage &&
+      currentAuthor.photoIdImage !== author.photoIdImage
+    ) {
+      await deleteCoverImage(currentAuthor.photoIdImage);
+    }
     const updatedAuthor = await prisma.author.update({
       where: { id },
       data: {

@@ -15,18 +15,17 @@ export const ResetPasswordController = async (req: Request, res: Response) => {
     try {
         const { token, password } = req.body;
 
-        const result = resetPassword.resertPassword(token, password)
+        const result = await resetPassword.resertPassword(token, password)
 
         if (!result) {
-            res.status(301).json({ msg: "incorrect token" })
+            return res.status(400).json({ msg: "Token inválido o vencido" })
         }
         return res.status(200).json({ msg: 'password update success' })
     } catch (error) {
-        console.log(error);
+        console.error("Error al restablecer contraseña", error);
 
         return res.status(500).json({
-            message: "internal server error",
-            error
+            message: "internal server error"
         });
     }
 }

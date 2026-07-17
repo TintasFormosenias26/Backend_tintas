@@ -1,12 +1,12 @@
 import { UserType } from "../../domain/entities/UserTypes";
-import { FindAndDeleteRepo, FindByIdRepo } from "../../domain/ports/FindAndDeleteRepo";
+import { FindAndDeleteRepo, FindByIdRepo, PublicUser } from "../../domain/ports/FindAndDeleteRepo";
 
 
 
 export class FindAndDeleteUser implements FindAndDeleteRepo {
     constructor(private readonly userRepo: FindAndDeleteRepo) { }
 
-    async findUser(): Promise<UserType[]> {
+    async findUser(): Promise<PublicUser[]> {
         const users = await this.userRepo.findUser();
         return users
     }

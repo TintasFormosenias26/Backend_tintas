@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { UpdateAuthor } from "../../app/service/UpdateAuthor.service";
+import { HttpError, UpdateAuthor } from "../../app/service/UpdateAuthor.service";
 import { Author } from "../../domain/entidades/author.Types";
 import { authorUpdateValidation } from "../../app/validations/authorValidations";
 import { UploadAuthorService } from "../../../shared/services/upload_Author.Service";
@@ -93,6 +93,12 @@ export const updataAuthors = async (
     });
   } catch (error) {
     console.error(error);
+
+    if (error instanceof HttpError) {
+      return res.status(error.statusCode).json({
+        msg: error.message,
+      });
+    }
 
     return res.status(500).json({
       msg: "internal server error",

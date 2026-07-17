@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { FindAndDeleteUser, FindByID } from "../../application/service/FindAndDelete.service";
 import { FindAndDeleteRepo, FindByIdRepo } from "../../domain/ports/FindAndDeleteRepo";
 import { findAndDeleteMongo, UserFindById } from "../../infrastructure/userRespositoryMongo";
-import { Result } from "pg";
 
 const findAndDeleteUser: FindAndDeleteRepo = new findAndDeleteMongo();
 const findAndDelService: FindAndDeleteUser = new FindAndDeleteUser(findAndDeleteUser);
@@ -36,6 +35,24 @@ export const deleteUser = async (req: Request, res: Response) => {
   }
 
 
+};
+
+export const deleteUserById = async (req: Request, res: Response) => {
+  try {
+    const idParam = req.params.id;
+    const id = Array.isArray(idParam) ? idParam[0] : idParam;
+
+    if (!id) return res.status(400).json({ message: "No user ID found" });
+    if (id === req.user?.id) {
+      return res.status(400).json({ message: "No puedes eliminar tu propia cuenta desde el panel." });
+    }
+
+    await findAndDelService.deleteUser(id);
+    return res.status(200).json({ msg: "user delete successful" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "internal server error" });
+  }
 };
 export const findById = async (req: Request, res: Response) => {
   try {

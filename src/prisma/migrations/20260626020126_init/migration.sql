@@ -14,7 +14,7 @@
 ALTER TABLE "BookContent" DROP CONSTRAINT "BookContent_bookId_fkey";
 
 -- AlterTable
-ALTER TABLE "Author" DROP COLUMN "itActivo",
+ALTER TABLE "Author" DROP COLUMN "isActivo",
 DROP COLUMN "photorUrl",
 DROP COLUMN "writingGenre",
 ADD COLUMN     "isActivo" BOOLEAN NOT NULL,

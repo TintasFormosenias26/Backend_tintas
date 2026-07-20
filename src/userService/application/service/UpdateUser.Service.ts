@@ -19,7 +19,7 @@ export class UpdateUSer implements UpdateUSerRepository {
     async updateUSer(id: any, user: Partial<UserType>): Promise<UserType | null | api_response> {
         if (user.email) {
             const emailExists = await this.authRepo.findByEmail(user.email);
-            if (emailExists) {
+            if (emailExists && emailExists.id !== id) {
                 return {
                     success: false,
                     message: "Email already in use",
@@ -31,7 +31,7 @@ export class UpdateUSer implements UpdateUSerRepository {
         }
         if (user.userName) {
             const usernameExists = await this.uniqueRepo.findByUserName(user.userName);
-            if (usernameExists) {
+            if (usernameExists && usernameExists.id !== id) {
                 return {
                     success: false,
                     message: "UserName already in use",

@@ -84,7 +84,9 @@ export class findAndDeleteMongo implements FindAndDeleteRepo {
   }
   async findUser() {
     return await prisma.user.findMany({
-
+      omit: {
+        password: true,
+      },
     });
   }
 }

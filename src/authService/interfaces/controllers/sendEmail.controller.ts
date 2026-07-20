@@ -7,9 +7,7 @@ import { sendEmail } from "../../application/service/SendEmail.Service";
 
 export const sendEmailController = async (req: Request, res: Response) => {
     try {
-        console.log(req.body)
         const { email } = req.body
-        console.log(email)
 
         // Validación básica
         if (!email) {
@@ -20,11 +18,10 @@ export const sendEmailController = async (req: Request, res: Response) => {
         }
 
         const result = await sendEmail(email);
-        console.log(result)
-        if (result === null) {
-            return res.status(400).json({ msg: 'the email is not found' });
-        }
 
+        if (result === null) {
+            return res.status(400).json({ success: true, message: "error al enviar el email" });
+        }
         return res.status(200).json({
             success: true,
             message: "Si el email existe, recibirás un código de recuperación",

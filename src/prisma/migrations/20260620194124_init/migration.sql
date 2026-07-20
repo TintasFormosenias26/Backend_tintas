@@ -77,7 +77,7 @@ CREATE TABLE "Author" (
     "birthdate" TIMESTAMP(3) NOT NULL,
     "birthplace" TEXT NOT NULL,
     "nationality" TEXT NOT NULL,
-    "itActivo" BOOLEAN NOT NULL,
+    "isActivo" BOOLEAN NOT NULL,
     "writingGenre" TEXT[],
     "photoIdImage" TEXT NOT NULL,
     "photorUrl" TEXT NOT NULL,

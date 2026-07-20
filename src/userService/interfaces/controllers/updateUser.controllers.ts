@@ -62,6 +62,31 @@ export const findAndUpdate = async (
   }
 };
 
+export const updateUserById = async (req: Request, res: Response) => {
+  try {
+    const idParam = req.params.id;
+    const id = Array.isArray(idParam) ? idParam[0] : idParam;
+    const { rol: _ignoredRole, password: _ignoredPassword, ...changes } = req.body as UserType;
+
+    if (!id) {
+      return res.status(400).json({ message: "No user ID found" });
+    }
+
+    const result = await updateUserService.updateUSer(id, changes);
+    if (!result) {
+      return res.status(404).json({ msg: "the user not update" });
+    }
+    if ("success" in result && !result.success) {
+      return res.status(result.status).json(result);
+    }
+
+    return res.status(200).json({ msg: "user update successful", data: result });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "internal server error" });
+  }
+};
+
 //UPDATE ROL OF USER 
 export const updateRolController = async (req: Request, res: Response) => {
   try {

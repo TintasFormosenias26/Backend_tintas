@@ -1,101 +1,72 @@
 import { Request, Response } from "express";
-import { UpdateAuthor } from "../../app/service/UpdateAuthor.service";
+import { CreateAuthor } from "../../app/service/SaveAuthor.service";
+import { ISaveAuthorRepository } from "../../domain/ports/saveAuthorRepository";
 import { Author } from "../../domain/entidades/author.Types";
-import { authorUpdateValidation } from "../../app/validations/authorValidations";
+import { deleteCoverImage } from "../../../shared/utils/deleteCoverImage";
+import { authorValidation } from "../../app/validations/authorValidations";
 import { UploadAuthorService } from "../../../shared/services/upload_Author.Service";
-import {
-  FindAuthorPostgresRepo,
-  UpdateAuthorPostgresRepo,
-} from "../../infrastructure/authores.MongoRepo";
+import { FindAuthorPostgresRepo, SaveAuthorPostgresRepo } from "../../infrastructure/authores.MongoRepo";
 
-const updateAuthorRepo = new UpdateAuthorPostgresRepo();
+const saveAuthorMongo: ISaveAuthorRepository = new SaveAuthorPostgresRepo();
 const findAuthorRepo = new FindAuthorPostgresRepo();
-const updataAuthor = new UpdateAuthor(
-  updateAuthorRepo,
-  findAuthorRepo
-);
 
-export const updataAuthors = async (
-  req: Request,
-  res: Response
-) => {
+const authorService = new CreateAuthor(saveAuthorMongo, findAuthorRepo);
+
+export const createAuthor = async (req: Request, res: Response) => {
   try {
     if (typeof req.body.isActivo === "string") {
-      req.body.isActivo =
-        req.body.isActivo === "true" ||
-        req.body.isActivo === "1";
+      req.body.isActivo = req.body.isActivo === "true" || req.body.isActivo === "1";
     }
+    const author: Author = req.body;
+    const file = req.file;
+    console.log(author)
 
-    const { id } = req.params;
-    const newAuthor: Author = req.body;
-
-    const parsed = authorUpdateValidation(newAuthor);
+    const parsed = authorValidation(author);
 
     if (!parsed.success) {
-      return res.status(400).json({
-        success: false,
-        message: "Datos de autor inválidos",
-        errors: parsed.errors.map((error) => ({
-          field: error.path.join("."),
-          message: error.message,
+      console.log({
+        message: "Datos de usuario inválidos",
+        errors: parsed.errors.map(error => ({
+          field: error.path.join('.'),
+          message: error.message
         })),
-        status: 400,
+        status: 400
+      })
+      res.status(400).json({
+        success: false,
+        message: "Datos de usuario inválidos",
+        errors: parsed.errors.map(error => ({
+          field: error.path.join('.'),
+          message: error.message
+        })),
+        status: 400
       });
+
+      return;
     }
 
-    // Si viene una nueva imagen
-    if (req.file) {
-      const avatar = await UploadAuthorService.uploadAuthor(
-        req.file as Express.Multer.File
-      );
+    const avatarUploaded = await UploadAuthorService.uploadAuthor(file as Express.Multer.File);
+    const newAuthor = {
+      ...author,
+      photoUrl: avatarUploaded.photoUrl,
+      photoIdImage: avatarUploaded.photoIdImage,
+    };
 
-      console.log("Avatar:", avatar);
-
-      const authorWithImage = {
-        ...newAuthor,
-
-        // Ajusta estos nombres según tu clase photoProfile
-        photoIdImage: avatar.photoIdImage,
-        photoUrl: avatar.photoUrl,
-      };
-
-      const result = await updataAuthor.updateAuthor(
-        id,
-        authorWithImage
-      );
-
-      if (!result) {
-        return res.status(404).json({
-          msg: "Author not found",
-        });
-      }
-
-      return res.status(200).json({
-        msg: "author update successful",
-        result,
-      });
-    }
-
-    const result = await updataAuthor.updateAuthor(
-      id,
-      newAuthor
-    );
-
+    const result = await authorService.saveAuthors(newAuthor);
+    console.log(result)
     if (!result) {
-      return res.status(404).json({
-        msg: "author not found",
-      });
+      await deleteCoverImage(avatarUploaded.photoIdImage);
+      res.status(409).json({ msg: "the author already exist" });
+      return;
     }
 
-    return res.status(200).json({
-      msg: "author update successful",
-      result,
-    });
-  } catch (error) {
-    console.error(error);
+    res.status(201).json({ msg: "the author save successful" });
 
-    return res.status(500).json({
-      msg: "internal server error",
+
+  } catch (error: any) {
+    return res.status(error.statusCode ?? 500).json({
+      success: false,
+      message: error.message
     });
   }
 };

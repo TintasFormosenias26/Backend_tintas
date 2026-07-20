@@ -2,13 +2,16 @@ import { NextFunction, Request, Response } from "express";
 
 export function validarRol(...rolesPermitidos: string[]) {
   return (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.user.rol)
     if (!req.user) {
       res.status(401).json({ mensaje: "unauthenticated user" });
       return;
     }
 
-    if (!rolesPermitidos.includes(req.user.rol)) {
+    const userRole = req.user.rol?.toUpperCase();
+    const allowedRoles = rolesPermitidos.map((role) => role.toUpperCase());
+    const hasAdminAccess = userRole === "SUPERADMIN" && allowedRoles.includes("ADMIN");
+
+    if (!userRole || (!allowedRoles.includes(userRole) && !hasAdminAccess)) {
       res.status(403).json({ mensaje: "You do not have permissions to access this resource" });
       return;
     }

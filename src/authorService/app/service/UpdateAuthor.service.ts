@@ -1,4 +1,3 @@
-import { deleteCoverImage } from "../../../shared/utils/deleteCoverImage";
 import { Author } from "../../domain/entidades/author.Types";
 import { FindAuthor } from "../../domain/ports/findAuthorRepository";
 import { UpdateAuthorRepository } from "../../domain/ports/updateAuthorRepository";
@@ -11,16 +10,6 @@ export class UpdateAuthor implements UpdateAuthorRepository {
     ) { }
 
     async updateAuthor(id: any, author: Author): Promise<Author> {
-        const photoIdImage = (author as any).photoIdImage;
-
-        if (photoIdImage) {
-            const result = await deleteCoverImage(photoIdImage);
-
-            if (!result) {
-                throw new HttpError(400, "No se pudo eliminar la imagen.");
-            }
-        }
-
         if (author.fullName) {
             const authorExist = await this.uniqueAuthor.findByName(author.fullName);
 

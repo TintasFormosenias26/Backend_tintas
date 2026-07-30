@@ -1,72 +1,60 @@
 import { Request, Response } from "express";
-import { CreateAuthor } from "../../app/service/SaveAuthor.service";
-import { ISaveAuthorRepository } from "../../domain/ports/saveAuthorRepository";
+import { UpdateAuthor } from "../../app/service/UpdateAuthor.service";
 import { Author } from "../../domain/entidades/author.Types";
-import { deleteCoverImage } from "../../../shared/utils/deleteCoverImage";
-import { authorValidation } from "../../app/validations/authorValidations";
+import { authorUpdateValidation } from "../../app/validations/authorValidations";
 import { UploadAuthorService } from "../../../shared/services/upload_Author.Service";
-import { FindAuthorPostgresRepo, SaveAuthorPostgresRepo } from "../../infrastructure/authores.MongoRepo";
+import {
+  FindAuthorPostgresRepo,
+  UpdateAuthorPostgresRepo,
+} from "../../infrastructure/authores.MongoRepo";
 
-const saveAuthorMongo: ISaveAuthorRepository = new SaveAuthorPostgresRepo();
+const updateAuthorRepo = new UpdateAuthorPostgresRepo();
 const findAuthorRepo = new FindAuthorPostgresRepo();
+const updateAuthorService = new UpdateAuthor(updateAuthorRepo, findAuthorRepo);
 
-const authorService = new CreateAuthor(saveAuthorMongo, findAuthorRepo);
-
-export const createAuthor = async (req: Request, res: Response) => {
+export const updateAuthors = async (req: Request, res: Response) => {
   try {
-    if (typeof req.body.isActivo === "string") {
-      req.body.isActivo = req.body.isActivo === "true" || req.body.isActivo === "1";
-    }
-    const author: Author = req.body;
-    const file = req.file;
-    console.log(author)
+    const { id } = req.params;
 
-    const parsed = authorValidation(author);
+    if (typeof req.body.isActivo === "string") {
+      req.body.isActivo =
+        req.body.isActivo === "true" || req.body.isActivo === "1";
+    }
+
+    let author: Partial<Author> = req.body;
+    const parsed = authorUpdateValidation(author);
 
     if (!parsed.success) {
-      console.log({
-        message: "Datos de usuario inválidos",
-        errors: parsed.errors.map(error => ({
-          field: error.path.join('.'),
-          message: error.message
-        })),
-        status: 400
-      })
-      res.status(400).json({
+      res.status(parsed.status).json({
         success: false,
-        message: "Datos de usuario inválidos",
-        errors: parsed.errors.map(error => ({
-          field: error.path.join('.'),
-          message: error.message
-        })),
-        status: 400
+        message: parsed.message,
+        errors: parsed.errors,
       });
-
       return;
     }
 
-    const avatarUploaded = await UploadAuthorService.uploadAuthor(file as Express.Multer.File);
-    const newAuthor = {
-      ...author,
-      photoUrl: avatarUploaded.photoUrl,
-      photoIdImage: avatarUploaded.photoIdImage,
-    };
+    author = parsed.data;
 
-    const result = await authorService.saveAuthors(newAuthor);
-    console.log(result)
-    if (!result) {
-      await deleteCoverImage(avatarUploaded.photoIdImage);
-      res.status(409).json({ msg: "the author already exist" });
-      return;
+    if (req.file) {
+      const uploadedPhoto = await UploadAuthorService.uploadAuthor(req.file);
+      author = {
+        ...author,
+        photoUrl: uploadedPhoto.photoUrl,
+        photoIdImage: uploadedPhoto.photoIdImage,
+      };
     }
 
-    res.status(201).json({ msg: "the author save successful" });
+    const updatedAuthor = await updateAuthorService.updateAuthor(id, author);
 
-
+    res.status(200).json({
+      success: true,
+      message: "Autor actualizado correctamente",
+      author: updatedAuthor,
+    });
   } catch (error: any) {
-    return res.status(error.statusCode ?? 500).json({
+    res.status(error.statusCode ?? 500).json({
       success: false,
-      message: error.message
+      message: error.message ?? "Error interno del servidor",
     });
   }
 };

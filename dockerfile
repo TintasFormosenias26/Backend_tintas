@@ -1,22 +1,22 @@
-FROM node:20-alpine
+FROM node:22-alpine
 
 WORKDIR /app
 
-# Instalar pnpm globalmente
-RUN corepack enable && corepack prepare pnpm@10.34.3 --activate
+# Instalar pnpm
+RUN npm install -g pnpm@11.0.9
 
-# Copiar dependencias primero (cache optimizado)
+# Copiar archivos de dependencias
 COPY package.json pnpm-lock.yaml ./
 
-RUN pnpm install
+# Instalar dependencias
+RUN pnpm install --frozen-lockfile
 
-# Copiar todo el proyecto
+# Copiar código
 COPY . .
 
-
-# Compilar TypeScript
+# Compilar
 RUN pnpm run build
 
-EXPOSE 3000
+EXPOSE 3400
 
-CMD ["node", "dist/src/index.js"]
+CMD ["node", "dist/src/app.js"]

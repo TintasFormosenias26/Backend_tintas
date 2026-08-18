@@ -10,98 +10,51 @@ import {
 
 const updateAuthorRepo = new UpdateAuthorPostgresRepo();
 const findAuthorRepo = new FindAuthorPostgresRepo();
-const updataAuthor = new UpdateAuthor(
-  updateAuthorRepo,
-  findAuthorRepo
-);
+const updateAuthorService = new UpdateAuthor(updateAuthorRepo, findAuthorRepo);
 
-export const updataAuthors = async (
-  req: Request,
-  res: Response
-) => {
+export const updateAuthors = async (req: Request, res: Response) => {
   try {
+    const { id } = req.params;
+
     if (typeof req.body.isActivo === "string") {
       req.body.isActivo =
-        req.body.isActivo === "true" ||
-        req.body.isActivo === "1";
+        req.body.isActivo === "true" || req.body.isActivo === "1";
     }
 
-    const { id } = req.params;
-    const newAuthor: Author = req.body;
-
-    const parsed = authorUpdateValidation(newAuthor);
+    let author: Partial<Author> = req.body;
+    const parsed = authorUpdateValidation(author);
 
     if (!parsed.success) {
-      return res.status(400).json({
+      res.status(parsed.status).json({
         success: false,
-        message: "Datos de autor inválidos",
-        errors: parsed.errors.map((error) => ({
-          field: error.path.join("."),
-          message: error.message,
-        })),
-        status: 400,
+        message: parsed.message,
+        errors: parsed.errors,
       });
+      return;
     }
 
-    // Si viene una nueva imagen
+    author = parsed.data;
+
     if (req.file) {
-      const avatar = await UploadAuthorService.uploadAuthor(
-        req.file as Express.Multer.File
-      );
-
-      console.log("Avatar:", avatar);
-
-      const authorWithImage = {
-        ...newAuthor,
-
-        // Ajusta estos nombres según tu clase photoProfile
-        photoIdImage: avatar.photoIdImage,
-        photoUrl: avatar.photoUrl,
+      const uploadedPhoto = await UploadAuthorService.uploadAuthor(req.file);
+      author = {
+        ...author,
+        photoUrl: uploadedPhoto.photoUrl,
+        photoIdImage: uploadedPhoto.photoIdImage,
       };
-
-      const result = await updataAuthor.updateAuthor(
-        id,
-        authorWithImage
-      );
-
-      if (!result) {
-        return res.status(404).json({
-          msg: "Author not found",
-        });
-      }
-
-      return res.status(200).json({
-        msg: "author update successful",
-        result,
-      });
     }
 
-    const result = await updataAuthor.updateAuthor(
-      id,
-      newAuthor
-    );
+    const updatedAuthor = await updateAuthorService.updateAuthor(id, author);
 
-    if (!result) {
-      return res.status(404).json({
-        msg: "author not found",
-      });
-    }
-
-    return res.status(200).json({
-      msg: "author update successful",
-      result,
+    res.status(200).json({
+      success: true,
+      message: "Autor actualizado correctamente",
+      author: updatedAuthor,
     });
-  } catch (error) {
-    console.error(error);
-
-    if (error instanceof HttpError) {
-      return res.status(error.statusCode).json({
-        msg: error.message,
-      });
-    }
-
-    return res.status(500).json({
-      msg: "internal server error",
+  } catch (error: any) {
+    res.status(error.statusCode ?? 500).json({
+      success: false,
+      message: error.message ?? "Error interno del servidor",
     });
   }
 };

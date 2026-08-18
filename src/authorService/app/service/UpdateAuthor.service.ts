@@ -9,7 +9,7 @@ export class UpdateAuthor implements UpdateAuthorRepository {
         private readonly uniqueAuthor: FindAuthor,
     ) { }
 
-    async updateAuthor(id: any, author: Author): Promise<Author> {
+    async updateAuthor(id: any, author: Partial<Author>): Promise<Author> {
         if (author.fullName) {
             const authorExist = await this.uniqueAuthor.findByName(author.fullName);
 

@@ -1,4 +1,3 @@
-import { int32 } from "zod";
 import { UserType } from "../entities/UserTypes";
 
 export type PublicUser = Omit<UserType, "password">;

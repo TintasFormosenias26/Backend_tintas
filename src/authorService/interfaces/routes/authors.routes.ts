@@ -3,7 +3,7 @@ import { createAuthor } from "../controllers/saveAuthor.controllers";
 import { validarRol } from "../../../shared/middlewares/validateRol";
 import { getAllAuthores, getAuthorById, getAuthorByName } from "../controllers/findAuthor.controllers";
 import { deleteAuthorById } from "../controllers/deleteAuthor.controllers";
-import { updataAuthors } from "../controllers/updateAuthor.controllers";
+import { updateAuthors } from "../controllers/updateAuthor.controllers";
 import multer from "multer";
 import { validateJWT } from "../../../shared/middlewares/validateJWT";
 
@@ -22,5 +22,5 @@ autorRoutes.get("/:id", getAuthorById);
 autorRoutes.delete("/:id", validateJWT, validarRol("ADMIN"),
   deleteAuthorById);
 autorRoutes.put("/:id", validateJWT, validarRol("ADMIN"),
-  upload.single("photo"), updataAuthors);
+  upload.single("photo"), updateAuthors);
 

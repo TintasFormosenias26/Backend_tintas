@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from "express";
+import { sendError } from "./errorHandler";
 
 export function validarRol(...rolesPermitidos: string[]) {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
-      res.status(401).json({ mensaje: "unauthenticated user" });
+      sendError(res, 401, "UNAUTHORIZED", "Tu sesión no es válida.");
       return;
     }
 
@@ -12,7 +13,7 @@ export function validarRol(...rolesPermitidos: string[]) {
     const hasAdminAccess = userRole === "SUPERADMIN" && allowedRoles.includes("ADMIN");
 
     if (!userRole || (!allowedRoles.includes(userRole) && !hasAdminAccess)) {
-      res.status(403).json({ mensaje: "You do not have permissions to access this resource" });
+      sendError(res, 403, "FORBIDDEN", "No tenés permisos para realizar esta acción.");
       return;
     }
 

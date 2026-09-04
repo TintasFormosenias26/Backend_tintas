@@ -1,14 +1,9 @@
-import crypto from "crypto";
+import crypto from "node:crypto";
 
-export function generateCustomToken(length: number = 6): string {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$&#?";
-    const randomBytes = crypto.randomBytes(length);
-    let token = "";
+export function generateResetToken(): string {
+    return crypto.randomBytes(32).toString("base64url");
+}
 
-    for (let i = 0; i < length; i++) {
-        const index = randomBytes[i] % chars.length;
-        token += chars[index];
-    }
-
-    return token;
+export function hashResetToken(token: string): string {
+    return crypto.createHash("sha256").update(token, "utf8").digest("hex");
 }

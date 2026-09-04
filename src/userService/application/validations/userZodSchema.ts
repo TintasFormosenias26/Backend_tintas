@@ -19,10 +19,8 @@ export const UserUpdateZodSchema = z.object({
     userName: z.string().min(5, "El nombre de usuario es obligatorio").optional(),
     birthDate: z.coerce.date().optional(),
     email: z.string().email("Email no válido").optional(),
-    password: z.string().min(8, "La contraseña debe tener al menos 6 caracteres").optional(),
-    nivel: z.string().min(1, "El nivel es obligatorio").optional(),
-    preference: z.object({
-        category: z.array(z.string()).min(1, "Debe haber al menos una categoría"),
-    }).optional(),
-});
+    avatar: z.string().url("El avatar debe ser una URL válida").max(500).optional(),
+}).strict();
+
+export type UserUpdateInput = z.infer<typeof UserUpdateZodSchema>;
 

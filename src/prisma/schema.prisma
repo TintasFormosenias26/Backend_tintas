@@ -157,9 +157,13 @@ model Book {
 }
 model Token{
   id        String   @id @default(cuid())
-  token     String   @unique
+  tokenHash String   @unique
   userEmail String
   createdAt DateTime @default(now())
+  expiresAt DateTime
+  usedAt    DateTime?
+
+  @@index([userEmail])
 }
 
 

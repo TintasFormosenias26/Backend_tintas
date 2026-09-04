@@ -2,7 +2,7 @@ import { BookUserProgresRepo } from "../entities/BookPogress.types";
 
 
 export interface FindProgressPort {
-    findByUser(id: any): Promise<BookUserProgresRepo[] | null>
-    findById(id: any): Promise<BookUserProgresRepo | null>
-    findByBook(id: any, idUser: any): Promise<BookUserProgresRepo[] | null>
+    findByUser(userId: string): Promise<BookUserProgresRepo[]>
+    findById(id: string, userId: string): Promise<BookUserProgresRepo | null>
+    findByBook(bookId: string, userId: string): Promise<BookUserProgresRepo[]>
 }

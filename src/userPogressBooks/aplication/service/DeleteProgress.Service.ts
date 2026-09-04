@@ -6,7 +6,7 @@ export class DeleteProgresService implements deleteProgress {
     ) {
 
     }
-    async deleteProgres(id: string): Promise<void> {
-        await this.bookRepo.deleteProgres(id)
+    async deleteProgres(id: string, userId: string): Promise<boolean> {
+        return this.bookRepo.deleteProgres(id, userId)
     }
 }

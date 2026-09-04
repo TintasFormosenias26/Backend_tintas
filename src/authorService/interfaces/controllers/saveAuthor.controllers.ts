@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { CreateAuthor } from "../../app/service/SaveAuthor.service";
 import { ISaveAuthorRepository } from "../../domain/ports/saveAuthorRepository";
 import { Author } from "../../domain/entidades/author.Types";
@@ -6,46 +6,34 @@ import { deleteCoverImage } from "../../../shared/utils/deleteCoverImage";
 import { authorValidation } from "../../app/validations/authorValidations";
 import { UploadAuthorService } from "../../../shared/services/upload_Author.Service";
 import { FindAuthorPostgresRepo, SaveAuthorPostgresRepo } from "../../infrastructure/authores.MongoRepo";
+import { sendError } from "../../../shared/middlewares/errorHandler";
 
 const saveAuthorMongo: ISaveAuthorRepository = new SaveAuthorPostgresRepo();
 const findAuthorRepo = new FindAuthorPostgresRepo();
 
 const authorService = new CreateAuthor(saveAuthorMongo, findAuthorRepo);
 
-export const createAuthor = async (req: Request, res: Response) => {
+export const createAuthor = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (typeof req.body.isActivo === "string") {
       req.body.isActivo = req.body.isActivo === "true" || req.body.isActivo === "1";
     }
     const author: Author = req.body;
     const file = req.file;
-    console.log(author)
 
     const parsed = authorValidation(author);
 
     if (!parsed.success) {
-      console.log({
-        message: "Datos de usuario inválidos",
-        errors: parsed.errors.map(error => ({
+      return sendError(res, 422, "VALIDATION_ERROR", "Revisá los campos indicados.", {
+        fields: parsed.errors.map(error => ({
           field: error.path.join('.'),
           message: error.message
-        })),
-        status: 400
-      })
-      res.status(400).json({
-        success: false,
-        message: "Datos de usuario inválidos",
-        errors: parsed.errors.map(error => ({
-          field: error.path.join('.'),
-          message: error.message
-        })),
-        status: 400
+        }))
       });
-
-      return;
     }
 
-    const avatarUploaded = await UploadAuthorService.uploadAuthor(file as Express.Multer.File);
+    if (!file) return sendError(res, 400, "FILE_REQUIRED", "Seleccioná una imagen para el autor.");
+    const avatarUploaded = await UploadAuthorService.uploadAuthor(file);
     const newAuthor = {
       ...author,
       photoUrl: avatarUploaded.photoUrl,
@@ -53,20 +41,15 @@ export const createAuthor = async (req: Request, res: Response) => {
     };
 
     const result = await authorService.saveAuthors(newAuthor);
-    console.log(result)
     if (!result) {
       await deleteCoverImage(avatarUploaded.photoIdImage);
-      res.status(409).json({ msg: "the author already exist" });
-      return;
+      return sendError(res, 409, "AUTHOR_ALREADY_EXISTS", "El autor ya existe.");
     }
 
-    res.status(201).json({ msg: "the author save successful" });
+    return res.status(201).json({ success: true, message: "Autor creado correctamente." });
 
 
-  } catch (error: any) {
-    return res.status(error.statusCode ?? 500).json({
-      success: false,
-      message: error.message
-    });
+  } catch (error: unknown) {
+    return next(error);
   }
 };

@@ -1,7 +1,6 @@
 import { Resend } from "resend";
-import { CreateTokenPrisma, FindTokenPrisma } from "../../../Token/MongoRepository/TokenMongo";
+import { PrismaResetTokenStore } from "../../../Token/MongoRepository/TokenMongo";
 import { UserFindByEmail } from "../../../userService/infrastructure/userRespositoryMongo";
-import { UpdateUSer } from "../../../userService/application/service/UpdateUser.Service";
 import ENV from "../../../shared/config/configEnv";
 
 const resend = new Resend(ENV.API_RENDER || "");
@@ -12,11 +11,11 @@ export const sendEmail = async (email: string) => {
   const user = await findEmail.findByEmail(email);
 
   if (!user) {
-    return null
+    return;
   }
 
-  const newToken = new CreateTokenPrisma();
-  const token = await newToken.createToken(email);
+  const tokenStore = new PrismaResetTokenStore();
+  const token = await tokenStore.createToken(email);
 
   await resend.emails.send({
     from: "Formosa Tintas <onboarding@resend.dev>",
@@ -40,10 +39,10 @@ export const sendEmail = async (email: string) => {
         border-radius: 6px;
         margin: 10px 0;
       ">
-        ${token.token}
+        ${token}
       </div>
 
-      <p>Este código es válido por <strong>1 minuto</strong>. Si no solicitaste este cambio, puedes ignorar este correo.</p>
+      <p>Este código tiene una validez limitada. Si no solicitaste este cambio, puedes ignorar este correo.</p>
 
       <hr />
 
@@ -54,7 +53,6 @@ export const sendEmail = async (email: string) => {
   `,
   });
 
-  console.log("Email sent");
 };
 
 

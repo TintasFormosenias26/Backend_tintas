@@ -1,7 +1,8 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { FindAndDeleteUser, FindByID } from "../../application/service/FindAndDelete.service";
 import { FindAndDeleteRepo, FindByIdRepo } from "../../domain/ports/FindAndDeleteRepo";
 import { findAndDeleteMongo, UserFindById } from "../../infrastructure/userRespositoryMongo";
+import { sendError } from "../../../shared/middlewares/errorHandler";
 
 const findAndDeleteUser: FindAndDeleteRepo = new findAndDeleteMongo();
 const findAndDelService: FindAndDeleteUser = new FindAndDeleteUser(findAndDeleteUser);
@@ -10,62 +11,59 @@ const findUserService: FindByID = new FindByID(findUserByIdPrisma)
 
 
 
-export const findUser = async (req: Request, res: Response) => {
+export const findUser = async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const users = await findAndDelService.findUser();
-    console.log(users);
-    res.status(200).json({ msg: "the users", users });
+    res.status(200).json({ success: true, users });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "internal server error", error });
+    next(error);
   }
 };
 
-export const deleteUser = async (req: Request, res: Response) => {
+export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   const id = req.user?.id;
   try {
-    const Result = await findAndDelService.deleteUser(id)
-    if (!Result) {
-      res.status(302).json({ msg: "user not delete" })
+    if (!id) return sendError(res, 401, "UNAUTHORIZED", "Tu sesión no es válida.");
+    const result = await findAndDelService.deleteUser(id)
+    if (!result) {
+      return sendError(res, 404, "USER_NOT_FOUND", "No se encontró el usuario.");
     }
-    res.status(200).json({ msg: "user delete successful" });
+    return res.status(200).json({ success: true, message: "Usuario eliminado correctamente." });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "internal server error", error });
+    return next(error);
   }
 
 
 };
 
-export const deleteUserById = async (req: Request, res: Response) => {
+export const deleteUserById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const idParam = req.params.id;
     const id = Array.isArray(idParam) ? idParam[0] : idParam;
 
-    if (!id) return res.status(400).json({ message: "No user ID found" });
+    if (!id) return sendError(res, 400, "INVALID_USER_ID", "El identificador de usuario no es válido.");
     if (id === req.user?.id) {
-      return res.status(400).json({ message: "No puedes eliminar tu propia cuenta desde el panel." });
+      return sendError(res, 409, "SELF_DELETE_NOT_ALLOWED", "No podés eliminar tu propia cuenta desde el panel.");
     }
 
     await findAndDelService.deleteUser(id);
-    return res.status(200).json({ msg: "user delete successful" });
+    return res.status(200).json({ success: true, message: "Usuario eliminado correctamente." });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "internal server error" });
+    return next(error);
   }
 };
-export const findById = async (req: Request, res: Response) => {
+export const findById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.user?.id;
+    if (!id) return sendError(res, 401, "UNAUTHORIZED", "Tu sesión no es válida.");
 
     const result = await findUserService.findByID(id);
     if (!result) {
-      res.status(302).json({ msg: "user not found   " });
+      return sendError(res, 404, "USER_NOT_FOUND", "No se encontró el usuario.");
     }
-    res.status(200).json({ msg: "user", result });
+    return res.status(200).json({ success: true, result });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "internal server error", error });
+    return next(error);
   }
 };
 

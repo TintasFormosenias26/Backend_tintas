@@ -6,7 +6,7 @@ import {
   UpdateBooksById,
 } from "../../application";
 
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { fileDelete } from "../../../shared/utils/deleteFile";
 import { uploadBook } from "../../../shared/utils/uploadBook";
 import { uploadCoverImage } from "../../../shared/utils/uploadCoverImage";
@@ -16,10 +16,11 @@ import { BookBase, BookSearch } from "../../../shared/types/bookTypes/bookTypes"
 import { BookCover } from "../../../shared/types/bookTypes/bookTypes";
 import { ContentBook } from "../../../shared/types/bookTypes/contentBookTypes";
 import { PrismaCrudRepository } from "../../infrastructure/mongo";
-import { FindAndDeleteUser, FindByID } from "../../../userService/application/service/FindAndDelete.service";
+import { FindByID } from "../../../userService/application/service/FindAndDelete.service";
 import { UserFindById } from "../../../userService/infrastructure/userRespositoryMongo";
 import { FindByIdRepo } from "../../../userService/domain/ports/FindAndDeleteRepo";
 import { GetAllBooksByLevel } from "../../application/crud/getBookByLevel";
+import { sendError } from "../../../shared/middlewares/errorHandler";
 
 const mongoCrudRepo = new PrismaCrudRepository();
 const createService = new CreateBook(mongoCrudRepo);
@@ -30,8 +31,6 @@ const getByIdService = new GetBooksById(mongoCrudRepo);
 const updateService = new UpdateBooksById(mongoCrudRepo);
 
 const findUserByIdPrisma: FindByIdRepo = new UserFindById()
-const findUserService: FindByID = new FindByID(findUserByIdPrisma)
-
 // Helper: parsea un campo que puede llegar como string JSON, string simple, o array
 function parseArrayField(value: unknown): string[] {
   if (!value) return [];
@@ -62,7 +61,7 @@ function parseArrayField(value: unknown): string[] {
 
 export class BooksCrudController {
   // 🔄️
-  async createBook(req: Request, res: Response): Promise<Response> {
+  async createBook(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     try {
 
       const {
@@ -80,20 +79,6 @@ export class BooksCrudController {
         fileExtension,
         anthology,
       }: BookBase = req.body;
-      console.log(title,
-        summary,
-        available,
-        language,
-        yearBook,
-        synopsis,
-        genre,
-        level,
-        format,
-        totalPages,
-        duration,
-        fileExtension,
-        anthology)
-
       // Parsear campos que pueden llegar como strings JSON desde multipart/form-data
       const authorIds: string[] = parseArrayField(req.body.authorIds);
       const subgenre: string[] = parseArrayField(req.body.subgenre);
@@ -102,7 +87,6 @@ export class BooksCrudController {
       const files = req.files as {
         [key: string]: Express.Multer.File[];
       };
-      console.log(files)
 
       const img = files.img[0];
       const file = files.file[0];
@@ -111,16 +95,13 @@ export class BooksCrudController {
 
       const content = await uploadBook(file.path);
       const coverImage = await uploadCoverImage(img.path);
-      console.log(coverImage)
 
       if (!coverImage || !content) {
         await fileDelete(img.path);
         await fileDelete(file.path);
-        console.log("no file in clou")
         if (coverImage && coverImage.public_id !== undefined) await deleteCoverImage(coverImage.public_id);
         if (content && content.public_id !== undefined) await deleteBookInCloudinary(content.public_id);
-        console.log("no se pudo almacenar el contenido o la portada del libro")
-        return res.status(400).json({ msg: "no se pudo almacenar el contenido o la portada del libro" });
+        return sendError(res, 502, "UPLOAD_SERVICE_ERROR", "No se pudo almacenar el archivo del libro.");
       }
 
       const newBook = {
@@ -153,26 +134,25 @@ export class BooksCrudController {
         duration,
         anthology,
       };
-      console.log(newBook)
       await createService.run(newBook as any);
 
       await fileDelete(img.path);
       await fileDelete(file.path);
-      return res.status(200).json({ msg: "libro subido correctamente" });
+      return res.status(201).json({ success: true, message: "Libro creado correctamente." });
     } catch (error) {
-      return res.status(500).json({ msg: "Error inesperado por favor intente de nuevo mas tarde" });
+      return next(error);
     }
   }
 
   // ✅
-  async getAllBook(req: Request, res: Response): Promise<Response> {
+  async getAllBook(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     try {
       let book;
       const id = req.user?.id;
+      if (!id) return sendError(res, 401, "UNAUTHORIZED", "Tu sesión no es válida.");
       const findUserService: FindByID = new FindByID(findUserByIdPrisma)
       const user = await findUserService.findByID(id)
       if (user) {
-        console.log("LEVEL USER", user.level)
         book = await getAllByLevelService.run(user.level)
         return res.status(200).json(book)
       }
@@ -181,24 +161,19 @@ export class BooksCrudController {
 
 
     } catch (error) {
-      console.log();
-      console.log(error);
-      console.log();
-      return res.status(500).json({
-        msg: "Erro inesperado por favor intente de nuevo mas tarde",
-      });
+      return next(error);
     }
   }
 
   // ✅
-  async deleteBook(req: Request, res: Response): Promise<Response> {
+  async deleteBook(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     try {
 
       const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 
       const book = await getByIdService.run(id);
 
-      if (!book) return res.status(200).json({ msg: "libro no encontrado" });
+      if (!book) return sendError(res, 404, "BOOK_NOT_FOUND", "No se encontró el libro.");
 
 
       const isDeletingCoverImage: boolean = await deleteCoverImage(book.bookCoverImage.idBookCoverImage);
@@ -210,36 +185,30 @@ export class BooksCrudController {
 
       await deleteService.run(id);
 
-      return res.status(200).json({ msg: "libro eliminado correctamente" });
+      return res.status(200).json({ success: true, message: "Libro eliminado correctamente." });
     } catch (error) {
-      console.log(error);
-      return res.status(500).json({
-        msg: "Erro inesperado por favor intente de nuevo mas tarde",
-      });
+      return next(error);
     }
   }
 
   // ✅
-  async getBookById(req: Request, res: Response): Promise<Response> {
+  async getBookById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     try {
       const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 
       const book = await getByIdService.run(id);
 
-      if (!book) return res.status(200).json({ msg: "libro no encontrado,buscado por id" });
+      if (!book) return sendError(res, 404, "BOOK_NOT_FOUND", "No se encontró el libro.");
 
       return res.json(book);
     } catch (error) {
 
-      console.log();
-      console.log(error);
-      console.log();
-      return res.status(500).json({ msg: "Erro inesperado por favor intente de nuevo mas tarde" });
+      return next(error);
     }
   }
 
   //✅
-  async updateBookById(req: Request, res: Response): Promise<Response> {
+  async updateBookById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     try {
       const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 
@@ -264,7 +233,7 @@ export class BooksCrudController {
       const subgenre: string[] = parseArrayField(req.body.subgenre);
 
       const existingBook: BookSearch | null = await getByIdService.run(id);
-      if (!existingBook) return res.status(404).json({ msg: "no se encontró el libro para actualizar" });
+      if (!existingBook) return sendError(res, 404, "BOOK_NOT_FOUND", "No se encontró el libro.");
 
       const files = req.files as {
         [key: string]: Express.Multer.File[];
@@ -338,12 +307,9 @@ export class BooksCrudController {
 
       await updateService.run(id, updatedBook);
 
-      return res.status(200).json({ msg: "libro actualizado correctamente" });
+      return res.status(200).json({ success: true, message: "Libro actualizado correctamente." });
     } catch (error) {
-
-      console.log();
-      console.log(error);
-      return res.status(500).json({ msg: "Error inesperado por favor intente de nuevo mas tarde" });
+      return next(error);
     }
   }
 }

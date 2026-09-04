@@ -1,11 +1,10 @@
-import { Request, Response } from "express";
-import session from 'express-session';
+import { NextFunction, Request, Response } from "express";
 
 
 declare global {
     namespace Express {
         interface Request {
-            user?: any;
+            user?: { id: string; rol: string; iat?: number; exp?: number };
         }
 
     }
@@ -19,73 +18,43 @@ import { AuthPostgres } from "../../../userService/infrastructure/userRespositor
 const authUserRepositoryMongo: AuthUserRepository = new AuthPostgres()
 const authUserService = new Auth_users(authUserRepositoryMongo)
 
-declare module "express-session" {
-    interface SessionData {
-        token?: any;
-        isLoggedIn: boolean;
-    }
+import { AUTH_COOKIE_NAME, authCookieOptions } from "../../../shared/config/authCookie";
+import type { Response as ExpressResponse } from "express";
+import { sendError } from "../../../shared/middlewares/errorHandler";
+
+export function completeLogin(res: ExpressResponse, token: string) {
+    res.cookie(AUTH_COOKIE_NAME, token, authCookieOptions());
+    return res.status(200).json({ success: true, message: "Sesión iniciada correctamente." });
 }
 
 
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
 
     try {
         const result = await authUserService.login(email, password)
 
         if (!result) {
-            res.status(400).json({ msg: 'Credenciales incorrectas' });
+            sendError(res, 401, "INVALID_CREDENTIALS", "El correo o la contraseña son incorrectos.");
         } else {
             const id = result.id
 
             const token = await generarJWT(id, result.rol);
-            req.session.token = token;
-            req.session.isLoggedIn = true
-
-            res.cookie("token", token, {
-                httpOnly: true,
-                secure: false,
-                maxAge: 3600000,
-            });
-
-            res.status(200).json({
-                msg: 'Authentication successful',
-                token,
-            });
+            completeLogin(res, token);
         }
     } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: "internal server error", error });
+        next(error);
     }
 }
 
 //get user 
-export const getMeCtrl = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const user_data = req.user
-        res.status(200).json({ msg: 'data', user_data });
-    } catch (error) {
-        res.status(500).json({ message: (error as Error).message });
-    }
+export const getMeCtrl = (req: Request, res: Response): void => {
+    res.status(200).json({ success: true, user_data: req.user });
 }
 
 //logout
 export const logout = async (req: Request, res: Response) => {
-    req.session.destroy((err) => {
-        try {
-            if (err) {
-                return res.status(500).json({ message: "error closing session" });
-            }
-            res.clearCookie("connect.sid");
-            res.clearCookie('token');
-
-            return res.json({ message: "Session closed successfully" });
-        } catch (error) {
-            console.log(error)
-            res.status(500).json({ message: "internal server error", error });
-        }
-
-
-    });
+    res.clearCookie(AUTH_COOKIE_NAME, authCookieOptions());
+    return res.json({ success: true, message: "Sesión cerrada correctamente." });
 }

@@ -1,10 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
 import ENV from "../config/configEnv";
-
-dotenv.config();
-const clave_secreta = ENV.JWT_SECRET || "";
+import { sendError } from "./errorHandler";
 
 // Middleware para validar JWT
 export const validateJWT = (req: Request, res: Response, next: NextFunction): void => {
@@ -14,13 +11,17 @@ export const validateJWT = (req: Request, res: Response, next: NextFunction): vo
   const token: string = tokenCookie || tokenHeader;
 
   if (!token) {
-    res.status(403).json({ message: "Token no proporcionado" });
+    sendError(res, 401, "UNAUTHORIZED", "Tu sesión no es válida.");
     return;
   }
 
-  jwt.verify(token, clave_secreta, (err, decoded) => {
+  jwt.verify(token, ENV.JWT_SECRET, {
+    algorithms: ["HS256"],
+    issuer: ENV.JWT_ISSUER,
+    audience: ENV.JWT_AUDIENCE,
+  }, (err, decoded) => {
     if (err || !decoded) {
-      res.status(401).json({ message: "Token inválido" });
+      sendError(res, 401, "INVALID_TOKEN", "Tu sesión venció o no es válida.");
       return;
     }
 

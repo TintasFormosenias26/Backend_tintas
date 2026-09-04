@@ -1,13 +1,11 @@
-import { Router, Request, Response } from "express";
+import { Router } from "express";
 import { BooksCrudController } from "../controller/booksCrudController";
-import upload from "../../../shared/middlewares/storage";
+import { bookUpload, validateUploadSignatures } from "../../../shared/middlewares/secureUpload";
 import { parseFormData } from "../../../shared/utils/parseFormData";
 import { validatorBooks } from "../../../shared/middlewares/validatorBooks";
 import { bookSchema } from "../../../shared/validations/book.validations";
 import { validateJWT } from "../../../shared/middlewares/validateJWT";
 import { validarRol } from "../../../shared/middlewares/validateRol";
-import { validateLevel } from "../../../shared/middlewares/validateLevel";
-import { searchBooksController } from "../controller/booksQueryController";
 
 const crudRouter = Router();
 const controller = new BooksCrudController();
@@ -15,34 +13,34 @@ const controller = new BooksCrudController();
 crudRouter.post(
      "/saveBook",
      validateJWT, validarRol("ADMIN"),
-     upload.fields([{ name: "file", maxCount: 1 }, { name: "img", maxCount: 1 }]),
+     bookUpload(), validateUploadSignatures,
      parseFormData,
      validatorBooks(bookSchema),
-     (req: Request, res: Response) => { controller.createBook(req, res) }
+     (req, res, next) => { void controller.createBook(req, res, next) }
 );
 
 crudRouter.patch(
      "/updateBook/:id",
      validateJWT, validarRol("ADMIN"),
 
-     upload.fields([{ name: "file", maxCount: 1 }, { name: "img", maxCount: 1 }]),
+     bookUpload(), validateUploadSignatures,
      parseFormData,
-     (req: Request, res: Response) => { controller.updateBookById(req, res) }
+     (req, res, next) => { void controller.updateBookById(req, res, next) }
 );
 
 crudRouter.delete(
      "/:id",
      validateJWT, validarRol("ADMIN"),
 
-     (req: Request, res: Response) => { controller.deleteBook(req, res) }
+     (req, res, next) => { void controller.deleteBook(req, res, next) }
 
 
 );
 
-crudRouter.get("/", validateJWT, (req: Request, res: Response) => { controller.getAllBook(req, res) }
+crudRouter.get("/", validateJWT, (req, res, next) => { void controller.getAllBook(req, res, next) }
 );
 
-crudRouter.get("/:id", (req: Request, res: Response) => { controller.getBookById(req, res) }
+crudRouter.get("/:id", (req, res, next) => { void controller.getBookById(req, res, next) }
 );
 
 

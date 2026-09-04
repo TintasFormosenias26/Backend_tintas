@@ -1,7 +1,8 @@
-import { Request, Response } from "express";
-import { UpdateUSerRepository } from "../../../userService/domain/ports/UpdateUserRepository";
+import { NextFunction, Request, Response } from "express";
 import { UpdateUserPostgresRepository, UserFindByEmail } from "../../../userService/infrastructure/userRespositoryMongo";
 import { ResetPassword } from "../../application/service/ResetPassword.Service";
+import { z } from "zod";
+import { sendError } from "../../../shared/middlewares/errorHandler";
 
 
 
@@ -11,21 +12,22 @@ const findByEmail = new UserFindByEmail()
 
 const resetPassword = new ResetPassword(findByEmail, userRespositoryMongo)
 
-export const ResetPasswordController = async (req: Request, res: Response) => {
+export const ResetPasswordController = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { token, password } = req.body;
+        const parsed = z.object({
+            token: z.string().min(20).max(512),
+            password: z.string().min(8).max(128).regex(/[A-Za-z]/).regex(/[0-9]/),
+        }).strict().safeParse(req.body);
+        if (!parsed.success) return sendError(res, 422, "INVALID_RESET_REQUEST", "Revisá la contraseña ingresada.");
+        const { token, password } = parsed.data;
 
         const result = await resetPassword.resertPassword(token, password)
 
-        if (!result) {
-            return res.status(400).json({ msg: "Token inválido o vencido" })
+        if (!result.success) {
+            return sendError(res, 400, "INVALID_RESET_TOKEN", "El enlace es inválido o venció.");
         }
-        return res.status(200).json({ msg: 'password update success' })
+        return res.status(200).json({ success: true, message: "Contraseña actualizada correctamente." });
     } catch (error) {
-        console.error("Error al restablecer contraseña", error);
-
-        return res.status(500).json({
-            message: "internal server error"
-        });
+        return next(error);
     }
 }

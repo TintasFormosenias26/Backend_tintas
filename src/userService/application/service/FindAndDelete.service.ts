@@ -1,5 +1,5 @@
-import { UserType } from "../../domain/entities/UserTypes";
-import { FindAndDeleteRepo, FindByIdRepo, PublicUser } from "../../domain/ports/FindAndDeleteRepo";
+import { PublicUser } from "../../domain/entities/UserTypes";
+import { FindAndDeleteRepo, FindByIdRepo } from "../../domain/ports/FindAndDeleteRepo";
 
 
 
@@ -19,7 +19,7 @@ export class FindAndDeleteUser implements FindAndDeleteRepo {
 export class FindByID implements FindByIdRepo {
     constructor(private readonly findUserRepo: FindByIdRepo) { }
 
-    async findByID(id: any): Promise<UserType | null> {
+    async findByID(id: string): Promise<PublicUser | null> {
         const result = await this.findUserRepo.findByID(id);
         return result
     }

@@ -38,6 +38,7 @@ export class BookProgresPostgres {
 export class UpdateProgressPostgres implements UpdateProgresPort {
     async updateProgres(
         id: string,
+        userId: string,
         data: Partial<BookUserProgresRepo>
     ): Promise<BookUserProgresRepo | null> {
         try {
@@ -46,14 +47,16 @@ export class UpdateProgressPostgres implements UpdateProgresPort {
                 status: data.status?.toUpperCase() as any,
                 unit: data.unit?.toUpperCase() as any,
             };
-            const result = await prisma.bookProgress.update({
-                where: {
-                    id,
-                },
-                data: updateData,
+            return await prisma.$transaction(async (transaction) => {
+                const updated = await transaction.bookProgress.updateMany({
+                    where: { id, userId },
+                    data: updateData,
+                });
+                if (updated.count !== 1) return null;
+                return await transaction.bookProgress.findFirst({
+                    where: { id, userId },
+                }) as unknown as BookUserProgresRepo;
             });
-
-            return result as unknown as BookUserProgresRepo;
         } catch {
             return null;
         }
@@ -61,12 +64,11 @@ export class UpdateProgressPostgres implements UpdateProgresPort {
 }
 
 export class DeleteRepo implements deleteProgress {
-    async deleteProgres(id: string): Promise<void> {
-        await prisma.bookProgress.delete({
-            where: {
-                id,
-            },
+    async deleteProgres(id: string, userId: string): Promise<boolean> {
+        const result = await prisma.bookProgress.deleteMany({
+            where: { id, userId },
         });
+        return result.count === 1;
     }
 }
 export class FindProgressPostgres implements FindProgressPort {
@@ -75,7 +77,6 @@ export class FindProgressPostgres implements FindProgressPort {
             where: {
                 userId: id,
             }, include: {
-                user: true,        // Incluye todos los campos del usuario
                 book: true
             }
         }) as unknown as BookUserProgresRepo[];
@@ -89,21 +90,19 @@ export class FindProgressPostgres implements FindProgressPort {
                 bookId: id,
                 userId: idUser,
             }, include: {
-                user: true,        // Incluye todos los campos del usuario
-                book: true        // Incluye todos los campos de los libros
+                book: true
             }
         }) as unknown as BookUserProgresRepo[];
     }
 
     async findById(
-        id: string
+        id: string,
+        userId: string
     ): Promise<BookUserProgresRepo | null> {
-        return await prisma.bookProgress.findUnique({
-            where: {
-                id,
-            }, include: {
-                user: true,        // Incluye todos los campos del usuario
-                book: true        // Incluye todos los campos de los libros
+        return await prisma.bookProgress.findFirst({
+            where: { id, userId },
+            include: {
+                book: true
             }
         }) as unknown as BookUserProgresRepo | null;
     }

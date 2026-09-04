@@ -1,10 +1,9 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { AuthPostgres, UniqueUsernamePostgre, UserPostgres } from "../../infrastructure/userRespositoryMongo";
 import { UserType } from "../../domain/entities/UserTypes";
 import { IRegisterRepository } from "../../domain/ports/RegisterRepositoryPorts";
 import { AuthUserRepository } from "../../domain/ports/AuthUserRepository";
 import { Register } from "../../application/service/Register.Service";
-import { ZodError } from "zod";
 
 // initialize the user service
 const userRespositoryMongo: IRegisterRepository = new UserPostgres();
@@ -13,7 +12,7 @@ const uniqueUsername = new UniqueUsernamePostgre();
 const userService: IRegisterRepository = new Register(userRespositoryMongo, authRepositoryMongo, uniqueUsername);
 
 //register
-export const registers = async (req: Request, res: Response) => {
+export const registers = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user: UserType = req.body;
     const newUser = { ...user };
@@ -25,9 +24,8 @@ export const registers = async (req: Request, res: Response) => {
       return;
     }
 
-    res.status(200).json({ msg: "user created successful", result });
+    res.status(201).json({ success: true, message: "Usuario creado correctamente.", result });
   } catch (error) {
-    console.error("internal server error", error);
-    res.status(500).json({ message: "internal server error " });
+    next(error);
   }
 };

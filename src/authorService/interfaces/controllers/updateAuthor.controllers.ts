@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { HttpError, UpdateAuthor } from "../../app/service/UpdateAuthor.service";
+import { NextFunction, Request, Response } from "express";
+import { UpdateAuthor } from "../../app/service/UpdateAuthor.service";
 import { Author } from "../../domain/entidades/author.Types";
 import { authorUpdateValidation } from "../../app/validations/authorValidations";
 import { UploadAuthorService } from "../../../shared/services/upload_Author.Service";
@@ -7,12 +7,13 @@ import {
   FindAuthorPostgresRepo,
   UpdateAuthorPostgresRepo,
 } from "../../infrastructure/authores.MongoRepo";
+import { sendError } from "../../../shared/middlewares/errorHandler";
 
 const updateAuthorRepo = new UpdateAuthorPostgresRepo();
 const findAuthorRepo = new FindAuthorPostgresRepo();
 const updateAuthorService = new UpdateAuthor(updateAuthorRepo, findAuthorRepo);
 
-export const updateAuthors = async (req: Request, res: Response) => {
+export const updateAuthors = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
 
@@ -25,12 +26,7 @@ export const updateAuthors = async (req: Request, res: Response) => {
     const parsed = authorUpdateValidation(author);
 
     if (!parsed.success) {
-      res.status(parsed.status).json({
-        success: false,
-        message: parsed.message,
-        errors: parsed.errors,
-      });
-      return;
+      return sendError(res, 422, "VALIDATION_ERROR", parsed.message, { fields: parsed.errors });
     }
 
     author = parsed.data;
@@ -51,10 +47,7 @@ export const updateAuthors = async (req: Request, res: Response) => {
       message: "Autor actualizado correctamente",
       author: updatedAuthor,
     });
-  } catch (error: any) {
-    res.status(error.statusCode ?? 500).json({
-      success: false,
-      message: error.message ?? "Error interno del servidor",
-    });
+  } catch (error: unknown) {
+    next(error);
   }
 };

@@ -17,18 +17,15 @@ export const sendEmailController = async (req: Request, res: Response) => {
             });
         }
 
-        const result = await sendEmail(email);
+        await sendEmail(email);
 
-        if (result === null) {
-            return res.status(400).json({ success: true, message: "error al enviar el email" });
-        }
+        // La respuesta es deliberadamente idéntica exista o no la cuenta.
         return res.status(200).json({
             success: true,
             message: "Si el email existe, recibirás un código de recuperación",
         });
 
-    } catch (error) {
-        console.error("Error en requestPasswordReset:", error);
+    } catch {
         return res.status(500).json({
             success: false,
             message: "Error interno del servidor",

@@ -1,15 +1,16 @@
 import { Role } from "../../prisma/generated/enums";
 import { prisma } from "../../shared/lib/prisma";
 import { api_response } from "../../shared/types/reponse.types";
-import { UpdateUserDTO, UserType } from "../domain/entities/UserTypes";
+import { PublicUser, UpdateUserDTO, UserType } from "../domain/entities/UserTypes";
 import { AuthUserRepository } from "../domain/ports/AuthUserRepository";
 import { FindAndDeleteRepo, FindByEmailRepo, FindByIdRepo } from "../domain/ports/FindAndDeleteRepo";
 import { IRegisterRepository } from "../domain/ports/RegisterRepositoryPorts";
 import { UniqueUserName } from "../domain/ports/UniqueUserName";
 import { UpdateRolRepo, UpdateUSerRepository } from "../domain/ports/UpdateUserRepository";
+import { publicUserOmit, publicUserSelect } from "../domain/entities/publicUser";
 
 export class UserPostgres implements IRegisterRepository {
-  async createUser(user: UserType): Promise<UserType> {
+  async createUser(user: UserType): Promise<PublicUser> {
     return await prisma.user.create({
       data: {
         name: user.name,
@@ -21,17 +22,19 @@ export class UserPostgres implements IRegisterRepository {
         password: user.password,
         avatar: user.avatar,
       },
+      omit: publicUserOmit,
     });
   }
 }
 ;
 
 export class UpdateRoleRepository implements UpdateRolRepo {
-  async updateRol(id: string, rol: Role): Promise<UserType | null | api_response> {
+  async updateRol(id: string, rol: Role): Promise<PublicUser | null | api_response> {
     return await prisma.user.update({
       where: {
         id: id,
       },
+      omit: publicUserOmit,
       data: {
         rol,
       },
@@ -59,17 +62,26 @@ export class UniqueUsernamePostgre implements UniqueUserName {
 }
 
 export class UpdateUserPostgresRepository implements UpdateUSerRepository {
-  updateUSer(id: string, user: UpdateUserDTO): Promise<UserType>
+  updateUSer(id: string, user: UpdateUserDTO): Promise<PublicUser>
   async updateUSer(
     id: string,
     user: UpdateUserDTO
-  ): Promise<UserType> {
+  ): Promise<PublicUser> {
 
     return await prisma.user.update({
       where: {
         id,
       },
-      data: user,
+      data: {
+        name: user.name,
+        lastName: user.lastName,
+        userName: user.userName,
+        birthDate: user.birthDate,
+        email: user.email,
+        avatar: user.avatar,
+        password: user.password,
+      },
+      omit: publicUserOmit,
     });
   }
 }
@@ -84,9 +96,7 @@ export class findAndDeleteMongo implements FindAndDeleteRepo {
   }
   async findUser() {
     return await prisma.user.findMany({
-      omit: {
-        password: true,
-      },
+      select: publicUserSelect,
     });
   }
 }
@@ -100,11 +110,12 @@ export class UserFindByEmail implements FindByEmailRepo {
   }
 }
 export class UserFindById implements FindByIdRepo {
-  async findByID(id: any): Promise<UserType | null> {
+  async findByID(id: string): Promise<PublicUser | null> {
     return await prisma.user.findUnique({
       where: {
         id,
       },
+      select: publicUserSelect,
     });
   }
 }

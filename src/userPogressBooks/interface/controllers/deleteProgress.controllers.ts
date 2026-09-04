@@ -1,21 +1,28 @@
 import { DeleteRepo } from "../../infrastructure/ProgressBookRepoMongo";
 import { deleteProgress } from '../../domain/ports/deleteProgress.Ports'
 import { DeleteProgresService } from "../../aplication/service/DeleteProgress.Service";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
+import { sendError } from "../../../shared/middlewares/errorHandler";
 
 const repo: deleteProgress = new DeleteRepo();
 const deleteService: deleteProgress = new DeleteProgresService(repo);
 
 
-export const deleteProgresBook = async (req: Request, res: Response) => {
+export const deleteProgresBook = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.body;
-        const result = await deleteService.deleteProgres(id);
+        const userId = req.user?.id;
+        if (!userId || typeof id !== "string") {
+            return sendError(res, 400, "INVALID_PROGRESS_DELETE", "Los datos enviados no son válidos.");
+        }
+        const deleted = await deleteService.deleteProgres(id, userId);
+        if (!deleted) {
+            return sendError(res, 404, "PROGRESS_NOT_FOUND", "No se encontró el progreso.");
+        }
 
-        res.status(200).json({ msg: 'progress delete succesfull' })
+        return res.status(200).json({ success: true, message: "Progreso eliminado correctamente." });
 
     } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: "internal server error", error });
+        return next(error);
     }
 }

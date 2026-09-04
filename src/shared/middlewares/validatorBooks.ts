@@ -1,6 +1,7 @@
 import { ZodSchema } from "zod";
 import type { Request, Response, NextFunction } from "express";
 import { fileDelete } from "../utils/deleteFile";
+import { sendError } from "./errorHandler";
 
 
 export const validatorBooks = <T>(schema: ZodSchema<T>) => {
@@ -30,21 +31,21 @@ export const validatorBooks = <T>(schema: ZodSchema<T>) => {
       // Si no hay archivos subidos
       if (!files || !files.file?.[0] || !files.img?.[0]) {
         await deleteUploadedFiles();
-        res.status(400).json({ msg: missingFileMsg() });
+        sendError(res, 400, "FILES_REQUIRED", missingFileMsg());
         return;
       }
 
       // Si hay errores de validación
       await deleteUploadedFiles();
-      res.status(400).json({
-        errors: result.error.issues.map((err) => ({
+      sendError(res, 422, "VALIDATION_ERROR", "Revisá los campos indicados.", {
+        fields: result.error.issues.map((err) => ({
           path: err.path.length ? err.path.join(".") : "general",
           message: err.message,
         })),
       });
       return;
     } catch (error) {
-      res.status(500).json({ msg: "Error inesperado, por favor intente de nuevo más tarde" });
+      next(error);
     }
   };
 };

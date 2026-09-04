@@ -1,10 +1,11 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { UploadService } from "../../../shared/services/uploadAvatar.service";
 import { AvatarsService } from "../../app/services/avatars.service";
 import { AvatarType } from "../../domain/entities/AvatarsTypes";
 import { IAvatar } from "../../domain/ports/AvatarPorts";
 import { deleteCoverImage } from "../../../shared/utils/deleteCoverImage";
 import { AvatarPostgresRepository } from "../../infrastructure/avatar.mongoRepository"
+import { sendError } from "../../../shared/middlewares/errorHandler";
 
 const iAvatar: IAvatar = new AvatarPostgresRepository();
 const avatarControllers = new AvatarsService(iAvatar);
@@ -13,12 +14,13 @@ const avatarControllers = new AvatarsService(iAvatar);
 interface MulterRequest extends Request {
 	file?: Express.Multer.File;
 }
-export const saveAvatar = async (req: MulterRequest, res: Response) => {
+export const saveAvatar = async (req: MulterRequest, res: Response, next: NextFunction) => {
 	try {
 		const gender = req.body.gender;
 		const file = req.file;
 
-		const avatarUploaded = await UploadService.uploadAvatar(file as Express.Multer.File);
+		if (!file) return sendError(res, 400, "FILE_REQUIRED", "Seleccioná una imagen para el avatar.");
+		const avatarUploaded = await UploadService.uploadAvatar(file);
 
 		const date: AvatarType = {
 			gender,
@@ -29,42 +31,38 @@ export const saveAvatar = async (req: MulterRequest, res: Response) => {
 		const result = await avatarControllers.saveAvatar(date);
 
 		if (!result) {
-			res.status(304).json({ msg: "The avatar was not saved" });
+			return sendError(res, 409, "AVATAR_NOT_SAVED", "No se pudo guardar el avatar.");
 		}
 
-		res.status(201).json({ msg: "The avatar was saved successfully" });
+		return res.status(201).json({ success: true, message: "Avatar guardado correctamente." });
 	} catch (error) {
-		console.log(error);
-		res.status(500).json({ msg: "Internal server error" });
+		return next(error);
 	}
 };
 
-export const deleteAvatar = async (req: Request, res: Response) => {
+export const deleteAvatar = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 		const result = await avatarControllers.deleteAvatar(id);
 		if (result === null) {
-			res.status(404).json({ msg: "Avatar no encontrado " });
-			return;
+			return sendError(res, 404, "AVATAR_NOT_FOUND", "No se encontró el avatar.");
 		}
-		res.status(200).json({ msg: "Avatar eliminado exitosamente" });
+		return res.status(200).json({ success: true, message: "Avatar eliminado correctamente." });
 	} catch (error) {
-		console.error(error);
-		res.status(500).json({ msg: "Error interno del servidor" });
+		return next(error);
 	}
 };
 
-export const getAvatars = async (req: Request, res: Response) => {
+export const getAvatars = async (_req: Request, res: Response, next: NextFunction) => {
 	try {
 		const avatars = await avatarControllers.findAvatars();
-		res.status(200).json(avatars);
+		return res.status(200).json(avatars);
 	} catch (error) {
-		console.error(error);
-		res.status(500).json({ msg: "Error interno al obtener los avatares" });
+		return next(error);
 	}
 };
 
-export const updateAvatar = async (req: MulterRequest, res: Response) => {
+export const updateAvatar = async (req: MulterRequest, res: Response, next: NextFunction) => {
 	try {
 		const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 		const gender = req.body.gender;
@@ -72,8 +70,7 @@ export const updateAvatar = async (req: MulterRequest, res: Response) => {
 
 		const existingAvatar = await avatarControllers.findAvatarById(id);
 		if (!existingAvatar) {
-			res.status(404).json({ msg: "Avatar no encontrado" });
-			return
+			return sendError(res, 404, "AVATAR_NOT_FOUND", "No se encontró el avatar.");
 		}
 
 		let avatarData: AvatarType = {
@@ -85,7 +82,7 @@ export const updateAvatar = async (req: MulterRequest, res: Response) => {
 		if (file) {
 			if (existingAvatar.idImage) await deleteCoverImage(existingAvatar.idImage);
 
-			const avatarUploaded = await UploadService.uploadAvatar(file as Express.Multer.File);
+			const avatarUploaded = await UploadService.uploadAvatar(file);
 			avatarData = {
 				gender,
 				urlSecura: avatarUploaded.photoUrl,
@@ -94,15 +91,11 @@ export const updateAvatar = async (req: MulterRequest, res: Response) => {
 		}
 		const updatedAvatar = await avatarControllers.updateAvatar(id, avatarData);
 		if (!updatedAvatar) {
-			res.status(404).json({ msg: "Avatar no encontrado para actualizar" });
-			return
+			return sendError(res, 404, "AVATAR_NOT_FOUND", "No se encontró el avatar.");
 		}
 
-		res.status(200).json({ msg: "Avatar actualizado exitosamente", avatar: updatedAvatar });
-		return
+		return res.status(200).json({ success: true, message: "Avatar actualizado correctamente.", avatar: updatedAvatar });
 	} catch (error) {
-		console.error(error);
-		res.status(500).json({ msg: "Error interno del servidor al actualizar el avatar" });
-		return
+		return next(error);
 	}
 };

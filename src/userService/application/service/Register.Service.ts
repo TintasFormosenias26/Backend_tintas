@@ -1,4 +1,4 @@
-import { UserType } from "../../domain/entities/UserTypes";
+import { PublicUser, UserType } from "../../domain/entities/UserTypes";
 import { IRegisterRepository } from "../../domain/ports/RegisterRepositoryPorts";
 import { AuthUserRepository } from "../../domain/ports/AuthUserRepository";
 import { UniqueUserName } from "../../domain/ports/UniqueUserName";
@@ -14,7 +14,7 @@ export class Register implements IRegisterRepository {
         private readonly authRepo: AuthUserRepository,
         private readonly uniqueRepo: UniqueUserName
     ) { }
-    async createUser(user: UserType): Promise<UserType | api_response> {
+    async createUser(user: UserType): Promise<PublicUser | api_response> {
         const emailExists = await this.authRepo.findByEmail(user.email);
         if (emailExists) {
             return {
@@ -38,7 +38,6 @@ export class Register implements IRegisterRepository {
 
         const avatars = await getAllAvatars();
         const avatarAssignment = await avatarsAssignment(avatars);
-        console.log(avatarAssignment)
         if (!avatarAssignment) {
             return {
                 success: false,
@@ -48,7 +47,6 @@ export class Register implements IRegisterRepository {
         }
 
         const newUser = { ...user, level, avatar: avatarAssignment, password: hashedPassword };
-        console.log(newUser);
         return await this.userRepo.createUser(newUser);
     }
 }

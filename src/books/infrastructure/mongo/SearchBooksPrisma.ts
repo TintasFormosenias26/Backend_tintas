@@ -1,11 +1,12 @@
 import { prisma } from "../../../shared/lib/prisma";
 import { BookSearchType } from "../../domain/entities/bookSearch";
+import type { Prisma } from "../../../prisma/generated/client";
+import type { BookSearchRepository } from "../../domain/bookSearchRepo";
 
-export class PrismaBookRepository {
+export class PrismaBookRepository implements BookSearchRepository {
 
     async search(filters: BookSearchType) {
-        console.log("ENTRÉ AL SEARCH");
-        const where: any = {};
+        const where: Prisma.BookWhereInput = {};
 
         if (filters.title) {
             where.title = {
@@ -69,7 +70,6 @@ export class PrismaBookRepository {
                 },
             };
         }
-        console.log(JSON.stringify(where, null, 2));
         return prisma.book.findMany({
             where,
             include: {

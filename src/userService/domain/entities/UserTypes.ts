@@ -26,10 +26,10 @@ export interface UpdateUserDTO {
   lastName?: string;
   userName?: string;
   email?: string;
+  /** Uso interno exclusivo del flujo de recuperación de contraseña. */
   password?: string;
   birthDate?: Date;
-  nivel?: string | null;
-  imgLevel?: string | null;
-  point?: number;
   avatar?: string;
 }
+
+export type PublicUser = Omit<UserType, "password">;

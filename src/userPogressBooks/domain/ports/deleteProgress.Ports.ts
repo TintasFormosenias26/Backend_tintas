@@ -1,5 +1,3 @@
-import { promises } from "fs";
-
 export interface deleteProgress {
-    deleteProgres(id: string): Promise<void>
+    deleteProgres(id: string, userId: string): Promise<boolean>
 }

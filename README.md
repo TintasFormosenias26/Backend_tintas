@@ -82,8 +82,8 @@ Para una base nueva o después de recibir migraciones:
 docker compose run --rm migrate
 ```
 
-El servicio `migrate` existe porque la imagen final de la API es mínima y no
-contiene pnpm ni Prisma CLI.
+El Compose predeterminado usa el target `development`, monta el código y reinicia
+la API automáticamente al editar archivos.
 
 ### Comandos de Docker
 
@@ -102,6 +102,19 @@ contiene pnpm ni Prisma CLI.
 | `docker compose run --rm migrate pnpm exec prisma migrate status` | Consulta el estado de las migraciones. |
 
 `docker compose down` no elimina la base remota configurada en `DATABASE_URL`.
+
+### Imagen para VM o producción
+
+El archivo de producción no monta el código y utiliza la imagen mínima:
+
+```powershell
+docker compose -f docker-compose.production.yml up --build -d
+docker compose -f docker-compose.production.yml ps
+docker compose -f docker-compose.production.yml logs -f api
+```
+
+Requiere `IMAGE_TAG`, un origen HTTPS en `CORS_ALLOWED_ORIGINS` y las variables
+reales del ambiente. Debe publicarse detrás de Nginx u otro proxy con HTTPS.
 
 ## Ejecución directa con Node.js
 

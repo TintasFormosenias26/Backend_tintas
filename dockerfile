@@ -7,6 +7,11 @@ FROM base AS dependencies
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 
+FROM dependencies AS development
+COPY . .
+EXPOSE 3400
+CMD ["pnpm", "dev"]
+
 FROM dependencies AS builder
 COPY tsconfig.json prisma.config.ts ./
 COPY src ./src

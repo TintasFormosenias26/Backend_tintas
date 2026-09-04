@@ -1,0 +1,49 @@
+name: tintas-backend-production
+
+services:
+  api:
+    image: tintas-backend:${IMAGE_TAG:?Definir IMAGE_TAG}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    environment:
+      NODE_ENV: production
+      PORT: "3400"
+      DATABASE_URL: ${DATABASE_URL:?Definir DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET:?Definir JWT_SECRET}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:?Definir CORS_ALLOWED_ORIGINS}
+      COOKIE_SECURE: "true"
+      TRUST_PROXY_HOPS: ${TRUST_PROXY_HOPS:-1}
+      CLOUD_NAME: ${CLOUD_NAME:?Definir CLOUD_NAME}
+      API_KEY: ${API_KEY:?Definir API_KEY}
+      API_SECRET: ${API_SECRET:?Definir API_SECRET}
+      API_RENDER: ${API_RENDER:?Definir API_RENDER}
+    ports:
+      - "127.0.0.1:${BACKEND_PORT:-3400}:3400"
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /app/uploads:size=128m,mode=0700,uid=1001,gid=1001
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3400/health/live"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  migrate:
+    profiles: ["tools"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?Definir DATABASE_URL}
+    command: ["pnpm", "exec", "prisma", "migrate", "deploy"]
